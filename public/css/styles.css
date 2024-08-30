@@ -38,7 +38,7 @@
            /* background: #1b1b1b; */
            background: rgba(54, 0, 51, 0.5);
            /* Fallback for old browsers with transparency */
-        height: 70px;
+           height: 70px;
            /* Chrome 10-25, Safari 5.1-6 */
            /* background: -webkit-linear-gradient(to right, rgba(11, 135, 147, 0.5), rgba(54, 0, 51, 0.5)); */
 
@@ -51,11 +51,11 @@
        }
 
        .navbar {
-           display: flex ;
-           padding: 0 10px ;
-           width: 100% ;
-           align-items: center ;
-           justify-content: space-between ;
+           display: flex;
+           padding: 0 10px;
+           width: 100%;
+           align-items: center;
+           justify-content: space-between;
            height: 70px;
        }
 
@@ -68,7 +68,8 @@
            display: none;
        }
 
-       .navbar .all-links,.navbar .log-links {
+       .navbar .all-links,
+       .navbar .log-links {
            display: flex;
            align-items: center;
        }
@@ -81,14 +82,15 @@
            /* background-color: #333;
             border: rebeccapurple solid 2px; */
        }
-       .navbar .log-links li {
-        position: relative;
-        list-style: none;
 
-        /* --------- */
-        /* background-color: #333;
+       .navbar .log-links li {
+           position: relative;
+           list-style: none;
+
+           /* --------- */
+           /* background-color: #333;
          border: rebeccapurple solid 2px; */
-    }
+       }
 
        .navbar .logo a {
            display: flex;
@@ -110,6 +112,7 @@
        header a:hover,
        footer a:hover {
            color: #ddd;
+           text-decoration: none;
        }
 
 
@@ -151,7 +154,7 @@
            width: 100%;
            position: relative;
            /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
-           background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(33, 6, 44, 0.5)),url(../images/house-image.png);
+           background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(33, 6, 44, 0.5)), url(../images/house-image.png);
            background-position: center 65%;
            background-size: cover;
            background-attachment: fixed;
@@ -320,7 +323,6 @@
        .services .card img {
            /* width: 120px;
            height: 120px; */
-           width: 300px;
            height: auto;
            margin-bottom: 20px;
            /* border-radius: 100%; */
@@ -343,6 +345,14 @@
            /* aspect-ratio: 16 / 9; */
            /* object-fit: cover; */
 
+       }
+
+       section.listings {
+           background-color: #f7f7f7;
+       }
+
+       section.contact {
+           background-color: #f7f7f7;
        }
 
        .row.listing .card {
@@ -497,6 +507,7 @@
            width: 100%;
            display: flex;
            justify-content: center;
+           align-items: center !important;
            /* background: #000; */
            background: #360033;
            /* fallback for old browsers */
@@ -627,6 +638,7 @@
                margin-bottom: 30px;
            }
        }
-       nav .all-links{
-        float: right;
+
+       nav .all-links {
+           float: right;
        }

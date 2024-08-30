@@ -1,23 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins',sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 
 
 
 
-.containers {
+.containers.login {
     position: absolute;
-    width: 900px;
+    width: 700px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 700px;
+    /* height: 700px; */
+    height: 500px;
     background-color: #2d2c2c25;
     background-size: cover;
     background-position: center;
@@ -26,9 +27,28 @@
 
 }
 
+.containers.register {
+    position: absolute;
+    width: 700px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 700px;
+    /* height: 500px; */
+    background-color: #2d2c2c25;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    margin-top: 20px;
+
+}
 
 .content .logo {
     font-size: 30px;
+}
+
+.login-register a {
+    color: #032b97 !important;
 }
 
 .text-sci h2 {
@@ -63,10 +83,10 @@
     width: calc(100% - 28%);
     height: 100%;
     overflow: hidden;
-    
+
 }
 
-.logreg-box .forms-box{
+.logreg-box .forms-box {
     position: absolute;
     display: flex;
     flex-direction: row !important;
@@ -104,14 +124,14 @@
 }
 
 
-.left{
+.left {
     width: 49%;
     float: left;
 }
-.right{
+
+.right {
     width: 49%;
     float: right
-        
 }
 
 
@@ -120,21 +140,24 @@
     font-size: 32px;
     text-align: center;
 }
+
 .forms-box div {
     font-size: 32px;
     text-align: center;
 }
-#registerd{
+
+#registerd {
     display: flex;
     justify-content: space-between;
     width: 700px;
 }
-.logreg-box{
+
+.logreg-box {
     width: 100%;
     overflow: auto;
 }
 
-.forms-box .input-box { 
+.forms-box .input-box {
     position: relative;
     width: 300px;
     height: 50px;
@@ -142,7 +165,23 @@
     margin: 30px 0;
 }
 
-.input-box input { 
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+
+    border-bottom: rgba(0, 0, 0, 0.288) solid 2px !important;
+
+    outline: none;
+    font-size: 16px;
+    color: black;
+    font-weight: 500;
+    padding-right: 28px;
+}
+
+.input-box select,
+#profile_picture {
     width: 100%;
     height: 100%;
     background: transparent;
@@ -153,18 +192,8 @@
     font-weight: 500;
     padding-right: 28px;
 }
-.input-box select, #profile_picture{ 
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    color: black;
-    font-weight: 500;
-    padding-right: 28px;
-}
-input::file-selector-button{
+
+input::file-selector-button {
     font-weight: bold;
     color: dodgerblue;
     padding: 0.5em;
@@ -203,12 +232,12 @@ input::file-selector-button{
     justify-content: space-between;
 }
 
-.remember-forgot label input { 
+.remember-forgot label input {
     accent-color: black;
     margin-right: 3px;
 }
 
-.remember-forgot a { 
+.remember-forgot a {
     color: black;
     text-decoration: none;
 }
@@ -217,7 +246,7 @@ input::file-selector-button{
     text-decoration: underline;
 }
 
-.btn { 
+.btn {
     width: 100%;
     height: 45px;
     background: #032b97;
@@ -228,16 +257,33 @@ input::file-selector-button{
     font-size: 16px;
     color: rgb(237, 228, 228);
     font-weight: 500;
-   
+
 }
 
-.btn:hover{
+.btn:hover {
 
     background-color: #074ca1;
 
 }
 
-.forms-box .login-register { 
+button#loginButton {
+    /* background-color: rgb(26, 48, 119); */
+    background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877));
+    color: white;
+}
+
+button#loginButton:hover {
+    /* background-color: rgb(26, 48, 119); */
+    background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877));
+    color: white;
+}
+
+/* button#owner {
+    background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877)) !important;
+    color: white !important;
+} */
+
+.forms-box .login-register {
     font-size: 14.5px;
     font-weight: 500;
     text-align: center;
@@ -253,17 +299,20 @@ input::file-selector-button{
 .login-register p a:hover {
     text-decoration: underline;
 }
-.container{
+
+.container {
     height: 100%;
     width: 100%;
 }
-footer{
+
+footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 30px; 
+    height: 30px;
 }
-.login{
+
+.login {
     display: flex;
     flex-direction: column;
 }

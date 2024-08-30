@@ -4,7 +4,7 @@
 
 @section('content')
 <h1>Sign up</h1>
-<div class="containers">
+<div class="containers register">
 
     <div class="logreg-box">
         <div class="forms-box login">

@@ -5,7 +5,7 @@
 @section('content')
 
 
-<div class="containers">
+<div class="containers login">
 
     <div class="logreg-box">
         <div class="forms-box login">
