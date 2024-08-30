@@ -121,7 +121,7 @@
                 </div>
             </li>
             <li class="card">
-                <img src="images/living room.jpg" alt="Jane Smith">
+                <img src="images/student dorm.jpg" alt="Jane Smith">
                 <div class="overlay">
                     <div class="text">
                         <h4>Student Dorm</h4>
@@ -132,7 +132,7 @@
                 </div>
             </li>
             <li class="card">
-                <img src="images/living room.jpg" alt="Mark Johnson">
+                <img src="images/house-with-garden.jpg" alt="Mark Johnson">
                 <div class="overlay">
                     <div class="text">
                         <h4>Family House with Garden</h4>
@@ -141,7 +141,7 @@
                 </div>
             </li>
             <li class="card">
-                <img src="images/high-angle.jpg" alt="Sarah Brown">
+                <img src="images/houseclosetomall.jpg" alt="Sarah Brown">
                 <div class="overlay">
                     <div class="text">
                         <h4>Convenient Locations</h4>
@@ -150,7 +150,7 @@
                 </div>
             </li>
             <li class="card">
-                <img src="images/high-angle.jpg" alt="Sarah Brown">
+                <img src="images/houseemployes.jpg" alt="Sarah Brown">
                 <div class="overlay">
                     <div class="text">
                         <h4>Apartment for Employees</h4>
@@ -160,7 +160,7 @@
                 </div>
             </li>
             <li class="card">
-                <img src="images/high-angle.jpg" alt="Sarah Brown">
+                <img src="images/beach.jpg" alt="Sarah Brown">
                 <div class="overlay">
                     <div class="text">
                         <h4>Vacation Rentals</h4>
@@ -227,6 +227,6 @@
             </form>
         </div>
     </div>
-    
+
 </section>
 @endsection
