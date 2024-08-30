@@ -1,0 +1,180 @@
+@extends('layouts.app')
+
+@section('title', $dorm ? 'Edit Dorm' : 'Add Dorm')
+
+@section('content')
+<style>
+    .image-preview {
+        display: inline-block;
+        position: relative;
+        margin: 10px;
+    }
+
+    .image-preview img {
+        display: block;
+    }
+
+    .image-preview button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<h1>{{ $dorm ? 'Edit Dorm' : 'Add Dorm' }}</h1>
+
+<button type="button" onclick="getUserLocation()">Get My Address</button>
+
+<form id="locationForm" method="post" action="{{ $dorm ? route('dorms.update', $dorm->id) : route('savedorm') }}"
+    enctype="multipart/form-data">
+    @csrf
+    @if($dorm)
+        @method('PUT')
+    @endif
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ $dorm->name ?? old('name') }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description"
+            name="description">{{ $dorm->description ?? old('description') }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="address">Address</label>
+        <input type="text" class="form-control" id="address" name="address"
+            value="{{ $dorm->address ?? old('address') }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="type">Type</label>
+        <select class="form-control" id="type" name="type">
+            <option value="" disabled {{ old('type') == '' ? 'selected' : '' }}>Select Type</option>
+            <option value="dorm" {{ (old('type') == 'dorm' || (isset($dorm) && is_object($dorm) && $dorm->type == 'dorm')) ? 'selected' : '' }}>Dorm</option>
+            <option value="apartment" {{ (old('type') == 'apartment' || (isset($dorm) && is_object($dorm) && $dorm->type == 'apartment')) ? 'selected' : '' }}>Apartment</option>
+        </select>
+    </div>
+
+
+    <div class="form-group">
+
+        <input type="hidden" class="form-control" id="latitude" name="latitude"
+            value="{{ $dorm->latitude ?? old('latitude') }}" required>
+    </div>
+
+    <div class="form-group">
+
+        <input type="hidden" class="form-control" id="longitude" name="longitude"
+            value="{{ $dorm->longitude ?? old('longitude') }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="rooms_available">Rooms Available</label>
+        <input type="number" class="form-control" id="rooms_available" name="rooms_available"
+            value="{{ $dorm->rooms_available ?? old('rooms_available') }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <input type="text" class="form-control" id="price" name="price" value="{{ $dorm->price ?? old('price') }}"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label for="image">Image</label>
+        <input type="file" name="image[]" id="image" multiple {{ $dorm ? '' : 'required' }}>
+        <div id="image-preview-container">
+            @if($dorm && $dorm->image)
+                @foreach(json_decode($dorm->image) as $index => $images)
+                    <div class="image-preview" id="image-preview-{{ $index }}">
+                        <img src="{{ asset('storage/dorm_pictures/' . $images) }}" style="width: 250px; height: 250px;">
+                        <button type="button" id="remove-button-{{ $index }}"
+                            onclick="removeImage({{ $index }})">Remove</button>
+                        <input type="text" name="existing_images[]" value="{{ $images }}">
+                    </div>
+                @endforeach
+            @endif
+        </div>
+    </div>
+
+    <button type="button" onclick="showmap()">Show Map</button>
+    <br>
+    <input type="submit" value="{{ $dorm ? 'Update Dorm' : 'Add Dorm' }}">
+</form>
+
+@if(!$dorm)
+    <form method="get" action="{{ route('showdorms') }}">
+        <button type="submit">Show Dorms</button>
+    </form>
+@endif
+
+<div id="map" style="width: 100%; height: 500px;">
+    @if ($dorm)
+        <script id="dorms-data" type="application/json">
+                                {!! json_encode($dorm) !!}
+                            </script>
+    @endif
+
+</div>
+
+<script>
+    document.getElementById('image').addEventListener('change', function (event) {
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const files = event.target.files;
+
+        if (files.length < 1 || files.length > 6) {
+            alert('You can upload a minimum of 1 and a maximum of 6 images.');
+            return;
+        }
+
+        Array.from(files).forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imagePreview = document.createElement('div');
+                imagePreview.classList.add('image-preview');
+                imagePreview.id = `new-image-preview-${index}`;
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '250px';
+                img.style.height = '250px';
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.id = `remove-new-button-${index}`; // Unique ID for the new images
+                removeButton.onclick = function () {
+                    const dt = new DataTransfer();
+                    for (let i = 0; i < files.length; i++) {
+                        if (i !== index) {
+                            dt.items.add(files[i]);
+                        }
+                    }
+                    event.target.files = dt.files;
+                    imagePreviewContainer.removeChild(imagePreview);
+                };
+
+                imagePreview.appendChild(img);
+                imagePreview.appendChild(removeButton);
+                imagePreviewContainer.appendChild(imagePreview);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    function removeImage(index) {
+        const imagePreview = document.getElementById(`image-preview-${index}`);
+        imagePreview.parentNode.removeChild(imagePreview);
+        // Optionally, you can add code here to remove the image from the server or mark it for removal
+    }
+
+</script>
+
+@endsection
