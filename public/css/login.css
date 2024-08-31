@@ -29,18 +29,23 @@
 
 .containers.register {
     position: absolute;
-    width: 700px;
+    width: 850px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 700px;
+    min-height: 700px;
     /* height: 500px; */
     background-color: #2d2c2c25;
     background-size: cover;
     background-position: center;
     border-radius: 15px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
+    margin-top: 3em;
 
+}
+
+.register-wrapper {
+    height: 42rem;
 }
 
 .content .logo {
@@ -131,7 +136,8 @@
 
 .right {
     width: 49%;
-    float: right
+    float: right;
+
 }
 
 
@@ -278,10 +284,10 @@ button#loginButton:hover {
     color: white;
 }
 
-/* button#owner {
+.btn-owner {
     background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877)) !important;
     color: white !important;
-} */
+}
 
 .forms-box .login-register {
     font-size: 14.5px;
