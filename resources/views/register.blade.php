@@ -12,7 +12,7 @@
                 <form id="register-form1" enctype="multipart/form-data">
                     @csrf
                     <h2>Sign Up</h2>
-                    <h2>As Tenants</h2>
+                    <h2>As <span class="tenante">Tenant</span></h2>
                     <div class="left">
 
 
@@ -79,7 +79,7 @@
                         <button class="btn btn-owner" id="tenant">Register</button>
                     </div>
                     <div class="login-register">
-                        <p>Sign up as Property owner<a href="#" class="register-link">Sign Up</a></p>
+                        <p>Sign up as Property Owner<a href="#" class="register-link">Sign Up</a></p>
                         <p>Already have an account?<a href="{{route('login')}}" class="">Sign In</a></p>
                     </div>
 
@@ -90,7 +90,7 @@
                 <form id="register-form" enctype="multipart/form-data">
                     @csrf
                     <h2>Sign Up</h2>
-                    <h2>As Property Owner</h2>
+                    <h2>As <span> Property Owner</span></h2>
                     <div class="left">
 
 
@@ -137,8 +137,8 @@
                             <input type="date" id="dob" name="dob">
                             <label for="dob">Date of Birth:</label>
                         </div>
-                        <div class="input-box">
 
+                        <div class="input-box">
                             <select id="gender" name="gender">
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -146,6 +146,7 @@
                                 <label for="gender">Gender:</label>
                             </select>
                         </div>
+
                         <div class="input-box">
                             <input type="file" id="profile_picture" name="profile_picture">
                             <label for="profile_picture">Profile Picture:</label>
@@ -157,7 +158,7 @@
                         <button class="btn btn-owner" id="owner">Register</button>
                     </div>
                     <div class="login-register">
-                        <p>Sign up as Tenant? <a href="#" class="login-link">Sign Up</a></p>
+                        <p>Sign up as Tenant? <a href="#" class="login-link ">Sign Up</a></p>
                         <p>Already have an account?<a href="{{route('login')}}" class="">Sign In</a></p>
                     </div>
 

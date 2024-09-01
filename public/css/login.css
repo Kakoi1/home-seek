@@ -10,7 +10,6 @@
 
 
 
-
 .containers.login {
     position: absolute;
     width: 700px;
@@ -19,33 +18,39 @@
     transform: translate(-50%, -50%);
     /* height: 700px; */
     height: 500px;
-    background-color: #2d2c2c25;
+    background-color: #2d2c2c0a;
     background-size: cover;
     background-position: center;
     border-radius: 15px;
     margin-top: 20px;
+
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 
 }
 
 .containers.register {
     position: absolute;
     width: 850px;
-    top: 50%;
+    /* top: 70%; */
+    top: 460px;
     left: 50%;
     transform: translate(-50%, -50%);
     min-height: 700px;
     /* height: 500px; */
-    background-color: #2d2c2c25;
+    /* background-color: #2d2c2c15; */
+
+    background-color: #2d2c2c0a;
     background-size: cover;
     background-position: center;
     border-radius: 15px;
     /* margin-top: 20px; */
-    margin-top: 3em;
-
+    /* margin-top: 7.5rem; */
+    /* margin-top: 100px; */
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
 
 .register-wrapper {
-    height: 42rem;
+    height: 43rem;
 }
 
 .content .logo {
@@ -145,6 +150,19 @@
 .forms-box h2 {
     font-size: 32px;
     text-align: center;
+
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.forms-box h2 span {
+    /* background: linear-gradient(to right, rgba(11, 136, 147, 0.288), rgba(54, 0, 51, 0.178)); */
+    background-color: rgba(30, 84, 128, 0.781);
+    padding: 0px 15px;
+    border-radius: 5px;
+    color: white;
+
+    font-size: 30px;
 }
 
 .forms-box div {
@@ -167,7 +185,7 @@
     position: relative;
     width: 300px;
     height: 50px;
-    border-bottom: 2px solid #e4e4e4;
+    /* border-bottom: 2px solid #e4e4e4; */
     margin: 30px 0;
 }
 
@@ -278,15 +296,22 @@ button#loginButton {
     color: white;
 }
 
+
+.btn-owner {
+    background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877)) !important;
+    color: white !important;
+}
+
 button#loginButton:hover {
     /* background-color: rgb(26, 48, 119); */
     background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877));
     color: white;
 }
 
-.btn-owner {
-    background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877)) !important;
-    color: white !important;
+
+button#owner.btn.btn-owner:hover {
+    background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877));
+    color: white;
 }
 
 .forms-box .login-register {
@@ -321,4 +346,8 @@ footer {
 .login {
     display: flex;
     flex-direction: column;
+}
+
+.login-register a {
+    margin-left: 5px !important;
 }
