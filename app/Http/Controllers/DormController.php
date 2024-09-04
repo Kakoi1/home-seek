@@ -98,6 +98,9 @@ class DormController extends Controller
             }
         }
 
+        // Order by latest posted dorms
+        $query->orderBy('created_at', 'desc');
+
         // Paginate results
         $dorms = $query->paginate(10);
 
@@ -110,8 +113,10 @@ class DormController extends Controller
                 'pagination' => (string) $dorms->links()
             ]);
         }
+
         return view('home', compact('dorms'));
     }
+
     public function adddorm()
     {
         $dorm = '';

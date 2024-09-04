@@ -97,13 +97,14 @@
                     <div class="image-preview" id="image-preview-{{ $index }}">
                         <img src="{{ asset('storage/dorm_pictures/' . $images) }}" style="width: 250px; height: 250px;">
                         <button type="button" id="remove-button-{{ $index }}"
-                            onclick="removeImage({{ $index }})">Remove</button>
-                        <input type="text" name="existing_images[]" value="{{ $images }}">
+                            onclick="removeExistingImage({{ $index }})">Remove</button>
+                        <input type="hidden" name="existing_images[]" value="{{ $images }}">
                     </div>
                 @endforeach
             @endif
         </div>
     </div>
+
 
     <button type="button" onclick="showmap()">Show Map</button>
     <br>
@@ -119,28 +120,31 @@
 <div id="map" style="width: 100%; height: 500px;">
     @if ($dorm)
         <script id="dorms-data" type="application/json">
-                                {!! json_encode($dorm) !!}
-                            </script>
+                                                            {!! json_encode($dorm) !!}
+                                                        </script>
     @endif
 
 </div>
 
 <script>
+    let allFiles = Array.from(document.getElementById('image').files);
+
     document.getElementById('image').addEventListener('change', function (event) {
         const imagePreviewContainer = document.getElementById('image-preview-container');
         const files = event.target.files;
 
-        if (files.length < 1 || files.length > 6) {
-            alert('You can upload a minimum of 1 and a maximum of 6 images.');
+        if (files.length + allFiles.length > 6) {
+            alert('You can upload a maximum of 6 images.');
             return;
         }
 
-        Array.from(files).forEach((file, index) => {
+        Array.from(files).forEach(file => {
+            allFiles.push(file);
             const reader = new FileReader();
             reader.onload = function (e) {
                 const imagePreview = document.createElement('div');
                 imagePreview.classList.add('image-preview');
-                imagePreview.id = `new-image-preview-${index}`;
+                imagePreview.id = `new-image-preview-${allFiles.length - 1}`;
 
                 const img = document.createElement('img');
                 img.src = e.target.result;
@@ -149,16 +153,9 @@
 
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remove';
-                removeButton.id = `remove-new-button-${index}`; // Unique ID for the new images
+                removeButton.id = `remove-new-button-${allFiles.length - 1}`;
                 removeButton.onclick = function () {
-                    const dt = new DataTransfer();
-                    for (let i = 0; i < files.length; i++) {
-                        if (i !== index) {
-                            dt.items.add(files[i]);
-                        }
-                    }
-                    event.target.files = dt.files;
-                    imagePreviewContainer.removeChild(imagePreview);
+                    removeImage(allFiles.length - 1);
                 };
 
                 imagePreview.appendChild(img);
@@ -167,14 +164,26 @@
             };
             reader.readAsDataURL(file);
         });
+
+        updateFileInput();
     });
 
     function removeImage(index) {
-        const imagePreview = document.getElementById(`image-preview-${index}`);
-        imagePreview.parentNode.removeChild(imagePreview);
-        // Optionally, you can add code here to remove the image from the server or mark it for removal
+        allFiles.splice(index, 1);
+        document.getElementById(`new-image-preview-${index}`).remove();
+        updateFileInput();
     }
 
+    function updateFileInput() {
+        const dataTransfer = new DataTransfer();
+        allFiles.forEach(file => dataTransfer.items.add(file));
+        document.getElementById('image').files = dataTransfer.files;
+    }
+
+    function removeExistingImage(index) {
+        document.getElementById(`image-preview-${index}`).remove();
+        // You can add code here to handle the removal of the image from the server if needed
+    }
 </script>
 
 @endsection

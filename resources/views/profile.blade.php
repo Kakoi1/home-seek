@@ -15,7 +15,7 @@
 
     @if($user->role == 'owner')
         <h2>My Properties</h2>
-        <a href="{{'adddorm'}}">add dorm</a>
+        <a href="{{'adddorm'}}">list a Property</a>
         <div class="row">
 
             @foreach($properties as $property)
@@ -56,12 +56,7 @@
             @endforeach
 
         </div>
-        <h2>Inquiries</h2>
-        <ul>
-            @foreach($inquiries as $inquiry)
-                <li>{{ $inquiry->message }} from {{ $inquiry->user->name }}</li>
-            @endforeach
-        </ul>
+        <!-- <h2>Inquiries</h2> -->
 
         <h2>Statistics</h2>
         <p>Total Properties: {{ $statistics['total_properties'] }}</p>

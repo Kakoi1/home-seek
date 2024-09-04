@@ -192,13 +192,20 @@ class Controller extends BaseController
             'rooms_available' => 'required|integer',
             'price' => 'required|numeric',
             'type' => 'required|string',
-            'image' => 'nullable|array|min:1|max:6',
+            'image' => 'nullable|array',
             'image.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'existing_images' => 'array',
             'existing_images.*' => 'string',
         ]);
 
-        // Handle images
+        $existingImages = $request->input('existing_images', []);
+        $newImageCount = $request->hasFile('image') ? count($request->file('image')) : 0;
+
+        if (count($existingImages) + $newImageCount < 3 || count($existingImages) + $newImageCount > 6) {
+            return redirect()->back()->withErrors(['image' => 'You must have between 3 and 6 images in total.']);
+        }
+
+        // Handle new images
         $newImagePaths = [];
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $image) {
@@ -208,19 +215,23 @@ class Controller extends BaseController
             }
         }
 
-        // Combine new images with existing ones
+        // Get existing images from the form
         $existingImages = $request->input('existing_images', []);
+
+        // Combine new images with existing ones
         $allImages = array_merge($existingImages, $newImagePaths);
 
-        // Remove images not present in the updated list
+        // Remove images that are not present in the updated list
         $currentImages = json_decode($dorm->image, true);
-        foreach ($currentImages as $currentImage) {
-            if (!in_array($currentImage, $allImages)) {
-                Storage::delete('public/dorm_pictures/' . $currentImage);
+        if (!empty($currentImages)) {
+            foreach ($currentImages as $currentImage) {
+                if (!in_array($currentImage, $allImages)) {
+                    Storage::delete('public/dorm_pictures/' . $currentImage);
+                }
             }
         }
 
-        // Update other fields
+        // Update dorm information
         $dorm->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -235,5 +246,6 @@ class Controller extends BaseController
 
         return redirect()->back()->with('success', 'Dorm updated successfully!');
     }
+
 
 }
