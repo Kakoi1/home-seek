@@ -286,12 +286,13 @@
 
            position: relative;
 
-
            /* Add transition for border */
            transition: transform 0.3s ease, border-color 0.3s ease;
            border: 2px solid transparent;
            /* Start with a transparent border */
            overflow: hidden;
+
+           border: solid 1px #bfbfbf50 !important;
        }
 
        section.services .cards .card,
@@ -307,7 +308,7 @@
        }
 
        section .cards .card:hover {
-           border: solid 2px rgba(11, 136, 147, 0.712);
+           border: solid 2px rgba(11, 136, 147, 0.712) !important;
            transform: scale(1.1);
 
 
@@ -562,6 +563,17 @@
        nav span {
            color: yellow;
            margin-left: 2px;
+       }
+
+       /* === NAVBAR == */
+       .dropdown-item:hover {
+           width: 95%;
+
+           /* Adjust padding as needed */
+       }
+
+       .dropdown-menu {
+           overflow: hidden;
        }
 
 

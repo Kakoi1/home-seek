@@ -3,7 +3,7 @@
 @section('title', 'Profile')
 
 @section('content')
-<div class="container">
+<div class="container" style="padding: 20px;">
     <h1>Profile</h1>
     <div class="profile-info">
         <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="300px"

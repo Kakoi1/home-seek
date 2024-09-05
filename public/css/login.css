@@ -310,7 +310,12 @@ button#loginButton:hover {
 
 
 button#owner.btn.btn-owner:hover {
-    background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877));
+    background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877)) !important;
+    color: white;
+}
+
+button#tenant:hover {
+    background: linear-gradient(to right, rgba(17, 185, 185, 0.911), rgba(116, 3, 110, 0.877)) !important;
     color: white;
 }
 
