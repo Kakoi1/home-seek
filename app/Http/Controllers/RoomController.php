@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\FetchMessEvent;
+use App\Events\MessageEvent;
+use App\Events\NotificationEvent;
 use App\Models\Dorm;
 use App\Models\Room;
 use App\Models\Message;
@@ -110,7 +113,7 @@ class RoomController extends Controller
             DB::insert(
                 'INSERT INTO messages (rooms_id, user_id, message, chat_id, created_at, updated_at) 
              VALUES (?, ?, ?, ?, NOW(), NOW())',
-                [$roomId, $userId, 'I am interested in your dorm.', $roomchatId]
+                [$roomId, $userId, 'I am interested in This Room.', $roomchatId]
             );
 
             // Get the newly created message ID
@@ -122,7 +125,15 @@ class RoomController extends Controller
                 [$messageId, $roomchatId]
             );
 
+            event(new NotificationEvent([
 
+                'reciever' => $room->dorm->user_id,
+                'message' => 'I am interested in This Room.',
+                'sender' => Auth::id(),
+                'rooms' => $roomId,
+                'roomid' => $roomchatId,
+                'action' => 'inquire',
+            ]));
 
         } else {
             $roomchatId = Roomchat::find($existingRoomchat[0]->id);
@@ -174,7 +185,7 @@ class RoomController extends Controller
     {
         $userId = Auth::id();
         $room = Room::findOrFail($roomId);
-
+        $chat = Roomchat::findOrFail($chatId);
 
         if (!$room) {
             return response()->json([
@@ -187,6 +198,8 @@ class RoomController extends Controller
             return response()->json(['status' => 'Room ID is required'], 400);
         }
 
+        $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
+
 
         $message = new Message();
         $message->rooms_id = $roomId;
@@ -194,6 +207,13 @@ class RoomController extends Controller
         $message->message = $request->message;
         $message->chat_id = $chatId; // Associate the message with the chatroom
         $message->save();
+
+        event(new MessageEvent([
+
+            'reciever' => $chat_id,
+
+        ]));
+
 
         return response()->json([
             'status' => 'Message sent successfully',
@@ -207,7 +227,9 @@ class RoomController extends Controller
         $userId = Auth::id();
         $room = Room::findOrFail($dormId);
         $dorm = Dorm::findOrFail($room->dorm->id);
+        $chat = Roomchat::findOrFail($roomId);
 
+        $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
 
         // Ensure that only the dorm owner can send the link
         if (Auth::id() !== $room->dorm->user_id) {
@@ -238,6 +260,12 @@ class RoomController extends Controller
         $message->chat_id = $roomId; // Associate the message with the chatroom
         $message->save();
 
+        event(new MessageEvent([
+
+            'reciever' => $chat_id,
+
+        ]));
+
         return response()->json(['status' => 'Link sent successfully']);
     }
 
@@ -260,6 +288,7 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         $userId = Auth::id();
+        $dorm = Dorm::findOrFail($request->dorm_id);
 
         $request->validate([
             'start_date' => 'required|date',
@@ -275,14 +304,24 @@ class RoomController extends Controller
             'status' => 'pending', // initial status
         ]);
 
-        Notification::create([
-            'user_id' => $request->dorm_id->user_id, // Assuming the owner is linked to the room
+        $notification = Notification::create([
+            'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
             'data' => 'A new rent form has been submitted for your room.',
             'read' => false,
             'room_id' => $request->room_id,
             'sender_id' => $userId
         ]);
+
+        event(new NotificationEvent([
+
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => Auth::id(),
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'rent',
+        ]));
 
         return response()->json(['success' => true]);
     }

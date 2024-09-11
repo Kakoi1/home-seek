@@ -167,7 +167,7 @@
         </div>
     </div>
 </div>
-
+<script src="{{ asset('js/login.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('#owner').on('click', function (e) {

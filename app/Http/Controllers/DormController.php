@@ -102,7 +102,7 @@ class DormController extends Controller
         $query->orderBy('created_at', 'desc');
 
         // Paginate results
-        $dorms = $query->paginate(10);
+        $dorms = $query->paginate(12);
 
         // Append query parameters to pagination links
         $dorms->appends($request->except('page'));

@@ -67,7 +67,7 @@
                         </form>
                     </div>
                 </li>
-                <script src="{{asset('js/navbar.js')}}"></script>
+                <!-- <script src="{{asset('js/navbar.js')}}"></script> -->
             @endguest
         </ul>
     </nav>

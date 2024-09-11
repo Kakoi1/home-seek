@@ -654,3 +654,10 @@
        nav .all-links {
            float: right;
        }
+
+
+    .notification-content {
+        top: 60px !important; /* Adjust this value to move it further down */
+        right: 12px !important; /* You can also adjust this to fine-tune the position */
+    }
+

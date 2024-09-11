@@ -64,6 +64,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/rent-form/store', [RoomController::class, 'store'])->name('rent-form.store');
 
+    Route::post('/pusher/auth', function () {
+        return Broadcast::auth(request());
+    })->middleware('auth');
+
 });
 
 // Routes for guests

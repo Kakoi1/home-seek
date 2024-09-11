@@ -38,7 +38,7 @@
         const pathParts = window.location.pathname.split('/');
         const dormId = pathParts[2]; // Assuming the URL format is /dorms/{dormId}/chat/{roomId}
         const roomId = pathParts[4]; // The roomId is the last part of the URL
-
+        markMessagesAsRead(roomId)
         if (!dormId || !roomId) {
             console.error('Dorm ID or Room ID is missing in the URL.');
             return;
@@ -89,14 +89,17 @@
         });
 
         // Fetch messages initially
-        fetchMessages();
+        var channel2 = pusher.subscribe('message.' + userId);
 
-        setInterval(function () {
-            markMessagesAsRead(roomId);
-        }, 2000);
+        channel2.bind('test.message', function (data) {
 
-        // Optionally, poll for new messages every few seconds
-        setInterval(fetchMessages, 5000);
+            if (data) {
+                fetchMessages();
+                markMessagesAsRead(roomId)
+                fetchConvo();
+            }
+        });
+
     });
 
 

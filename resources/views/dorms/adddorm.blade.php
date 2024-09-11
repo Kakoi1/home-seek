@@ -98,7 +98,7 @@
                         <img src="{{ asset('storage/dorm_pictures/' . $images) }}" style="width: 250px; height: 250px;">
                         <button type="button" id="remove-button-{{ $index }}"
                             onclick="removeExistingImage({{ $index }})">Remove</button>
-                        <input type="hidden" name="existing_images[]" value="{{ $images }}">
+                        <input type="text~" name="existing_images[]" value="{{ $images }}">
                     </div>
                 @endforeach
             @endif
@@ -120,8 +120,8 @@
 <div id="map" style="width: 100%; height: 500px;">
     @if ($dorm)
         <script id="dorms-data" type="application/json">
-                                                            {!! json_encode($dorm) !!}
-                                                        </script>
+                                                                    {!! json_encode($dorm) !!}
+                                                                </script>
     @endif
 
 </div>

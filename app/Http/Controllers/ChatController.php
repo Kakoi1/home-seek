@@ -8,7 +8,9 @@ use App\Models\Dorm;
 use App\Models\Room;
 use App\Models\Message;
 use App\Models\Chatroom;
+use App\Events\MessageEvent;
 use Illuminate\Http\Request;
+use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,10 +33,11 @@ class ChatController extends Controller
     public function sendMessage(Request $request, $dormId, $roomId)
     {
         $userId = Auth::id();
+        $chat = Chatroom::findOrFail($roomId);
 
         // Check if the dorm exists
 
-
+        $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
         // Identify the owner and the current user
 
 
@@ -53,6 +56,11 @@ class ChatController extends Controller
             'updated_at' => now(),
         ]);
 
+        event(new MessageEvent([
+
+            'reciever' => $chat_id,
+
+        ]));
         // Optionally, update the chatroom with the first message ID if not already set
 
 
@@ -111,6 +119,17 @@ class ChatController extends Controller
             // Update the chatroom with the new message's id
             $chatroom->message_id = $message->id;
             $chatroom->save();
+
+            event(new NotificationEvent([
+
+                'reciever' => $dorm->user_id,
+                'message' => 'I am interested in your dorm.',
+                'sender' => Auth::id(),
+                'rooms' => $dormId,
+                'roomid' => $chatroom->id,
+                'action' => 'dorm',
+            ]));
+
         } else {
             // If the chatroom already exists, retrieve the chatroom object
             $chatroom = Chatroom::find($existingChatroom[0]->id);

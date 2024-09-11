@@ -174,8 +174,12 @@ function markNotificationAsRead(notificationId, redirectUrl) {
         .catch(error => console.error('Error marking notification as read:', error));
 }
 
+document.addEventListener('DOMContentLoaded', function () {
 
+    fetchNotifications();
+    fetchConvo();
+});
 
 // Fetch data every 2 seconds
-setInterval(fetchNotifications, 2000);
-setInterval(fetchConvo, 2000);
+// setInterval(fetchNotifications, 2000);
+// setInterval(fetchConvo, 2000);

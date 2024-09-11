@@ -3,8 +3,15 @@
 @section('title', 'Home')
 
 @section('content')
+<style>
+    #dorm-list {}
 
-<div class="container">
+    .home-container {
+        max-width: 2000px;
+        margin: 0 auto;
+    }
+</style>
+<div class="home-container">
     <br>
     <h2>Dorm Listings</h2>
 
@@ -33,10 +40,13 @@
     <div id="dorms-list">
         @include('partials.dorms', ['dorms' => $dorms])
     </div>
-
+    <br>
+    <br>
+    <br>
     <div id="pagination-links" class="d-flex justify-content-center">
         {{ $dorms->links() }}
     </div>
+    <br>
 </div>
 
 @endsection

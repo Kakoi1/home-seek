@@ -134,11 +134,16 @@
             });
         @endif
         fetchMessages();
-        setInterval(fetchMessages, 2000);
+        var channel2 = pusher.subscribe('message.' + userId);
 
-        setInterval(function () {
-            markMessagesAsRead(roomId);
-        }, 2000);
+        channel2.bind('test.message', function (data) {
+
+            if (data) {
+                fetchMessages();
+                markMessagesAsRead(roomId)
+                fetchConvo();
+            }
+        });
 
     });
 
