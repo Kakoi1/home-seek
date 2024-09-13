@@ -6,6 +6,7 @@ use App\Models\Dorm;
 use App\Models\User;
 use App\Models\Chatroom;
 use App\Models\RentForm;
+use App\Models\Verifications;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -73,8 +74,15 @@ class Controller extends BaseController
 
         if (auth()->attempt(['username' => $fields['logname'], 'password' => $fields['logpassword']])) {
             $request->session()->regenerate();
-            return redirect()->route('home')->with('success', 'You have been login.');
-            ;
+
+            // Check the role of the authenticated user
+            if (auth()->user()->role === 'admin') {
+                // Redirect to the admin dashboard if the user is an admin
+                return redirect()->route('admin.dashboard')->with('success', 'Welcome, Admin!');
+            } else {
+                // Redirect to the home route for regular users
+                return redirect()->route('home')->with('success', 'You have successfully logged in.');
+            }
         }
 
         return redirect()->back()->withErrors(['logname' => 'Invalid credentials'])->withInput();
@@ -247,5 +255,39 @@ class Controller extends BaseController
         return redirect()->back()->with('success', 'Dorm updated successfully!');
     }
 
+    public function requestVerify(Request $request)
+    {
+        $userid = Auth::id();
 
+        $request->validate([
+            'id_document.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'business_permit.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Handle ID Document Image Upload
+        $idDocumentPaths = null;
+        if ($request->hasFile('id_document')) {
+            $docID = $request->file('id_document');
+            $filename = time() . '_' . uniqid() . '.' . $docID->getClientOriginalExtension();
+            $idDocumentPaths = $docID->storeAs('public/id_documents', $filename); // Save in storage/app/public/id_documents
+
+        }
+
+        // Handle Business Permit Image Upload
+        $businessPermitPath = null;
+        if ($request->hasFile('business_permit')) {
+            $permit = $request->file('business_permit');
+            $filename = time() . '_' . uniqid() . '.' . $permit->getClientOriginalExtension();
+            $businessPermitPath = $permit->storeAs('public/business_permits', $filename); // Save the business permit
+        }
+
+        // Now, store the image paths in your database (example with a 'users' table):
+        $verify = new Verifications();
+        $verify->user_id = $userid; // Get the authenticated user
+        $verify->id_document = $idDocumentPaths; // Store paths in the database
+        $verify->business_permit = $businessPermitPath;
+        $verify->save();
+
+        return redirect()->back()->with('success', 'Verification Request Sent!');
+    }
 }

@@ -71,7 +71,6 @@
     @endif
     @yield('content')
 
-    </div>
     @include('partials.footer')
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {

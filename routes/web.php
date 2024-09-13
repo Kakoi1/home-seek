@@ -8,8 +8,19 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotifyController;
 use App\Http\Controllers\MessageController;
+
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/managepage', [AdminController::class, 'manageUsers'])->name('admin.manageuser');
+    Route::post('/admin/dorms/approve', [AdminController::class, 'approveDorm'])->name('admin.approveDorm');
+    Route::delete('/admin/dorms/{id}', [AdminController::class, 'deleteDorm'])->name('admin.deleteDorm');
+    // Add more admin-specific routes here
+});
+
 
 Route::get('/', function () {
     return view('index');
@@ -37,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/room/{id}/edit/{action}', [RoomController::class, 'viewRoom'])->name('room.edit');
     Route::put('/room/{room}', [RoomController::class, 'update'])->name('room.update');
     Route::get('/rooms/{room}/inquire', [RoomController::class, 'inquireRoom'])->name('room.inquire');
+    Route::post('/verify', [Controller::class, 'requestVerify'])->name('verify');
     // routes/web.php
 
     Route::get('/dorms/{id}/chat/{room_id}', [ChatController::class, 'index'])->name('dorm.chat');
