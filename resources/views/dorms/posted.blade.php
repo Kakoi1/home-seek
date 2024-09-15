@@ -199,18 +199,18 @@
                 var roomDiv = document.createElement("div");
                 roomDiv.classList.add("room");
                 roomDiv.innerHTML = `
-                                <p>Room Number: {{ $room->number }}</p>
-                                <img class='pic' src="{{ asset('storage/room_images/' . $room->images) }}" alt="Room Image">
-                                <p>Capacity: {{ $room->capacity }}</p>
-                                <p>Price: {{ $room->price }}</p>
-                                <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
-                            `;
+                                        <p>Room Number: {{ $room->number }}</p>
+                                        <img class='pic' src="{{ asset('storage/room_images/' . $room->images) }}" alt="Room Image">
+                                        <p>Capacity: {{ $room->capacity }}</p>
+                                        <p>Price: {{ $room->price }}</p>
+                                        <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
+                                    `;
 
                 @if ($dorm->user_id == auth::id())
                     roomDiv.innerHTML += `<button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">edit</button>
-                                                              <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
-                                                              <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">delete</button>
-                                        `;
+                                                                          <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
+                                                                          <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">delete</button>
+                                                    `;
                 @elseif($room->status)
                     roomDiv.innerHTML += `<a href="{{ route('room.inquire', $room->id) }}" class="btn btn-primary">Inquire Room</a>`;
                 @endif

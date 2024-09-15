@@ -22,8 +22,9 @@
 }
 
 .page-item.active .page-link {
-    background-color: #007bff;
+
     border-color: #007bff;
+    background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877));
     color: white;
 }
 

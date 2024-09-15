@@ -1,91 +1,63 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//     let map, routingControl, userMarker, heading = 0;
+function nextImage(dormId) {
+    const carousel = document.getElementById('carousel-' + dormId);
+    const images = JSON.parse(carousel.getAttribute('data-images'));
+    let currentImage = parseInt(carousel.getAttribute('data-current-image'));
 
-//     function initMap() {
-//         // Create a map centered at Cebu
-//         map = L.map('map').setView([10.255, 123.807], 14);
+    currentImage = (currentImage + 1) % images.length;
 
-//         // Add OpenStreetMap tiles
-//         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-//             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-//         }).addTo(map);
+    updateCarousel(carousel, dormId, currentImage);
+}
 
-//         // Dorm locations
-//         var dormDataElement = document.getElementById('dorms-data');
-//         if (dormDataElement) {
-//             var dorms = JSON.parse(dormDataElement.textContent);
-//             if (Array.isArray(dorms)) {
-//                 dorms.forEach(function(dorm) {
-//                     var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
-//                     marker.bindPopup(dorm.name + '<br><a href="#" onclick="getDirections(' + dorm.latitude + ',' + dorm.longitude + '); return false;">Direction</a>');
-//                 });
-//             } else {
-//                 var dorm = dorms;
-//                 var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
-//                 marker.bindPopup(dorm.name + '<br><a href="#" onclick="getDirections(' + dorm.latitude + ',' + dorm.longitude + '); return false;">Direction</a>');
-//                 map.setView([dorm.latitude, dorm.longitude], 14);
-//             }
-//         }
+function prevImage(dormId) {
+    const carousel = document.getElementById('carousel-' + dormId);
+    const images = JSON.parse(carousel.getAttribute('data-images'));
+    let currentImage = parseInt(carousel.getAttribute('data-current-image'));
 
-//         if (window.DeviceOrientationEvent) {
-//             window.addEventListener('deviceorientation', handleOrientation, true);
-//         }
-//     }
+    currentImage = (currentImage - 1 + images.length) % images.length;
 
-//     function getDirections(lat, lng) {
-//         if (navigator.geolocation) {
-//             navigator.geolocation.getCurrentPosition(function(position) {
-//                 var userLatLng = [position.coords.latitude, position.coords.longitude];
-//                 addRouting(userLatLng, [lat, lng]);
-//                 addUserMarker(userLatLng);
-//             });
-//         } else {
-//             alert("Geolocation is not supported by this browser.");
-//         }
-//     }
+    updateCarousel(carousel, dormId, currentImage);
+}
 
-//     function addRouting(start, end) {
-//         if (routingControl) {
-//             map.removeControl(routingControl);
-//         }
-//         routingControl = L.Routing.control({
-//             waypoints: [
-//                 L.latLng(start[0], start[1]),
-//                 L.latLng(end[0], end[1])
-//             ],
-//             routeWhileDragging: true
-//         }).addTo(map);
-//     }
+function setImage(dormId, index) {
+    const carousel = document.getElementById('carousel-' + dormId);
+    updateCarousel(carousel, dormId, index);
+}
 
-//     function addUserMarker(latlng) {
-//         var userIcon = L.divIcon({
-//             html: '<img src="/images/right-arrow_275202.png" style="transform: rotate(' + heading + 'deg);" class="leaflet-rotate-icon" />',
-//             iconSize: [0, 0],
-//             iconAnchor: [16, 16]
-//         });
+function updateCarousel(carousel, dormId, currentImage) {
+    const images = JSON.parse(carousel.getAttribute('data-images'));
 
-//         if (userMarker) {
-//             userMarker.setLatLng(latlng);
-//             userMarker.setIcon(userIcon);
-//         } else {
-//             userMarker = L.marker(latlng, { icon: userIcon }).addTo(map);
-//         }
+    // Update the background image
+    carousel.style.backgroundImage = 'url(/storage/dorm_pictures/' + images[currentImage] + ')';
+    carousel.setAttribute('data-current-image', currentImage);
 
-//         map.setView(latlng, 14);
-//     }
+    // Update dots
+    const dotsContainer = document.getElementById('dots-' + dormId);
+    const dots = dotsContainer.getElementsByClassName('dot');
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('active');
+    }
+    dots[currentImage].classList.add('active');
+}
+function updateCarousel(carousel, dormId, currentImage) {
+    const images = JSON.parse(carousel.getAttribute('data-images'));
 
-//     function handleOrientation(event) {
-//         heading = event.alpha;
+    // Add fade-out effect
+    carousel.classList.add('fade');
 
-//         if (userMarker) {
-//             var icon = userMarker.getIcon();
-//             icon.options.html = '<img src="/images/right-arrow_275202.png" style="transform: rotate(' + heading + 'deg);" class="leaflet-rotate-icon" />';
-//             userMarker.setIcon(icon);
-//         }
-//     }
+    setTimeout(() => {
+        // Update the background image after fade-out
+        carousel.style.backgroundImage = 'url(/storage/dorm_pictures/' + images[currentImage] + ')';
+        carousel.setAttribute('data-current-image', currentImage);
 
-//     // Make functions globally accessible
-//     window.getDirections = getDirections;
+        // After changing the image, add fade-in effect
+        carousel.classList.remove('fade');
+    }, 100);  // Matches the transition duration in CSS (0.5s)
 
-//     initMap();
-// });
+    // Update dots
+    const dotsContainer = document.getElementById('dots-' + dormId);
+    const dots = dotsContainer.getElementsByClassName('dot');
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('active');
+    }
+    dots[currentImage].classList.add('active');
+}

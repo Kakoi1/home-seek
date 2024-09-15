@@ -4,7 +4,12 @@
 
 @section('content')
 <style>
-    #dorm-list {}
+    #dorm-list {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .home-container {
         max-width: 2000px;
@@ -48,5 +53,5 @@
     </div>
     <br>
 </div>
-
+<script src="{{asset('js/dorm.js')}}"></script>
 @endsection

@@ -26,13 +26,14 @@
                     @foreach($users as $user)
                         <div class="user-box">
                             <!-- Display user image -->
-                            <img src="{{ $user->profile_image ? asset('storage/profile_images/' . $user->profile_image) : 'https://via.placeholder.com/80x80' }}"
+                            <img src="{{ $user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
                                 alt="User Image">
 
                             <!-- User Information -->
                             <div class="user-info">
                                 <h4>{{ $user->name }}</h4>
-                                <p>Status: {{ $user->status ? 'Active' : 'Inactive' }}</p>
+                                <p>Status: {{ $user->status ? 'Inactive' : 'Active' }}</p>
+                                <p>Role: {{ $user->role }}</p>
                             </div>
 
                             <!-- Action Buttons -->
