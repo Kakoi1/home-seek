@@ -1,28 +1,134 @@
-<!-- resources/views/dorms/chat.blade.php -->
-
 @extends('layouts.app')
 
 @section('title', 'Chat with ' . $room->number)
 
 @section('content')
+
+<style>
+    .chat-box {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: #f1f1f1;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        height: 700px;
+    }
+
+    .chat-box h2 {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: scroll;
+        padding: 10px;
+        background-color: white;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .message-input-container {
+        display: flex;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+        background-color: white;
+    }
+
+    #message-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 10px;
+        font-size: 1rem;
+        margin-right: 10px;
+        resize: none;
+    }
+
+    #send-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 0 15px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #send-button:hover {
+        background-color: #0056b3;
+    }
+
+    .chat-bubble {
+        max-width: 80%;
+        padding: 10px 15px;
+        border-radius: 20px;
+        margin: 5px 0;
+        font-size: 0.9rem;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .chat-bubble.sent {
+        background-color: #007bff;
+        color: white;
+        margin-left: auto;
+        text-align: right;
+    }
+
+    .chat-bubble.received {
+        background-color: #e9ecef;
+        color: #333;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .chat-time {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+        background-color: #007bff;
+        border-radius: 10px;
+    }
+</style>
+
 <div class="chat-box">
-    <h2>{{ $dorm->name }}</h2>
-    <h2>Chat about {{ $room->number }}</h2>
-    <div id="chat-messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
-
-    <textarea id="message-input" rows="3" placeholder="Type your message..."></textarea>
-    <button id="send-button">Send</button>
-
+    <h2>Chat about {{ $dorm->name }}</h2>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div class="message-input-container">
+        <textarea id="message-input" rows="3" placeholder="Type your message..."></textarea>
+        <button id="send-button">Send</button>
+    </div>
     @if(auth()->id() === $dorm->user_id)
-        <!-- Button to send the rent form URL -->
         <button id="send-url-button">Send Rent Form Link</button>
     @endif
 </div>
 
 <script>
+    window.route = {
+        fetchMessagesUrl: '{{ route("FetchRoomMessage", ["dormId" => ":dormId", "roomId" => ":roomId"]) }}',
+        sendMessageUrl: '{{ route("RoomSendMessage", ["dormId" => ":dormId", "roomId" => ":roomId"]) }}',
+        markMessagesReadUrl: '{{ route("message.read") }}',
+    };
+
+    const markMessagesReadUrl = window.route.markMessagesReadUrl;
 
     function markMessagesAsRead(roomId) {
-        fetch('/mark-as-read', {
+        fetch(markMessagesReadUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -42,26 +148,46 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         const pathParts = window.location.pathname.split('/');
-        const dormId = pathParts[2];
-        const roomId = pathParts[4];
+        let dormId, roomId;
+
+        if (isNaN(parseInt(pathParts[2], 10)) || isNaN(parseInt(pathParts[4], 10))) {
+            dormId = pathParts[4];
+            roomId = pathParts[6];
+        } else {
+            dormId = pathParts[2];
+            roomId = pathParts[4];
+        }
+
+        const fetchMessagesUrl = window.route.fetchMessagesUrl.replace(':dormId', dormId).replace(':roomId', roomId);
+        const sendMessageUrl = window.route.sendMessageUrl.replace(':dormId', dormId).replace(':roomId', roomId);
 
         const messagesContainer = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
         const sendUrlButton = document.getElementById('send-url-button');
-
         function fetchMessages() {
-            fetch(`/rooms/${dormId}/chat/${roomId}/fetch-messages`)
+            fetch(fetchMessagesUrl)
                 .then(response => response.json())
                 .then(messages => {
                     messagesContainer.innerHTML = '';
                     messages.forEach(message => {
                         const messageElement = document.createElement('div');
-                        if (message.message.includes('http://') || message.message.includes('https://')) {
-                            messageElement.innerHTML = `${message.user.name}: <a href="${message.message}" target="_blank">${message.message}</a>`;
-                        } else {
-                            messageElement.textContent = `${message.user.name}: ${message.message}`;
-                        }
+                        const isSentByUser = message.user.id === {{ auth()->id() }};
+
+                        messageElement.classList.add('chat-bubble');
+                        messageElement.classList.add(isSentByUser ? 'sent' : 'received');
+
+                        // Detect and create clickable links
+                        const messageHtml = message.message.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+                        messageElement.innerHTML = `${isSentByUser ? ` ${messageHtml} : ${message.user.name}` : `${message.user.name}: ${messageHtml}`}`;
+
+                        // Add timestamp
+                        const messageTime = document.createElement('div');
+                        messageTime.classList.add('chat-time');
+                        const messageDate = new Date(message.created_at);
+                        messageTime.textContent = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        messageElement.appendChild(messageTime);
                         messagesContainer.appendChild(messageElement);
                     });
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -73,7 +199,7 @@
             const message = messageInput.value;
             if (message.trim() === '') return;
 
-            fetch(`/rooms/${dormId}/send-message/${roomId}`, {
+            fetch(sendMessageUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +217,7 @@
                 .catch(error => console.error('Error sending message:', error));
         });
 
-        @if(auth()->id() === $dorm->user_id)
+        if (sendUrlButton) {
             sendUrlButton.addEventListener('click', function () {
                 fetch(`/rooms/${roomId}/send-url/${dormId}`, {
                     method: 'POST',
@@ -111,7 +237,6 @@
                                 confirmButtonText: 'OK'
                             });
                         } else {
-                            // Handle other error cases
                             Swal.fire({
                                 title: 'Error',
                                 text: data.status,
@@ -128,24 +253,19 @@
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
-                    })
-                    .catch(error => console.error('Error sending URL:', error));
-
+                    });
             });
-        @endif
+        }
+
         fetchMessages();
-        var channel2 = pusher.subscribe('message.' + userId);
+        var channel2 = pusher.subscribe('message.' + {{ auth()->id() }});
 
         channel2.bind('test.message', function (data) {
-
             if (data) {
                 fetchMessages();
-                markMessagesAsRead(roomId)
-                fetchConvo();
+                markMessagesAsRead(roomId);
             }
         });
-
     });
-
 </script>
 @endsection

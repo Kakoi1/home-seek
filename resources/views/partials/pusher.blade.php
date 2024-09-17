@@ -25,6 +25,13 @@ if (userId) {
         channel.bind('test.notification', function (data) {
 
             if (data.sender && data.message) {
+                const maxLength = 50; // You can adjust this limit as needed
+
+                // Truncate the message if it's longer than the maximum length
+                let truncatedMessage = data.message;
+                if (truncatedMessage.length > maxLength) {
+                    truncatedMessage = truncatedMessage.substring(0, maxLength) + '...';
+                }
                 let linker = '';
                 let notificationContent = '';
 
@@ -35,7 +42,7 @@ if (userId) {
                 <a href="${linker}">
                     <div class="notification-content" >
                         <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${data.message}</span>
+                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
                     </div>
                 </a>
             `;
@@ -46,19 +53,30 @@ if (userId) {
                 <a href="${linker}">
                     <div class="notification-content" >
                         <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${data.message}</span>
+                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
                     </div>
                 </a>
             `;
                 }
-                else {
+                else if (data.action === 'rent') {
                     linker = `/room/${data.roomid}/edit/view`;
                     fetchNotifications();
                     notificationContent = `
                
               <div onclick='markNotificationAsRead(${data.rooms}, "${linker}");' class="notification-content" id="notify">
                 <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${data.message}</span>
+                <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
+            </div>
+               
+            `;
+                }
+                else {
+                    fetchNotifications();
+                    notificationContent = `
+               
+              <div onclick='markNotificationAsRead(${data.rooms}, "${linker}");' class="notification-content" id="">
+                <i class="fas fa-user"></i> <span>${data.sender.name}</span>
+                <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
             </div>
                
             `;

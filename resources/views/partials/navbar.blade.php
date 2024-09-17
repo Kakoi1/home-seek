@@ -1,6 +1,6 @@
 <header>
     <nav class="navbar ">
-        <h2 class="logo"><a href="/home">Home <span>Seek</span></a></h2>
+        <h2 class="logo"><a href="{{route('home')}}">Home <span>Seek</span></a></h2>
         <input type="checkbox" id="menu-toggler">
         <label for="menu-toggler" id="hamburger-btn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
@@ -20,7 +20,7 @@
                     <button onclick="window.location.href='{{ route('login') }}'">Login</button>
                     <button onclick="window.location.href='{{ route('register') }}'">Register</button>
                 </div>
-            @else 
+            @else
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="chatroomDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
@@ -71,4 +71,19 @@
             @endguest
         </ul>
     </nav>
+
+    <script>
+        // Define global JavaScript variables for routes
+        window.routes = {
+            chatroomsUrl: "{{ route('fetchChatrooms') }}",
+            roomchatUrl: "{{ route('chatroom.Chatroom') }}",
+            notificationUrl: "{{ route('notifies') }}",
+            dormUrl: "{{ route('dorm.chat', ['dorm' => ':id', 'chatroom' => ':room_id']) }}",
+            roomUrl: "{{ route('room.chat', ['room' => ':id', 'roomchat' => ':room_id']) }}",
+            markNotificationUrl: "{{ route('markAsRead', ':id') }}", // Route with placeholder for notification ID
+            roomEditUrl: "{{ route('room.edit', ['id' => ':id', 'action' => 'edit']) }}",  // Route with placeholder for room_id
+            homeUrl: "{{ route('home') }}"
+
+        };
+    </script>
 </header>

@@ -1,6 +1,10 @@
+
 function fetchConvo() {
-    // Fetch chatrooms
-    fetch('/chatrooms')
+    const chatroomsUrl = window.routes.chatroomsUrl; // Access the URL from the global variable
+    const roomchatUrl = window.routes.roomchatUrl;
+    const chatroomUrlTemplate = window.routes.dormUrl;
+    const roomchatUrlTemplate = window.routes.roomUrl;
+    fetch(chatroomsUrl)
         .then(response => response.json())
         .then(chatrooms => {
             console.log('Fetched chatrooms:', chatrooms); // Log the chatrooms data
@@ -10,7 +14,7 @@ function fetchConvo() {
             let totalUnreadRoomInquiries = 0;
 
             // Fetch room chats
-            fetch('/room-chats')
+            fetch(roomchatUrl)
                 .then(response => response.json())
                 .then(roomChats => {
                     console.log('Fetched room chats:', roomChats); // Log the room chats data
@@ -22,10 +26,14 @@ function fetchConvo() {
                     chatroomDropdownMenu.innerHTML += `<h6>Dorm Inquiries:</h6>`;
                     chatrooms.chat.forEach(chatroom => {
                         const unreadCount = chatroom.unread_count;
+                        const chatroomUrl = chatroomUrlTemplate
+                        .replace(':id', chatroom.dorm_id)
+                        .replace(':room_id', chatroom.chatroom_id);
+    
 
                         const chatroomItem = document.createElement('a');
                         chatroomItem.classList.add('dropdown-item');
-                        chatroomItem.href = `/dorms/${chatroom.dorm_id}/chat/${chatroom.chatroom_id}`;
+                        chatroomItem.href = chatroomUrl;
                         chatroomItem.textContent = `Chat with ${chatroom.dorm_name} (${chatroom.user_name})`;
                     
                         // Only add the unread count if there are unread messages
@@ -47,9 +55,14 @@ function fetchConvo() {
                     // Add room chats to dropdown
                     chatroomDropdownMenu.innerHTML += `<h6>Room Inquiries:</h6>`;
                     roomChats.forEach(roomChat => {
+
+                        const roomchatUrl = roomchatUrlTemplate
+                        .replace(':id', roomChat.room_id)
+                        .replace(':room_id', roomChat.roomchat_id);
+
                         const roomChatItem = document.createElement('a');
                         roomChatItem.classList.add('dropdown-item');
-                        roomChatItem.href = `/rooms/${roomChat.room_id}/chat/${roomChat.roomchat_id}`;
+                        roomChatItem.href = roomchatUrl;
                         roomChatItem.textContent = `Chat in Room ${roomChat.room_number} (${roomChat.user_name})`;
 
                         const unreadCount = roomChat.unread_count;
@@ -80,7 +93,10 @@ function fetchConvo() {
 }
 
 function fetchNotifications() {
-    fetch('/notifications')
+
+    const notifyUrl = window.routes.notificationUrl; // Get the notification URL
+
+    fetch(notifyUrl)
         .then(response => response.json())
         .then(data => {
             const notificationMenu = document.getElementById('notificationsMenu');
@@ -93,26 +109,39 @@ function fetchNotifications() {
                 data.notifications.forEach(notification => {
                     const notificationItem = document.createElement('a');
                     notificationItem.classList.add('dropdown-item');
-                    notificationItem.href = `/room/${notification.room_id}/edit/view`; // Redirect to the room page
-                    notificationItem.setAttribute('data-id', notification.id); // Set the notification ID
+                    
+                    // Set href based on room_id and notification type
+                    if (notification.room_id) {
+                        const roomEditUrlTemplate = window.routes.roomEditUrl; // Get the room edit URL template
+                        notificationItem.href = roomEditUrlTemplate.replace(':room_id', notification.room_id); // Replace placeholder with room_id
+                    } else {
+                        notificationItem.href = window.routes.homeUrl; // Fallback URL
+                    }
+
+                    notificationItem.setAttribute('data-id', notification.id);
 
                     // Create a div for the message and sender
                     const textDiv = document.createElement('div');
-
                     const messageDiv = document.createElement('div');
-                    messageDiv.style.display = 'flex'; // Use flexbox to align items
+                    messageDiv.style.display = 'flex';
                     messageDiv.style.justifyContent = 'space-between';
 
+                    const maxLength = 50;
+                    let truncatedMessage = notification.data;
+                    if (truncatedMessage.length > maxLength) {
+                        truncatedMessage = truncatedMessage.substring(0, maxLength) + '...';
+                    }
+
                     const messageElement = document.createElement('h6');
-                    messageElement.textContent = notification.data; // Assuming `notification.data` contains the message
+                    messageElement.textContent = truncatedMessage;
                     messageElement.style.margin = 0;
 
                     const senderElement = document.createElement('p');
-                    senderElement.textContent = `Sent by: ${notification.sender.name}`; // Assuming `notification.sender.name` is correct
+                    senderElement.textContent = `Sent by: ${notification.sender.name}`;
                     senderElement.style.margin = 0;
                     senderElement.style.fontSize = 'smaller';
 
-                    const createdAt = new Date(notification.created_at); // Parse the date string
+                    const createdAt = new Date(notification.created_at);
                     const formattedDate = createdAt.toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
@@ -125,11 +154,10 @@ function fetchNotifications() {
 
                     const timestampElement = document.createElement('span');
                     timestampElement.textContent = `${formattedDate} ${formattedTime}`;
-                    timestampElement.style.marginLeft = 'auto'; // Push timestamp to the right
+                    timestampElement.style.marginLeft = 'auto';
                     timestampElement.style.fontSize = 'smaller';
                     timestampElement.style.color = '#888';
 
-                    // If the notification is unread, apply bold style to both message and sender elements
                     if (!notification.read) {
                         messageElement.style.fontWeight = 'bold';
                         senderElement.style.fontWeight = 'bold';
@@ -138,13 +166,33 @@ function fetchNotifications() {
 
                     textDiv.appendChild(messageElement);
                     textDiv.appendChild(senderElement);
-                    messageDiv.appendChild(textDiv); // Append text div to message div
+                    messageDiv.appendChild(textDiv);
                     messageDiv.appendChild(timestampElement);
                     notificationItem.appendChild(messageDiv);
 
+                    // Handle click event
                     notificationItem.addEventListener('click', function (e) {
                         e.preventDefault();
-                        markNotificationAsRead(notification.id, notificationItem.href);
+
+                        // Replace placeholder with actual notification ID in markNotificationUrl
+                        const markNotificationUrlTemplate = window.routes.markNotificationUrl;
+                        const markNotificationUrl = markNotificationUrlTemplate.replace(':id', notification.id);
+                        console.log(markNotificationUrl);
+                        
+                        if (notification.type === 'verification') {
+                            const fullMessageDiv = document.createElement('div');
+                            fullMessageDiv.textContent = notification.data;
+                            fullMessageDiv.classList.add('full-notification');
+
+                            document.body.appendChild(fullMessageDiv);
+
+                            fullMessageDiv.addEventListener('click', function () {
+                                fullMessageDiv.style.display = 'none';
+                                markNotificationAsRead(markNotificationUrl, notificationItem.href,notification.id);
+                            });
+                        } else {
+                            markNotificationAsRead(markNotificationUrl, notificationItem.href);
+                        }
                     });
 
                     notificationMenu.appendChild(notificationItem);
@@ -156,29 +204,28 @@ function fetchNotifications() {
         .catch(error => console.error('Error fetching notifications:', error));
 }
 
-
-function markNotificationAsRead(notificationId, redirectUrl) {
-    fetch(`/notifications/${notificationId}/mark-as-read`, {
+function markNotificationAsRead(markNotificationUrl, redirectUrl, notid) {
+    fetch(markNotificationUrl, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: notificationId })
+        body: JSON.stringify({ id: notid })
     })
         .then(response => {
             if (response.ok) {
-                window.location.href = redirectUrl; // Redirect after marking as read
+                window.location.href = redirectUrl;
             }
         })
         .catch(error => console.error('Error marking notification as read:', error));
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
     fetchNotifications();
     fetchConvo();
 });
+
 
 // Fetch data every 2 seconds
 // setInterval(fetchNotifications, 2000);

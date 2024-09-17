@@ -18,6 +18,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/managepage', [AdminController::class, 'manageUsers'])->name('admin.manageuser');
     Route::post('/admin/dorms/approve', [AdminController::class, 'approveDorm'])->name('admin.approveDorm');
     Route::delete('/admin/dorms/{id}', [AdminController::class, 'deleteDorm'])->name('admin.deleteDorm');
+    Route::post('/approve-verification/{id}', [AdminController::class, 'approve'])->name('verification.approve');
+    Route::post('/reject-verification/{id}', [AdminController::class, 'reject'])->name('verification.reject');
+    Route::post('/activate-user/{id}', [AdminController::class, 'activate'])->name('user.activate');
+    Route::post('/deactivate-user/{id}', [AdminController::class, 'deactivate'])->name('user.deactivate');
+
+
     // Add more admin-specific routes here
 });
 
@@ -51,20 +57,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/verify', [Controller::class, 'requestVerify'])->name('verify');
     // routes/web.php
 
-    Route::get('/dorms/{id}/chat/{room_id}', [ChatController::class, 'index'])->name('dorm.chat');
-    Route::get('/rooms/{id}/chat/{rooms_id}', [RoomController::class, 'index'])->name('room.chat');
-    Route::post('/dorms/{id}/send-message/{room_id}', [ChatController::class, 'sendMessage'])->name('dorm.send-message');
-    Route::post('/rooms/{id}/send-message/{chat_id}', [RoomController::class, 'sendMessage'])->name('room.send-message');
-    Route::get('/dorms/{dormId}/chat/{roomId}/fetch-messages', [ChatController::class, 'fetchMessages']);
-    Route::get('/rooms/{roomsId}/chat/{roomId}/fetch-messages', [RoomController::class, 'fetchMessages']);
+    Route::get('/dorms/{dorm}/chat/{chatroom}', [ChatController::class, 'index'])->name('dorm.chat');
+    Route::get('/rooms/{room}/chat/{roomchat}', [RoomController::class, 'index'])->name('room.chat');
+    Route::post('/dorms/{dormId}/send-message/{roomId}', [ChatController::class, 'sendMessage'])->name('DormSendMessage');
+    Route::post('/rooms/{dormId}/send-message/{roomId}', [RoomController::class, 'sendMessage'])->name('RoomSendMessage');
+    Route::get('/dorms/{dormId}/chat/{roomId}/fetch-messages', [ChatController::class, 'fetchMessages'])->name('FetchDormMessage');
+    Route::get('/rooms/{dormId}/chat/{roomId}/fetch-messages', [RoomController::class, 'fetchMessages'])->name('FetchRoomMessage');
     Route::get('/dorms/{id}/inquire', [ChatController::class, 'inquire'])->name('dorm.inquire');
-    Route::get('/chatrooms', [ChatController::class, 'fetchChatrooms'])->name('chatrooms.fetchChatrooms');
-    Route::get('/room-chats', [RoomController::class, 'fetchRoomChats'])->name('chatroom.fetchChatroom');
+    Route::get('/chatrooms', [ChatController::class, 'fetchChatrooms'])->name('fetchChatrooms');
+    Route::get('/room-chats', [RoomController::class, 'fetchRoomChats'])->name('chatroom.Chatroom');
     Route::post('/rooms/{id}/send-url/{chat_id}', [RoomController::class, 'sendRentFormUrl'])->name('send-url');
     Route::post('/check-form', [RoomController::class, 'checkForm'])->name('check-form');
-    Route::get('/notifications', [NotifyController::class, 'getNotifications']);
-    Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead']);
-    Route::post('/mark-messages-read', [MessageController::class, 'markMessagesRead']);
+    Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
+    Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
+    Route::post('/mark-messages-read', [MessageController::class, 'markMessagesRead'])->name('message.read');
     Route::post('/mark-as-read', [MessageController::class, 'markasRead']);
     Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
 

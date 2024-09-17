@@ -15,32 +15,55 @@
         max-width: 2000px;
         margin: 0 auto;
     }
+
+    .top-area-container {
+        /* display: grid;
+        place-items: center; */
+        margin: 0 4rem;
+
+    }
+
+    #search-form {
+        padding: 20px;
+        background-color: #f6f7f6;
+        border-radius: 5px;
+        /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); */
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12);
+        margin-bottom: 4rem !important;
+    }
+
+    .home-container h2 {
+        text-align: center;
+    }
 </style>
 <div class="home-container">
     <br>
-    <h2>Dorm Listings</h2>
+    <div class="top-area-container">
+        <h2>Dorm Listings</h2>
+        <h5>Filter by:</h5>
 
-    <!-- Search Form -->
-    <form id="search-form" class="mb-4 search-form">
-        <div class="form-row">
-            <div class="col-md-4 mb-3">
-                <input type="text" name="search" class="form-control" placeholder="Search by name or address"
-                    value="{{ request('search') }}">
+        <!-- Search Form -->
+        <form id="search-form" class="mb-4 search-form">
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <input type="text" name="search" class="form-control" placeholder="Enter property name or address"
+                        value="{{ request('search') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="number" name="min_price" class="form-control" placeholder="Enter min price"
+                        value="{{ request('min_price') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="number" name="max_price" class="form-control" placeholder="Enter max price"
+                        value="{{ request('max_price') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="number" name="rooms_avail" class="form-control" placeholder="Enter no. of rooms"
+                        value="{{ request('rooms_avail') }}">
+                </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <input type="number" name="min_price" class="form-control" placeholder="Min price"
-                    value="{{ request('min_price') }}">
-            </div>
-            <div class="col-md-3 mb-3">
-                <input type="number" name="max_price" class="form-control" placeholder="Max price"
-                    value="{{ request('max_price') }}">
-            </div>
-            <div class="col-md-3 mb-3">
-                <input type="number" name="rooms_avail" class="form-control" placeholder="Rooms"
-                    value="{{ request('rooms_avail') }}">
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 
     <div id="dorms-list">
         @include('partials.dorms', ['dorms' => $dorms])

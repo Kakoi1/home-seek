@@ -137,8 +137,9 @@
                                     <div class="card-body">
                                         <h2><a href="{{ route('dorms.posted', $dorm->id) }}">{{ $dorm->name }}</a></h2>
                                         <h5 class="card-title">{{ $dorm->name }}</h5>
-                                        <p class="card-text">{{ \Illuminate\Support\Str::limit($dorm->address, 50) }}</p>
-                                        <p class="card-text">{{ $dorm->price }}</p>
+                                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>
+                                            {{ \Illuminate\Support\Str::limit($dorm->address, 50) }}</p>
+                                        <p class="card-text"><span>₱</span>{{ $dorm->price }}</p>
                                     </div>
                                 </div>
 

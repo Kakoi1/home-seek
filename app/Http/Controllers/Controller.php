@@ -6,9 +6,10 @@ use App\Models\Dorm;
 use App\Models\User;
 use App\Models\Chatroom;
 use App\Models\RentForm;
-use App\Models\Verifications;
 use Illuminate\Http\Request;
+use App\Models\Verifications;
 use Illuminate\Validation\Rule;
+use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controller as BaseController;
@@ -265,28 +266,38 @@ class Controller extends BaseController
         ]);
 
         // Handle ID Document Image Upload
-        $idDocumentPaths = null;
+
         if ($request->hasFile('id_document')) {
             $docID = $request->file('id_document');
-            $filename = time() . '_' . uniqid() . '.' . $docID->getClientOriginalExtension();
-            $idDocumentPaths = $docID->storeAs('public/id_documents', $filename); // Save in storage/app/public/id_documents
+            $filename1 = time() . '_' . uniqid() . '.' . $docID->getClientOriginalExtension();
+            $idDocumentPaths = $docID->storeAs('public/id_documents', $filename1); // Save in storage/app/public/id_documents
 
         }
 
         // Handle Business Permit Image Upload
-        $businessPermitPath = null;
+
         if ($request->hasFile('business_permit')) {
             $permit = $request->file('business_permit');
-            $filename = time() . '_' . uniqid() . '.' . $permit->getClientOriginalExtension();
-            $businessPermitPath = $permit->storeAs('public/business_permits', $filename); // Save the business permit
+            $filename2 = time() . '_' . uniqid() . '.' . $permit->getClientOriginalExtension();
+            $businessPermitPath = $permit->storeAs('public/business_permits', $filename2); // Save the business permit
         }
 
         // Now, store the image paths in your database (example with a 'users' table):
         $verify = new Verifications();
         $verify->user_id = $userid; // Get the authenticated user
-        $verify->id_document = $idDocumentPaths; // Store paths in the database
-        $verify->business_permit = $businessPermitPath;
+        $verify->id_document = $filename1; // Store paths in the database
+        $verify->business_permit = $filename2;
         $verify->save();
+
+        event(new NotificationEvent([
+
+            'reciever' => 15,
+            'message' => 'Verification Request was Sent',
+            'sender' => Auth::id(),
+            'rooms' => null,
+            'roomid' => null,
+            'action' => 'verify',
+        ]));
 
         return redirect()->back()->with('success', 'Verification Request Sent!');
     }

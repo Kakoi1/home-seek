@@ -24,7 +24,7 @@ class Verifications extends Model
     // Relationship: A verification request belongs to a user
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
 

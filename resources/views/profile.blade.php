@@ -45,20 +45,108 @@
         font-weight: bold;
         color: #333;
     }
+
+    /* Statistics Section */
+    .statistics-section {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e7e7e7;
+        text-align: center;
+        margin-top: 6rem;
+
+
+    }
+
+    .stats-grid {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .stat-box {
+        background-color: #f1f1f1;
+        padding: 20px;
+        border-radius: 8px;
+        flex: 1;
+        margin: 0 10px;
+
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        border: 2px solid royalblue;
+    }
+
+    .stat-box p {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .stat-box h3 {
+        font-size: 2.5rem;
+        color: #0b8893;
+    }
+
+    .profile-info {
+        display: grid;
+        place-items: center;
+
+        padding: 20px 0;
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e7e7e7;
+        margin-bottom: 4rem;
+        overflow: hidden;
+    }
+
+    .profile-contact-info {
+        margin: 0 auto;
+    }
+
+    /* List a Property Button */
+    .custom-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #0b8893;
+        color: white;
+        text-decoration: none;/ font-size: 1rem;
+        border-radius: 8px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin: 15px 0;
+
+    }
+
+    .custom-button:hover {
+        background-color: #04656d;
+        transform: translateY(-3px);
+    }
+
+    .custom-button:active {
+        background-color: #033047;
+        /* Active state background */
+        transform: translateY(0);
+        /* Button returns to original position */
+    }
 </style>
 <div class="container" style="padding: 20px;">
-    <h1>Profile</h1>
     <div class="profile-info">
+        <h1>Profile</h1>
+
         <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="300px"
             height="300px">
-        <p>Name: {{ $user->name }}</p>
-        <p>Email: {{ $user->email }}</p>
-        <p>Contact: {{ $user->contact }}</p>
+        <div class="profile-contact-info">
+            <p><b>Name:</b> {{ $user->name }}</p>
+            <p><b>Email:</b> {{ $user->email }}</p>
+            <p><b>Contact:</b>{{ $user->contact }}</p>
+        </div>
     </div>
 
     @if($user->role == 'owner')
         <h2>My Properties</h2>
-        <a href="{{'adddorm'}}">list a Property</a>
+        <a href="{{'adddorm'}}" class="custom-button">+ List a Property</a>
         <div class="row">
 
             @foreach($properties as $property)
@@ -100,15 +188,26 @@
 
         </div>
         <!-- <h2>Inquiries</h2> -->
+        <div class="statistics-section">
+            <h2>Statistics 📈</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <p>Total Properties:</p>
+                    <h3>{{ $statistics['total_properties'] }}</h3>
 
-        <h2>Statistics</h2>
-        <p>Total Properties: {{ $statistics['total_properties'] }}</p>
-        <p>Total Inquiries: {{ $statistics['total_inquiries'] }}</p>
+                </div>
+                <div class="stat-box">
+                    <p>Total Inquiries:</p>
+                    <h3>{{ $statistics['total_inquiries'] }}</h3>
+
+                </div>
+            </div>
+        </div>
 
     @elseif($user->role == 'tenant')
         <div class="bg-warning p-4">
             <p>Your account is Not verified yet</p>
-            <p>Verifiy to become a property owner</p>
+            <p>Verify to become a property owner</p>
             <button id="openVerificationModal" class="btn ">Verify</button>
         </div>
 

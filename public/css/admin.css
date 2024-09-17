@@ -888,8 +888,186 @@
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
+.requestCount {
+    background-color: #f44336; /* Red background to highlight the request count */
+    color: white; /* White text for contrast */
+    padding: 5px 10px; /* Add some padding for better spacing */
+    border-radius: 50%; /* Make it round like a badge */
+    font-size: 14px; /* Adjust font size */
+    font-weight: bold; /* Make the text bold */
+    display: inline-block; /* Ensure it behaves like an inline element */
+    min-width: 24px; /* Ensure there's a minimum width */
+    text-align: center; /* Center the text */
+    position: relative; /* Relative positioning for future enhancements */
+    right: -10px; /* Adjust position if needed */
+}
+/* Modal styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 9999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    /* max-width: 600px; */
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 
 footer span {
     color: #fff;
+}
+.valid-id {
+    padding: 20px;
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-evenly;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+}
+
+.valid-id label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+.valid-id img {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    object-fit: cover;
+}
+
+.valid-id img:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media screen and (max-width: 768px) {
+    .valid-id {
+        padding: 15px;
+       
+    }
+    
+    
+    .valid-id label {
+        font-size: 14px;
+    }
+}
+/* Style for the image modal (popup) */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Sit on top */
+    padding-top: 60px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.9); /* Black background with opacity */
+}
+
+.popup-content {
+    margin: auto;
+    display: block;
+    max-width: 90%; /* Responsive max size */
+    max-height: 90%;
+}
+
+.popup-content:hover {
+    cursor: zoom-out;
+}
+
+#caption {
+    margin: auto;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 20px;
+    height: 50px;
+}
+
+.closepopup {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.closepopup:hover,
+.closepopup:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.clickable-img {
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.clickable-img:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+.modal-reject {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    height: 220px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+    /* max-width: 600px; */
+}
+.modal-reject textarea
+{
+width: 100%;
+height: 100px;
+}
+.modal-reject button{
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+    
+}
+.rejBut{
+  float: right;
 }

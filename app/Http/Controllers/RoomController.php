@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\FetchMessEvent;
 use App\Events\MessageEvent;
 use App\Events\NotificationEvent;
 use App\Models\Dorm;

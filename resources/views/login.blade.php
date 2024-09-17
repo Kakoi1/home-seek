@@ -9,7 +9,8 @@
 
     <div class="logreg-box">
         <div class="forms-box login">
-            <form action="/login" id="loginForm" method="post" autocomplete="" enctype="multipart/form-data">
+            <form action="{{route('login')}}" id="loginForm" method="post" autocomplete=""
+                enctype="multipart/form-data">
                 @csrf
                 <h2>Sign In</h2>
                 <div class="input-box">
