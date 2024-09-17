@@ -29,6 +29,7 @@
         border-radius: 5px;
         /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); */
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12);
+        margin-bottom: 4rem !important;
     }
 
     .home-container h2 {
