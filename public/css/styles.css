@@ -148,6 +148,20 @@
            background: #ffffffcc;
            /* Adjust color as needed */
        }
+/* Hover effect in nav-link with main class */
+header a.main:hover::after {
+    width: 0;
+    transform: none;
+    background: transparent;
+    /* Adjust color as needed */
+}
+/* Hover effect in nav-link with main class */
+header a.main::after {
+    width: 0;
+    transform: none;
+    background: transparent;
+    /* Adjust color as needed */
+}
 
        .homepage {
            height: 100vh;
