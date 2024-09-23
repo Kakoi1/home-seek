@@ -22,7 +22,7 @@
                 </div>
             @else
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="chatroomDropdown" role="button" data-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle main" href="#" id="chatroomDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         Messages <span id="messageCount" class="badge badge-danger"></span>
                     </a>
@@ -36,7 +36,7 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a id="notificationsDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                    <a id="notificationsDropdown" class="nav-link dropdown-toggle main" href="#" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Notifications <span id="notificationCount" class="badge badge-danger"></span>
                     </a>
@@ -47,7 +47,7 @@
 
 
                 <li class="nav-item dropdown">
-                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle main" href="#" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false" v-pre>
                         <img src="{{ asset('storage/profile_pictures/' . Auth::user()->profile_picture) }}"
                             alt="Profile Picture" style="width: 30px; height: 30px;">

@@ -31,6 +31,11 @@
         overflow: auto;
     }
 
+    .modal-content button {
+        width: 50%;
+
+    }
+
     .form-control {
         height: 100%;
     }
@@ -103,7 +108,8 @@
     }
 
     .profile-contact-info {
-        margin: 0 auto;
+        display: flex;
+        gap: 7rem;
     }
 
     /* List a Property Button */
@@ -130,10 +136,115 @@
         transform: translateY(0);
         /* Button returns to original position */
     }
+
+    /* ----------------------------- */
+    .custom-warning-bg {
+        background-color: #d1ecf1;
+        /* Light blue */
+        color: #0c5460;
+        display: grid;
+        place-items: center;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    button#openVerificationModal {
+        width: 20%;
+        text-transform: uppercase;
+
+    }
+
+    /* --------------- */
+    .rented-property-section {
+        margin-top: 4rem;
+        padding: 40px;
+        background-color: #f8f9fa;
+        /* Light background */
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .rented-property-section h2 {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .property-card {
+        background-color: #ffffff;
+        /* White background for card */
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+
+    .property-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .property-card h3 {
+        margin: 0;
+        color: #343a40;
+        /* Dark gray for text */
+    }
+
+    .property-card a {
+        text-decoration: none;
+        color: #0b8893;
+        /* Custom link color */
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .property-card a:hover {
+        color: #04656d;
+        /* Darker shade on hover */
+        text-decoration: underline;
+    }
+
+    /* ========= verify details ======= */
+   
+    .verification-details {
+        margin-top: 3.5rem;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    .verification-details h4 {
+        border-bottom: 2px solid #0b8893;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .verification-details .lead {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: #495057;
+    }
+    .verification-details .list-group {
+        margin-bottom: 1rem;
+    }
+    .verification-details .list-group-item {
+        border: none;
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+        transition: background-color 0.3s;
+        /* =add= */
+        border-radius: 15px;
+        margin: 5px 0;
+    }
+
+    .verification-details .list-group-item:hover {
+        background-color: #e9ecef;
+    }
 </style>
 <div class="container" style="padding: 20px;">
     <div class="profile-info">
-        <h1>Profile</h1>
+        <h1>MY PROFILE</h1>
 
         <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="300px"
             height="300px">
@@ -205,10 +316,28 @@
         </div>
 
     @elseif($user->role == 'tenant')
-        <div class="bg-warning p-4">
-            <p>Your account is Not verified yet</p>
-            <p>Verify to become a property owner</p>
-            <button id="openVerificationModal" class="btn ">Verify</button>
+        <div class="custom-warning-bg p-4 rounded shadow">
+            <h5 class="font-weight-bold text-dark">Account Verification Needed</h5>
+            <p class="text-dark"> <i class="fas fa-info-circle"></i> Your account is not verified yet.</p>
+            <p class="text-dark">Verify to become a property owner.</p>
+            <button id="openVerificationModal" class="btn btn-success btn-lg"> <i class="fas fa-check-circle"></i> Verify
+                Now</button>
+        </div>
+
+        <div class="verification-details">
+            <h4 class="text-primary font-weight-bold">🔑 Become a Property Owner!</h4>
+            <p class="lead">Ready to take the next step? Verify your account today!</p>
+            <h5 class="text-info">How to Verify:</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Complete your profile information.</li>
+                <li class="list-group-item">Submit required documents (e.g., ID).</li>
+                <li class="list-group-item">Wait for our team to confirm your account.</li>
+            </ul>
+            <h5 class="text-info">Benefits of Verification:</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Access to property ownership opportunities.</li>
+                <li class="list-group-item">Enhanced features and support.</li>
+            </ul>
         </div>
 
         <div id="verificationModal" class="modal-overlay">
@@ -217,6 +346,11 @@
                 <h2>Submit Verification Documents</h2>
                 <form id="verificationForm" action="{{ route('verify') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <div class="form-group">
+                        <label for="fb_username">Facebook Username</label>
+                        <input type="text" id="fb_username" name="fb_username" class="form-control"
+                            placeholder="Enter your Facebook username" required>
+                    </div>
                     <div class="form-group">
                         <label for="id_document">Upload Valid ID</label>
                         <input type="file" id="imageInput" name="id_document" class="form-control" accept="image/*"
@@ -231,19 +365,31 @@
                         <div id="permitPreviewContainer"></div>
                     </div>
 
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <h2>Current rented Property</h2>
-        @if ($currentDorm)
 
-            <h3><a href="{{ route('dorms.posted', $currentDorm->dorm->id)}}">{{$currentDorm->dorm->name}}</a></h3>
-            <h3>{{$currentDorm->room->number}}</h3>
-        @else
-            <h3>No rented Properties</h3>
-        @endif
+        <div class="rented-property-section">
+            <h2>Current Rented Property</h2>
+            @if ($currentDorm)
+                <div class="property-card">
+                    <h3>
+                        <a href="{{ route('dorms.posted', $currentDorm->dorm->id) }}">
+                            {{ $currentDorm->dorm->name }}
+                        </a>
+                    </h3>
+                    <h3>Room Number: {{ $currentDorm->room->number }}</h3>
+                </div>
+            @else
+                <div class="property-card">
+                    <h3>No rented Properties</h3>
+                </div>
+            @endif
+        </div>
 
 
     @else
