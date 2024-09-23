@@ -33,7 +33,7 @@
 
     .modal-content button {
         width: 50%;
-      
+
     }
 
     .form-control {
@@ -202,6 +202,45 @@
         /* Darker shade on hover */
         text-decoration: underline;
     }
+
+    /* ========= verify details ======= */
+   
+    .verification-details {
+        margin-top: 3.5rem;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    .verification-details h4 {
+        border-bottom: 2px solid #0b8893;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .verification-details .lead {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: #495057;
+    }
+    .verification-details .list-group {
+        margin-bottom: 1rem;
+    }
+    .verification-details .list-group-item {
+        border: none;
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+        transition: background-color 0.3s;
+        /* =add= */
+        border-radius: 15px;
+        margin: 5px 0;
+    }
+
+    .verification-details .list-group-item:hover {
+        background-color: #e9ecef;
+    }
 </style>
 <div class="container" style="padding: 20px;">
     <div class="profile-info">
@@ -283,6 +322,22 @@
             <p class="text-dark">Verify to become a property owner.</p>
             <button id="openVerificationModal" class="btn btn-success btn-lg"> <i class="fas fa-check-circle"></i> Verify
                 Now</button>
+        </div>
+
+        <div class="verification-details">
+            <h4 class="text-primary font-weight-bold">🔑 Become a Property Owner!</h4>
+            <p class="lead">Ready to take the next step? Verify your account today!</p>
+            <h5 class="text-info">How to Verify:</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Complete your profile information.</li>
+                <li class="list-group-item">Submit required documents (e.g., ID).</li>
+                <li class="list-group-item">Wait for our team to confirm your account.</li>
+            </ul>
+            <h5 class="text-info">Benefits of Verification:</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Access to property ownership opportunities.</li>
+                <li class="list-group-item">Enhanced features and support.</li>
+            </ul>
         </div>
 
         <div id="verificationModal" class="modal-overlay">
