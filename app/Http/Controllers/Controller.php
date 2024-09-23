@@ -11,7 +11,10 @@ use App\Models\Verifications;
 use Illuminate\Validation\Rule;
 use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -19,6 +22,29 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    public function callbackFromFacebook()
+    {
+        try {
+            $facebookUser = Socialite::driver('facebook')
+                ->scopes(['email', 'public_profile', 'user_messenger_page_chat']) // Adjust scopes
+                ->stateless()
+                ->user();
+
+            // Display user data (for debugging)
+            dd($facebookUser);
+
+            // Here you may need to make an API call to fetch the Messenger ID
+            // Check if the Messenger ID is in the $facebookUser object or make an API call
+
+        } catch (\Exception $e) {
+            return redirect('/login')->withErrors('Unable to fetch data from Facebook, please try again.');
+        }
+    }
+
+
+
+
 
     public function register(Request $request)
     {

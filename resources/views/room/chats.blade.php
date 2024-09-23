@@ -113,8 +113,15 @@
         <textarea id="message-input" rows="3" placeholder="Type your message..."></textarea>
         <button id="send-button">Send</button>
     </div>
+
+    <input type="hidden" name="" id="chatid" value="{{$roomchat->id}}">
+    <input type="hidden" name="" id="roomid" value="{{$room->id}}">
+
     @if(auth()->id() === $dorm->user_id)
-        <button id="send-url-button">Send Rent Form Link</button>
+        <form id="sendUrl" action="{{route('send-url', ['id' => $roomchat->id, 'chat_id' => $room->id])}}" method="post">
+            @csrf
+            <button id="send-url-button">Send Rent Form Link</button>
+        </form>
     @endif
 </div>
 
@@ -124,6 +131,7 @@
         sendMessageUrl: '{{ route("RoomSendMessage", ["dormId" => ":dormId", "roomId" => ":roomId"]) }}',
         markMessagesReadUrl: '{{ route("message.read") }}',
     };
+
 
     const markMessagesReadUrl = window.route.markMessagesReadUrl;
 
@@ -147,16 +155,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const pathParts = window.location.pathname.split('/');
-        let dormId, roomId;
 
-        if (isNaN(parseInt(pathParts[2], 10)) || isNaN(parseInt(pathParts[4], 10))) {
-            dormId = pathParts[4];
-            roomId = pathParts[6];
-        } else {
-            dormId = pathParts[2];
-            roomId = pathParts[4];
-        }
+        const dormId = document.getElementById('roomid').value;
+        const roomId = document.getElementById('chatid').value;
+
+
 
         const fetchMessagesUrl = window.route.fetchMessagesUrl.replace(':dormId', dormId).replace(':roomId', roomId);
         const sendMessageUrl = window.route.sendMessageUrl.replace(':dormId', dormId).replace(':roomId', roomId);
@@ -218,12 +221,16 @@
         });
 
         if (sendUrlButton) {
-            sendUrlButton.addEventListener('click', function () {
-                fetch(`/rooms/${roomId}/send-url/${dormId}`, {
+            document.getElementById('sendUrl').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const form = document.getElementById('sendUrl');
+                const formData = new FormData(form);
+
+                fetch(form.action, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
                     }
                 })
                     .then(response => response.json())

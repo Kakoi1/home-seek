@@ -4,7 +4,7 @@
 
 @section('content')
 
-<form id="checkForm" action="/check-form" method="post">
+<form id="checkForm" action="{{route('check-form')}}" method="post">
     @csrf
     <input type="hidden" name="roomId" value="{{ $room->id }}">
     <input type="hidden" name="dormId" value="{{ $dorm->id }}">

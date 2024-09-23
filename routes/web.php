@@ -8,6 +8,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomController;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotifyController;
 use App\Http\Controllers\MessageController;
@@ -35,6 +36,14 @@ Route::get('/', function () {
 Auth::routes();
 Route::post('/login', [Controller::class, 'login'])->name('login');
 Route::post('/register', [Controller::class, 'register'])->name('register');
+Route::get('/facebook', function () {
+    return Socialite::driver('facebook')->redirect();
+})->name('facebook.login');
+Route::get('/facebook/callback', [Controller::class, 'callbackFromFacebook'])->name('callback');
+
+Route::get('/rent-form/{room}', [RoomController::class, 'createRentForm'])
+    ->name('rent.form')
+    ->middleware('signed');
 // Middleware group for authenticated users
 Route::middleware('auth')->group(function () {
     Route::get('/home', [DormController::class, 'index'])->name('home');
@@ -75,10 +84,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
 
 
-
-    Route::get('/rent-form/{room}', [RoomController::class, 'createRentForm'])
-        ->name('rent.form')
-        ->middleware('signed');
 
     Route::post('/rent-form/store', [RoomController::class, 'store'])->name('rent-form.store');
 

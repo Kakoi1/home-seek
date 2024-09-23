@@ -135,7 +135,7 @@ class ChatController extends Controller
             $chatroom = Chatroom::find($existingChatroom[0]->id);
         }
 
-        return redirect()->route('dorm.chat', ['id' => $dormId, 'room_id' => $chatroom->id])->with('success', 'Inquiry Sent');
+        return redirect()->route('dorm.chat', ['dorm' => $dormId, 'chatroom' => $chatroom->id])->with('success', 'Inquiry Sent');
     }
 
 

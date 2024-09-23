@@ -138,7 +138,7 @@ class RoomController extends Controller
             $roomchatId = Roomchat::find($existingRoomchat[0]->id);
         }
 
-        return redirect()->route('room.chat', ['id' => $roomId, 'rooms_id' => $roomchatId])->with('success', 'Rom inquire sent successfully!');
+        return redirect()->route('room.chat', ['room' => $roomId, 'roomchat' => $roomchatId])->with('success', 'Rom inquire sent successfully!');
     }
 
     public function fetchMessages($dormId, $roomId)

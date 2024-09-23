@@ -28,6 +28,10 @@
                     <p>Don't have an account? <a href="{{route('register')}}" class="register-links">Sign up</a></p>
                 </div>
             </form>
+            <a href="{{ route('facebook.login') }}" class="btn btn-facebook btn-user btn-block">
+                <i class="fab fa-facebook-f fa-fw"></i>
+                Login with Facebook
+            </a>
         </div>
 
     </div>
