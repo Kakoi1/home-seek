@@ -204,7 +204,7 @@
     }
 
     /* ========= verify details ======= */
-   
+
     .verification-details {
         margin-top: 3.5rem;
         padding: 20px;
@@ -225,9 +225,11 @@
         margin-bottom: 20px;
         color: #495057;
     }
+
     .verification-details .list-group {
         margin-bottom: 1rem;
     }
+
     .verification-details .list-group-item {
         border: none;
         padding: 10px 15px;
@@ -241,13 +243,37 @@
     .verification-details .list-group-item:hover {
         background-color: #e9ecef;
     }
-</style>
-<div class="container" style="padding: 20px;">
-    <div class="profile-info">
-        <h1>MY PROFILE</h1>
 
-        <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="300px"
-            height="300px">
+    .proper {
+        width: 250px !important;
+        height: 300px !important;
+    }
+
+    .proper-cont {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e7e7e7;
+        text-align: center;
+        margin-top: 6rem;
+        width: 100%;
+        align-items: center;
+    }
+
+    .image-carousel {
+        background-position: center !important;
+        background-size: cover !important;
+    }
+</style>
+<link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
+<div class="containers" style="padding: 20px;">
+    <div class="profile-info">
+        <h1>{{$user->name}} PROFILE</h1>
+
+        <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="250px"
+            height="250px" style="border-radius: 160px;">
+        <br>
         <div class="profile-contact-info">
             <p><b>Name:</b> {{ $user->name }}</p>
             <p><b>Email:</b> {{ $user->email }}</p>
@@ -257,44 +283,81 @@
 
     @if($user->role == 'owner')
         <h2>My Properties</h2>
-        <a href="{{'adddorm'}}" class="custom-button">+ List a Property</a>
-        <div class="row">
 
-            @foreach($properties as $property)
 
-                <div class="col-md-4">
-                    @php
-                        $images = json_decode($property->image, true);
-                    @endphp
+        <br>
+        <div class="proper-cont">
+            <div>
+                <a href="{{'adddorm'}}" class="custom-button">+ List a Property</a>
+                <br>
+                <a href="">See More +</a>
+            </div>
 
-                    @if (is_array($images) && count($images) > 0)
-                        <img src="{{ asset('storage/dorm_pictures/' . $images[0]) }}" class="card-img-top"
-                            alt="{{ $property->name }}">
-                    @else
-                        <img src="{{ asset('default-placeholder.png') }}" class="card-img-top" alt="No Image Available">
-                    @endif
+            @foreach ($properties as $dorm)
+                <div class="proper">
+                    <div class="cards">
+                        @if (!empty($dorm->image))
+                                @php
+                                    // Decode the JSON string into an array
+                                    $images = json_decode($dorm->image, true);
+                                @endphp
 
-                    <div class="dropdown" style="position: absolute; top: 10px; right: 20px;">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Options
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="{{ route('dorms.posted', $property->id) }}">Show</a>
-                            <a class="dropdown-item" href="{{ route('dorms.adddorm', $property->id) }}">Edit</a>
-                            <form id="archive-form-{{ $property->id }}" action="{{ route('dorms.archive', $property->id) }}"
-                                method="POST" style="display:inline;">
-                                @csrf
-                                <button type="button" class="dropdown-item text-danger"
-                                    onclick="confirmArchive({{ $property->id }})">Delete</button>
-                            </form>
+                                @if (is_array($images) && !empty($images))
+                                    <!-- Carousel container -->
+                                    <div class="image-carousel" id="carousel-{{ $dorm->id }}" data-images="{{ json_encode($images) }}"
+                                        data-current-image="0"
+                                        style="background-image: url('{{ asset('storage/dorm_pictures/' . $images[0]) }}');">
+                                        <div class="overlay-content">
+
+                                        </div>
+
+                                        <div class="dropdown " style="position: absolute; top: 10px; right: 20px;">
+                                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Options
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{{ route('dorms.posted', $dorm->id) }}">Show</a>
+                                                <a class="dropdown-item" href="{{ route('dorms.adddorm', $dorm->id) }}">Edit</a>
+                                                <form id="archive-form-{{ $dorm->id }}" action="{{ route('dorms.archive', $dorm->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item text-danger"
+                                                        onclick="confirmArchive({{ $dorm->id }})">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Arrow buttons for image navigation -->
+                                        <button class="prev" onclick="prevImage({{ $dorm->id }})">❮</button>
+                                        <button class="next" onclick="nextImage({{ $dorm->id }})">❯</button>
+
+                                        <!-- Dots for image indicators -->
+                                        <div class="dots-container" id="dots-{{ $dorm->id }}">
+                                            @foreach ($images as $index => $image)
+                                                <span class="dot {{ $index === 0 ? 'active' : '' }}"
+                                                    onclick="setImage({{ $dorm->id }}, {{ $index }})"></span>
+                                            @endforeach
+                                        </div>
+
+                                    </div>
+
+                                @else
+                                    <p>No images available.</p>
+                                @endif
+                        @else
+                            <div class="image-carousel" style="background-image: url('{{ asset('default-placeholder.png') }}');">
+                                <div class="overlay-content">
+                                    <h3>No Image Available</h3>
+                                </div>
+                            </div>
+                        @endif
+                        <div class="card-body" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
+                            <h5 class="card-title">{{ $dorm->name }}</h5>
+
                         </div>
                     </div>
-                    <br>
-                    <br>
-                    <h5>{{$property->name}}</h5>
                 </div>
-
             @endforeach
 
         </div>
@@ -320,7 +383,7 @@
             <h5 class="font-weight-bold text-dark">Account Verification Needed</h5>
             <p class="text-dark"> <i class="fas fa-info-circle"></i> Your account is not verified yet.</p>
             <p class="text-dark">Verify to become a property owner.</p>
-            <button id="openVerificationModal" class="btn btn-success btn-lg"> <i class="fas fa-check-circle"></i> Verify
+            <button id="openVerificationModal" class="btn btn-success "> <i class="fas fa-check-circle"></i> Verify
                 Now</button>
         </div>
 
@@ -496,5 +559,6 @@
         });
 
     </script>
+    <script src="{{asset('js/dorm.js')}}"></script>
 </div>
 @endsection

@@ -12,7 +12,10 @@ use Illuminate\Validation\Rule;
 use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
+use App\Mail\SendVerificationCodeMail;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Routing\Controller as BaseController;
@@ -26,23 +29,96 @@ class Controller extends BaseController
     public function callbackFromFacebook()
     {
         try {
-            $facebookUser = Socialite::driver('facebook')
-                ->scopes(['email', 'public_profile', 'user_messenger_page_chat']) // Adjust scopes
-                ->stateless()
-                ->user();
+            // Fetch the Facebook user data
+            $facebookUser = Socialite::driver('facebook')->user();
 
-            // Display user data (for debugging)
-            dd($facebookUser);
+            // Check if the user exists in the database by Facebook ID
+            $user = User::where('fb_id', $facebookUser->getId())->first();
 
-            // Here you may need to make an API call to fetch the Messenger ID
-            // Check if the Messenger ID is in the $facebookUser object or make an API call
+            if (!$user) {
+                // If the user does not exist, create a user without an email/phone yet
+                $user = User::create([
+                    'name' => $facebookUser->getName(),
+                    'fb_id' => $facebookUser->getId(),
+                    'profile_picture' => $facebookUser->getAvatar(),
+                ]);
+                return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide gmail and Phone no. to login');
+            } else {
+                // If the user exists, simply log them in and redirect to home
+                if (!$user->email) {
+                    return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide gmail and Phone no. to login');
+                } else if (!$user->email_verified_at) {
+                    return view('emails.email_verfy', ['user' => $user])->with('success', 'Gmail is not verified yet. a Verification code was sent to your gmail');
+                } else {
+                    Auth::login($user);
+                    return redirect('/home');
+                }
+            }
 
         } catch (\Exception $e) {
-            return redirect('/login')->withErrors('Unable to fetch data from Facebook, please try again.');
+            // Handle errors
+            return redirect('/login');
         }
     }
 
 
+    public function collectEmailPhone(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'phone_number' => 'required',
+        ]);
+
+        // Find the user by ID
+        $user = User::find($request->user_id);
+
+        if ($user) {
+            // Update the user with the email and phone number
+            if ($user->email) {
+                $verificationCode = rand(100000, 999999); // Random 6-digit code
+                $user->email_verification_code = $verificationCode;
+                $user->save();
+            } else {
+                $user->email = $request->email;
+                $user->phone = $request->phone_number;
+
+                if ($request->hasFile('profile_picture')) {
+                    $file = $request->file('profile_picture');
+                    $filename = time() . '.' . $file->getClientOriginalExtension();
+                    $pic = $filename; // Save the business permit
+                }
+
+                // Generate a verification code
+                $verificationCode = rand(100000, 999999); // Random 6-digit code
+                $user->email_verification_code = $verificationCode;
+                $user->profile_picture = $pic;
+                $user->save();
+            }
+            // Send the verification code via email
+            Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+
+            // Redirect the user to a verification page
+            return view('emails.email_verfy', ['user' => $user])->with('success', 'a Verification code was sent to your gmail');
+
+        } else {
+            return redirect('/login')->withErrors('User not found.');
+        }
+    }
+    public function verifyEmail(Request $request)
+    {
+        $user = User::find($request->user_id);
+
+        if ($user && $user->email_verification_code == $request->verification_code) {
+            $user->email_verified_at = now();
+            $user->email_verification_code = null;
+            $user->save();
+
+            Auth::login($user);
+            return redirect('/home')->with('success', 'Email verified successfully!');
+        } else {
+            return redirect()->back()->withErrors('Invalid verification code.');
+        }
+    }
 
 
 
@@ -55,10 +131,7 @@ class Controller extends BaseController
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')],
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'dob' => 'nullable|date',
             'role' => 'required|string',
-            'gender' => 'nullable|string|in:male,female,other',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -173,7 +246,10 @@ class Controller extends BaseController
 
         if ($user->role == 'owner') {
             // Fetch owner's properties
-            $properties = Dorm::where('user_id', $user->id)->where('archive', 0)->get();
+            $properties = Dorm::where('user_id', $user->id)
+                ->where('archive', 0)
+                ->take(13) // Limit to 3 properties
+                ->get();
 
             // Count inquiries for each property
             foreach ($properties as $property) {

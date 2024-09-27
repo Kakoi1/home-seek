@@ -46,15 +46,7 @@ class DormController extends Controller
             'type' => $request->type,
         ]);
 
-        for ($i = 1; $i <= $request->rooms_available; $i++) {
-            Room::create([
-                'dorm_id' => $dorm->id,
-                'number' => 'Room ' . $i,
-                'capacity' => null,
-                'price' => null,
-                'status' => true, // Set to available by default
-            ]);
-        }
+
 
         return redirect()->back()->with('success', 'Dorm added successfully!');
     }
@@ -124,8 +116,10 @@ class DormController extends Controller
     }
     public function show($id)
     {
+
         $dorm = Dorm::with('user')->findOrFail($id);
-        return view('dorms.posted', compact('dorm'));
+        $rooms = Room::where('dorm_id', $dorm->id)->count();
+        return view('dorms.posted', compact('dorm', 'rooms'));
     }
 
     public function archive($id)

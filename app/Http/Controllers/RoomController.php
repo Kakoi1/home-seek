@@ -384,6 +384,53 @@ class RoomController extends Controller
 
         return redirect()->back()->with('success', 'Rent form status updated successfully.');
     }
+    public function addRooms(Request $request, $id)
+    {
+        $request->validate([
+            'rooms_available' => 'required|integer|min:1',
+        ]);
+
+        $dorm = Dorm::findOrFail($id); // Find the dorm or throw 404 if not found
+
+        for ($i = 1; $i <= $request->rooms_available; $i++) {
+            Room::create([
+                'dorm_id' => $dorm->id,
+                'number' => ($dorm->rooms()->count() + $i), // Dynamic room number based on existing rooms
+                'capacity' => null,
+                'price' => null,
+                'status' => true, // Set to available by default
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteRooms(Request $request, $id)
+    {
+        $request->validate([
+            'rooms_to_delete' => 'required|array|min:1',
+            'rooms_to_delete.*' => 'exists:rooms,id',
+        ]);
+
+        // Find the dorm or throw 404 if not found
+        $dorm = Dorm::findOrFail($id);
+
+        // Loop through each room to be deleted
+        foreach ($request->rooms_to_delete as $roomId) {
+            // Find the room
+            $room = Room::findOrFail($roomId);
+
+            // Check if the room has an image and delete it
+            if (!empty($room->images)) {
+                Storage::delete('public/room_images/' . $room->images);
+            }
+
+            // Delete the room record
+            $room->delete();
+        }
+
+        return response()->json(['success' => true]);
+    }
 
 
 }

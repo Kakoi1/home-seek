@@ -10,15 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function initMap() {
         // Create a map centered at Cebu
         map = L.map('map').setView([10.255, 123.807], 14);
-
+    
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-
-        // Set the map bounds to Minglanilla
-        // map.setMaxBounds(minglanillaBounds);
-
+    
         // Dorm locations
         var dormDataElement = document.getElementById('dorms-data');
         if (dormDataElement) {
@@ -26,21 +23,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Array.isArray(dorms)) {
                 dorms.forEach(function(dorm) {
                     var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
-                    marker.bindPopup(dorm.name + '<br><a href="#" onclick="getDirections(' + dorm.latitude + ',' + dorm.longitude + '); return false;">Direction</a>');
+                    // Bind popup with dorm details
+                    marker.bindPopup(`
+                        <h2 class="dorm-name" data-dorm-id="${dorm.id}" style="cursor:pointer;">${dorm.name}</h2>
+                        ₱${dorm.price}<br>
+                        <a href="#" onclick="getDirections(${dorm.latitude}, ${dorm.longitude}); return false;">Direction</a>
+                    `);
                 });
             } else {
                 var dorm = dorms;
                 var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
-                marker.bindPopup(dorm.name + '<br><a href="#" onclick="getDirections(' + dorm.latitude + ',' + dorm.longitude + '); return false;">Direction</a>');
+                marker.bindPopup(`
+                    <h2 class="dorm-name" data-dorm-id="${dorm.id}" style="cursor:pointer;">${dorm.name}</h2>
+                    ₱${dorm.price}<br>
+                    <a href="#" onclick="getDirections(${dorm.latitude}, ${dorm.longitude}); return false;">Direction</a>
+                `);
                 map.setView([dorm.latitude, dorm.longitude], 14);
             }
         }
-
+    
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', handleOrientation, true);
         }
-
-        // Add click event to place a marker within the bounds
+    
+        // Add click event to place a marker within bounds
         map.on('click', function(e) {
             if (e.latlng.lat >= 10.233 && e.latlng.lat <= 10.283 && e.latlng.lng >= 123.789 && e.latlng.lng <= 123.835) {
                 if (marker) {
@@ -49,15 +55,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 marker = L.marker(e.latlng).addTo(map);
                 document.getElementById("latitude").value = e.latlng.lat;
                 document.getElementById("longitude").value = e.latlng.lng;
-
+    
                 // Get the address from the coordinates and set it in the input field
                 getAddress(e.latlng.lat, e.latlng.lng);
             } else {
                 alert("Please pin a location within Minglanilla, Cebu.");
             }
         });
+    
+        // Add event listener to dorm name after the popups are created
+        map.on('popupopen', function(e) {
+            const dormNameElement = e.popup._contentNode.querySelector('.dorm-name');
+            if (dormNameElement) {
+                dormNameElement.addEventListener('click', function () {
+                    const dormId = this.getAttribute('data-dorm-id');
+                    getDorm(dormId); // Call the function with the dorm ID
+                });
+            }
+        });
     }
-
+    
+    function getDorm(dormId) {
+        // Replace :dormId with the actual dorm ID in the route
+        let mapUrl = window.routes.mapUrl.replace(':dormId', dormId); 
+        // Redirect to the specific dorm page
+        window.location.href = mapUrl;
+    }
+    
+    
     function getDirections(lat, lng) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -125,14 +150,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showMap() {
-        document.getElementById('map').style.display = 'block';
+        document.getElementById('map-overlay').style.display = 'flex';
         setTimeout(() => {
             map.invalidateSize();
         }, 100);
     }
 
     function closeMap() {
-        document.getElementById('map').style.display = 'none';
+        document.getElementById('map-overlay').style.display = 'none';
     }
 
     // Make functions globally accessible

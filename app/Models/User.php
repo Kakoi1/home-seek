@@ -14,11 +14,13 @@ class User extends Authenticatable
         'username',
         'password',
         'phone',
-        'address',
-        'dob',
-        'gender',
+        'fb_id',
+        'fb_username',
         'profile_picture',
+        'active_status',
         'role',
+        'email_verification_code',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -35,42 +37,7 @@ class User extends Authenticatable
         return $this->hasMany(Dorm::class);
     }
 
-    public function isPartOfDormChatRoom($chat_id)
-    {
-        // Assuming you have a many-to-many relationship with DormChatRoom
-        return $this->dormChatRooms()->where('id', $chat_id)->exists();
-    }
 
-    /**
-     * Check if the user is part of a general chat room.
-     *
-     * @param int $chat_id
-     * @return bool
-     */
-    public function isPartOfRoomChatRoom($chat_id)
-    {
-        // Assuming you have a many-to-many relationship with RoomChatRoom
-        return $this->roomChatRooms()->where('id', $chat_id)->exists();
-    }
 
-    /**
-     * Define the many-to-many relationship with DormChatRoom.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function dormChatRooms()
-    {
-        return $this->belongsToMany(ChatRoom::class);
-    }
-
-    /**
-     * Define the many-to-many relationship with RoomChatRoom.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roomChatRooms()
-    {
-        return $this->belongsToMany(RoomChat::class);
-    }
 }
 

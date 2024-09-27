@@ -44,6 +44,9 @@ Route::get('/facebook/callback', [Controller::class, 'callbackFromFacebook'])->n
 Route::get('/rent-form/{room}', [RoomController::class, 'createRentForm'])
     ->name('rent.form')
     ->middleware('signed');
+Route::post('/collect-email-phone', [Controller::class, 'collectEmailPhone'])->name('collect.email.phone');
+Route::post('/verify-email', [Controller::class, 'verifyEmail'])->name('verify.email');
+
 // Middleware group for authenticated users
 Route::middleware('auth')->group(function () {
     Route::get('/home', [DormController::class, 'index'])->name('home');
@@ -82,6 +85,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/mark-messages-read', [MessageController::class, 'markMessagesRead'])->name('message.read');
     Route::post('/mark-as-read', [MessageController::class, 'markasRead']);
     Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
+    Route::post('/dorm/{id}/delete-rooms', [RoomController::class, 'deleteRooms'])->name('dorm.deleteRooms');
+    Route::post('//dorm/{id}/add-rooms', [RoomController::class, 'addRooms'])->name('dorm.addRooms');
 
 
 

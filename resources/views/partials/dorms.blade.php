@@ -1,119 +1,4 @@
-<style>
-    .proper {
-        height: 400px;
-        width: 500px;
-        margin-bottom: 10px;
-    }
-
-    .proper-cont {
-        max-width: 1800px;
-        width: 100%;
-        margin: 0 auto;
-        display: flex;
-        /* grid-template-rows: repeat(auto-fit, minmax(150px, 1fr)); */
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        gap: 100px;
-        height: 100%;
-    }
-
-    .image-carousel {
-        position: relative;
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        height: 400px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: background-image 0.5s ease-in-out;
-    }
-
-    .image-carousel.fade {
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-    }
-
-    .image-carousel.active {
-        opacity: 1;
-    }
-
-    .overlay-content {
-        position: absolute;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        z-index: 2;
-    }
-
-    .card-body {
-        background-color: rgba(0, 0, 0, 0.2);
-        position: relative;
-        top: 20px;
-    }
-
-    .prev,
-    .next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        font-size: 24px;
-        z-index: 2;
-        border-radius: 50%;
-    }
-
-    .prev {
-        left: 10px;
-    }
-
-    .next {
-        right: 10px;
-    }
-
-    .prev:hover,
-    .next:hover {
-        background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    .dots-container {
-        text-align: center;
-        position: absolute;
-        bottom: 10px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        z-index: 2;
-    }
-
-    .dot {
-        height: 10px;
-        width: 10px;
-        margin: 0 5px;
-        background-color: rgba(255, 255, 255, 0.7);
-        border-radius: 50%;
-        display: inline-block;
-        transition: background-color 0.3s ease;
-        cursor: pointer;
-    }
-
-    .dot.active {
-        background-color: white;
-    }
-
-    .dot:hover {
-        background-color: white;
-    }
-</style>
+<link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
 
 @if($dorms->isEmpty())
     <p>No dorms available.</p>
@@ -134,15 +19,26 @@
                                 data-current-image="0"
                                 style="background-image: url('{{ asset('storage/dorm_pictures/' . $images[0]) }}');">
                                 <div class="overlay-content">
-                                    <div class="card-body">
-                                        <h2><a href="{{ route('dorms.posted', $dorm->id) }}">{{ $dorm->name }}</a></h2>
-                                        <h5 class="card-title">{{ $dorm->name }}</h5>
-                                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>
-                                            {{ \Illuminate\Support\Str::limit($dorm->address, 50) }}</p>
-                                        <p class="card-text"><span>₱</span>{{ $dorm->price }}</p>
-                                    </div>
-                                </div>
 
+                                </div>
+                                <div class="icon-overlay">
+                                    <!-- Heart Icon for Favorites -->
+                                    <span class="favorite-icon" onclick="toggleFavorite({{ $dorm->id }})">
+                                        <i class="fa-regular fa-heart" style="color: #007bff;"></i>
+                                        <span id="fav-count-{{ $dorm->id }}">{{ $dorm->favorite_count }}12</span>
+                                    </span>
+
+                                    <!-- Eye Icon for Views -->
+                                    <span class="view-icon">
+                                        <i class="fas fa-eye" style="color: #007bff;"></i>
+                                        <span id="view-count-{{ $dorm->id }}">{{ $dorm->view_count }}12</span>
+                                    </span>
+                                    <!-- Heart Icon for Favorites -->
+                                    <span class="favorite-icon" onclick="toggleComments({{ $dorm->id }})">
+                                        <i class="fa-regular fa-comment" style="color: #007bff;"></i>
+                                        <span id="fav-count-{{ $dorm->id }}">{{ $dorm->favorite_count }}12</span>
+                                    </span>
+                                </div>
                                 <!-- Arrow buttons for image navigation -->
                                 <button class="prev" onclick="prevImage({{ $dorm->id }})">❮</button>
                                 <button class="next" onclick="nextImage({{ $dorm->id }})">❯</button>
@@ -154,7 +50,9 @@
                                             onclick="setImage({{ $dorm->id }}, {{ $index }})"></span>
                                     @endforeach
                                 </div>
+
                             </div>
+
                         @else
                             <p>No images available.</p>
                         @endif
@@ -165,6 +63,12 @@
                             </div>
                         </div>
                     @endif
+                    <div class="card-body" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
+                        <h5 class="card-title">{{ $dorm->name }}</h5>
+                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>
+                            {{ \Illuminate\Support\Str::limit($dorm->address, 50) }}</p>
+                        <p class="card-text"><span>₱</span>{{ $dorm->price }}</p>
+                    </div>
                 </div>
             </div>
         @endforeach

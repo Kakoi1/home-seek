@@ -91,7 +91,7 @@
 
         <div class="form-group">
             <label for="images">Image</label>
-            <input type="file" id="images" name="images">
+            <input type="file" accept="image/png, image/gif, image/jpeg" id="images" name="images">
             @if($room->images)
                 <img src="{{ asset('storage/room_images/' . $room->images) }}" alt="Room Image"
                     style="width: 150px; height: 150px;">

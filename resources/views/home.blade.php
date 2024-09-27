@@ -62,6 +62,7 @@
                         value="{{ request('rooms_avail') }}">
                 </div>
             </div>
+            <button onclick="location.href ='{{ route('showdorms') }}'" class="btn" type="button">Map Search</button>
         </form>
     </div>
 

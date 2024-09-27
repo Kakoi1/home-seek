@@ -22,8 +22,8 @@
                 </div>
             @else
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle main" href="#" id="chatroomDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle main" href="#" id="chatroomDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Messages <span id="messageCount" class="badge badge-danger"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="chatroomDropdown">
@@ -47,8 +47,8 @@
 
 
                 <li class="nav-item dropdown">
-                    <a id="navbarDropdown" class="nav-link dropdown-toggle main" href="#" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" v-pre>
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle main" href="#" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         <img src="{{ asset('storage/profile_pictures/' . Auth::user()->profile_picture) }}"
                             alt="Profile Picture" style="width: 30px; height: 30px;">
                         {{ Auth::user()->name }} <span class="caret"></span>
@@ -82,8 +82,8 @@
             roomUrl: "{{ route('room.chat', ['room' => ':id', 'roomchat' => ':room_id']) }}",
             markNotificationUrl: "{{ route('markAsRead', ':id') }}", // Route with placeholder for notification ID
             roomEditUrl: "{{ route('room.edit', ['id' => ':room_id', 'action' => 'edit']) }}",  // Route with placeholder for room_id
-            homeUrl: "{{ route('home') }}"
-
+            homeUrl: "{{ route('home') }}",
+            mapUrl: "{{route('dorms.posted', ':dormId')}}"
         };
     </script>
 </header>
