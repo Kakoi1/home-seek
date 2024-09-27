@@ -24,7 +24,7 @@
     <ul class="cards">
         <li class="card">
             <img src="images/white-bedroom.jpg" alt="img">
-            <h3>Wide Selection</h3>
+            <h3>Diverse Listings</h3>
             <p>Browse through a comprehensive listing of dormitories and apartments in Minglanilla, offering various
                 amenities and
                 rental options.</p>
@@ -63,7 +63,7 @@
 <section class="portfolio d-flex justify-content-center" id="portfolio">
     <!-- <span> -->
     <h2>Why Choose Us?</h2>
-    <p>Choosing Home Seek means choosing reliability, transparency, and efficiency in your housing search:</p>
+    <p>Experience the advantages of our trusted rental platform.</p>
     <!-- </span> -->
     <ul class="cards">
         <li class="card">
@@ -73,19 +73,16 @@
                 area.</p>
         </li>
         <li class="card">
-            <img src="images/fam.png" alt="img">
-            <h3>Customer Satisfaction</h3>
-            <p>Our dedicated team is committed to providing prompt assistance and guidance, making your rental
-                process smooth and
-                hassle-free.
+            <img src="images/high-angle.jpg" alt="img">
+            <h3>Comprehensive Listings</h3>
+            <p>From apartments to shared homes, find a variety of rental options that suit your needs. Explore listings
+                across multiple cities and neighborhoods.
             </p>
         </li>
         <li class="card">
-            <img src="images/kitchen.jpg" alt="img">
-            <h3>Trusted Network</h3>
-            <p>Benefit from our established relationships with landlords and property managers, providing reliable
-                and transparent
-                rental experiences.</p>
+            <img src="images/notifs.jpg" alt="img">
+            <h3>Real-Time <br>Notifications</h3>
+            <p>Stay updated with instant notifications for booking requests, confirmations, and tenant inquiries. Our timely alerts help you manage your rentals or reservations effortlessly.</p>
         </li>
         <!-- <li class="card">
                 <img src="team.jpg" alt="img">
@@ -179,11 +176,18 @@
     <p>Choose Home-Seek to discover your ideal rental room or apartment in Minglanilla today.</p>
     <div class="row company-info">
         <h3>Our Story</h3>
-        <p>Home-Seek started with a vision to simplify the process of finding rental rooms and apartments in
-            Minglanilla. Founded
-            by passionate individuals with extensive experience in real estate, our journey began with a commitment
-            to offering
-            reliable and personalized services to our clients.</p>
+        <p>At Home-Seek, we aim to make renting easy for everyone. Our goal is to connect tenants with
+            property owners through a simple and secure online platform. Whether you're looking for a cozy apartment or
+            a room to share, we’re here to help you find the right place.
+
+            We started Home-Seek in 2024 because we wanted to improve the rental experience for everyone.
+            Our friendly team understands the challenges that come with renting and is dedicated to providing you with
+            the best support possible. We believe in being open and honest, ensuring that you can trust our listings and
+            feel safe when booking.
+
+            Join us as we make finding your next home a smooth and enjoyable journey!
+
+            </p>
     </div>
     <div class="row mission-vision">
         <!-- <h3>Our Mission</h3>

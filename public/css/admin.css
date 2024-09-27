@@ -746,6 +746,7 @@
 
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+      padding: 10px 0;
   }
 
   .user-box:hover {
@@ -759,7 +760,8 @@
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 10px;
+      /* margin-bottom: 10px; */
+
   }
 
   .user-box .user-info {
@@ -837,7 +839,7 @@
   .filter-btn:hover {
       background-color: #2f70c5;
       color: white;
-      border-color: #05427a;
+      /* border-color: #05427a; */
   }
 
   /* ====================================== */
