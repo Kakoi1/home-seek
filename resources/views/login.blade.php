@@ -26,7 +26,7 @@
                 <button id="loginButton" name="login" class="btn">Sign In</button>
                 <br>
                 <br>
-                <a href="{{ route('facebook.login') }}" class="btn ">
+                <a href="{{ route('facebook.login') }}" class="btn facebook">
                     <i class="fab fa-facebook-f fa-fw"></i>
                     Login with Facebook
                 </a>

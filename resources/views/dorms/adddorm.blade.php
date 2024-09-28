@@ -16,6 +16,8 @@
         text-align: center;
         font-size: 2rem;
         margin-bottom: 20px;
+
+        padding-top: 1.5rem;
     }
 
     form {
@@ -192,8 +194,8 @@
 
         <div class="form-group">
             <label for="address">Address</label>
-            <button type="button" onclick="getUserLocation()">Get My Address</button> <button type="button"
-                onclick="showMap()">Show Map</button><br><br>
+            <button type="button" onclick="getUserLocation()" class="btn_address">   <i class="fa fa-map-marker-alt"></i> Get My Address</button> <button type="button"
+                onclick="showMap()"> <i class="fa fa-map"></i> Show Map</button><br><br>
             <input type="text" id="address" readonly name="address" value="{{ $dorm->address ?? old('address') }}"
                 required>
         </div>

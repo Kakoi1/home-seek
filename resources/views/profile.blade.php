@@ -111,7 +111,11 @@
         display: flex;
         gap: 7rem;
     }
+.profile-info img{
+    box-shadow: 0px 9px 20px rgba(13, 38, 76, 0.19);
+    
 
+}
     /* List a Property Button */
     .custom-button {
         display: inline-block;
@@ -128,6 +132,7 @@
     .custom-button:hover {
         background-color: #04656d;
         transform: translateY(-3px);
+        color: white;
     }
 
     .custom-button:active {
@@ -265,11 +270,18 @@
         background-position: center !important;
         background-size: cover !important;
     }
+    h1.username{
+        text-transform: uppercase;
+        padding: 1rem;
+    }
+    .containers h2{
+        text-align: center;
+    }
 </style>
 <link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
-<div class="containers" style="padding: 20px;">
+<div class="containers" style="padding: 20px; overflow: auto;">
     <div class="profile-info">
-        <h1>{{$user->name}} PROFILE</h1>
+        <h1 class="username">{{$user->name}}'s PROFILE</h1>
 
         <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture" width="250px"
             height="250px" style="border-radius: 160px;">

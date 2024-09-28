@@ -289,6 +289,21 @@ input::file-selector-button {
     background-color: #074ca1;
 
 }
+.btn.facebook{
+    background-color: #264baf;
+    color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn.facebook:hover{
+    background-color: #2e4175;
+    color: white;
+
+}
+.btn.facebook i{
+ margin-right: 0.5rem;
+}
 
 button#loginButton {
     /* background-color: rgb(26, 48, 119); */
