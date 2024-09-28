@@ -35,6 +35,19 @@
     .home-container h2 {
         text-align: center;
     }
+
+    .map-search {
+        width: 15%;
+        margin: 0 auto;
+        display: block;
+        background: linear-gradient(to right, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+    color: white;
+    }
+    .map-search:hover {
+        background-color: #4561a4;
+        color: white;
+        font-weight: 500;
+    }
 </style>
 <div class="home-container">
     <br>
@@ -62,7 +75,8 @@
                         value="{{ request('rooms_avail') }}">
                 </div>
             </div>
-            <button onclick="location.href ='{{ route('showdorms') }}'" class="btn" type="button">Map Search</button>
+            <button onclick="location.href ='{{ route('showdorms') }}'" class="btn map-search" type="button">Map
+                Search</button>
         </form>
     </div>
 

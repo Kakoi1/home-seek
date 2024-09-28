@@ -1,7 +1,10 @@
 <link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
 
 @if($dorms->isEmpty())
-    <p>No dorms available.</p>
+<div style="text-align: center; margin: 20px;">
+        <img src="{{ asset('images/no-results.png') }}" alt="No results found" style="max-width: 400px; height: auto; margin-bottom: 10px;" />
+        <p>No dorms available.</p>
+    </div>
 @else
     <div class="proper-cont">
         @foreach ($dorms as $dorm)
