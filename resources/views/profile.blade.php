@@ -275,7 +275,7 @@
         padding: 1rem;
     }
     .containers h2{
-        text-align: center;
+        text-align: center;  
     }
 </style>
 <link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
