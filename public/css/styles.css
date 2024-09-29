@@ -7,15 +7,6 @@
            font-family: "Poppins", sans-serif;
        }
 
-       /* Target the scrollbar track */
-       /* ::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #270a4d;
-        } */
-
 
 
        html {
@@ -731,3 +722,4 @@ header a.main::after {
     max-width: 80%;
     word-wrap: break-word;
 }
+

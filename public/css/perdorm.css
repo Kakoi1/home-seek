@@ -11,6 +11,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     /* Add box shadow for a card effect */
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.proper:hover{
+    transform: scale(1.05);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
 }
 
 .proper-cont {
@@ -151,11 +156,13 @@
     z-index: 2;
     border-radius: 50%;
     transition: background-color 0.3s ease;
+
+    width: 45px;
 }
 
 .prev:hover,
 .next:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .prev {
