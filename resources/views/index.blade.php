@@ -7,7 +7,7 @@
 <section class="homepage" id="home">
     <div class="content">
         <div class="text">
-            <h1>Comprehensive Dorm and Apartment Listing</h1>
+            <h1>Comprehensive List of Local Stay Escapes</h1>
             <p>
                 Discover Your Ideal Dorm or Apartment in Minglanilla.</p>
         </div>
