@@ -121,7 +121,7 @@
     opacity: 1;
 }
 
-.card-body {
+.cardbody {
     padding: 15px;
     text-align: center;
     /* Center-align text inside the card body */
@@ -131,13 +131,13 @@
     /* Add a border for separation */
 }
 
-.card-body h2,
-.card-body h5 {
+.cardbody h2,
+.cardbody h5 {
     font-size: 1.25rem;
     margin: 10px 0;
 }
 
-.card-body p {
+.cardbody p {
     font-size: 1rem;
     color: #555;
 }

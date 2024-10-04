@@ -13,21 +13,22 @@ class CreateRentFormsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('room_id');
             $table->unsignedBigInteger('dorm_id');
+            $table->enum('term', ['short_term', 'long_term']);
             $table->date('start_date');
-            $table->integer('duration'); // duration in months
-            $table->string('status')->default('pending');
+            $table->date('end_date')->nullable(); // For short-term rentals
+            $table->integer('duration')->nullable(); // For long-term rentals
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 
-            // Foreign keys
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->foreign('dorm_id')->references('id')->on('dorms')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('room_id')->references('id')->on('rooms');
+            $table->foreign('dorm_id')->references('id')->on('dorms');
         });
     }
+
 
     public function down()
     {
         Schema::dropIfExists('rent_forms');
     }
 }
-

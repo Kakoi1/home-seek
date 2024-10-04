@@ -41,8 +41,9 @@
         margin: 0 auto;
         display: block;
         background: linear-gradient(to right, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
-    color: white;
+        color: white;
     }
+
     .map-search:hover {
         background-color: #4561a4;
         color: white;
@@ -89,6 +90,7 @@
     <div id="pagination-links" class="d-flex justify-content-center">
         {{ $dorms->links() }}
     </div>
+    <br>
     <br>
 </div>
 <script src="{{asset('js/dorm.js')}}"></script>

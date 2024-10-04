@@ -222,11 +222,70 @@
         display: none;
         /* Initially hidden */
     }
+
+    /* Full-screen Image Modal */
+    .image-modal {
+        display: none;
+        position: fixed;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 1000px;
+        border-radius: 15px;
+    }
+
+    #image-caption {
+        text-align: center;
+        color: #ccc;
+        padding: 10px 0;
+        height: 150px;
+    }
+
+    /* Close button */
+    .closemodal {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        color: #fff;
+        font-size: 35px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* Zoom-in animation */
+    .modal-content {
+        animation: zoom 0.6s;
+    }
+
+    @keyframes zoom {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
 </style>
 @php
     // Decode the JSON string into an array
     $imag = json_decode($dorm->image, true);
 @endphp
+<br>
+<br>
+
 <div class="dorm-container">
 
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -250,11 +309,13 @@
             @endif
         </div>
         <!-- Carousel Controls -->
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <a class="carousel-control-prev" style="background-color: #14131346; border-radius: 8px;"
+            href="#carouselExampleControls" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <a class="carousel-control-next" style="background-color: #14131346; border-radius: 8px;"
+            href="#carouselExampleControls" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
         </a>
@@ -264,11 +325,11 @@
             @foreach($imag as $key => $image)
                 <img src="{{ asset('storage/dorm_pictures/' . $image) }}" alt="{{ $dorm->name }}"
                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px; cursor: pointer; margin-right: 10px;"
-                    onclick="jumpToSlide({{ $key }})">
+                    onclick="openModal('{{ asset('storage/dorm_pictures/' . $image) }}', '{{ $dorm->name }}')">
             @endforeach
         </div>
     </div>
-
+    <br>
     <div class="info" style="margin-top: 30px; margin: 0 auto;">
         <h1>{{ $dorm->name }}</h1>
         <h4>{{ $dorm->description }}</h4>
@@ -289,6 +350,7 @@
                 Inquire </a>
         @endif
     </div>
+    <br>
     <div id="map" style="width: 100%; height: 500px;"></div>
     <script id="dorms-data" type="application/json">
     {!! json_encode($dorm) !!}
@@ -319,6 +381,12 @@
         <button id="add-rooms" class="btn btn-primary mt-3">Save Room Changes</button>
     </div>
 
+    <div id="imageModal" class="image-modal" style="display: none;">
+        <span class="closemodal">&times;</span>
+        <img class="modal-content" id="fullImage">
+        <!-- <div id="image-caption"></div> -->
+    </div>
+
     <!-- Modal/Div for Selecting Rooms to Delete -->
     <div id="room-delete-modal" class="room-delete-modal" style="display:none;">
         <h5>Select Room(s) to Delete:</h5>
@@ -346,6 +414,25 @@
 
 <br><br>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const propertyId = {{ $dorm->id }};
+
+        const url = `{{ route('dorm.view', ':dormId') }}`.replace(':dormId', propertyId);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message); // Optionally show a message
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
     function showRooms() {
         // Create the overlay element
         var overlay = document.createElement("div");
@@ -356,32 +443,32 @@
         roomGrid.id = "room-grid";
 
         @if(isset($dorm->rooms))
-            @foreach($dorm->rooms as $room)
+                    @foreach($dorm->rooms as $room)
 
-                var roomDiv = document.createElement("div");
-                roomDiv.classList.add("room");
-                roomDiv.innerHTML = `
-                                                                                                                                                                                <p>Room Number: {{ $room->number }}</p>
-                                                                                                                                                                                <img class='pic' src="{{ asset('storage/room_images/' . $room->images) }}" alt="Room Image"
-                                                                                                                                                                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
-                                                                                                                                                                                <p>Capacity: {{ $room->capacity }}</p>
-                                                                                                                                                                                <p>Price: {{ $room->price }}</p>
-                                                                                                                                                                                <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
-                                                                                                                                                                                `;
+                                var roomDiv = document.createElement("div");
+                                roomDiv.classList.add("room");
+                                roomDiv.innerHTML = `
+                        <p>Room Number: {{ $room->number }}</p>
+                        <img class='pic' src="{{ $room->images ? asset('storage/room_images/' . $room->images) : 'https://via.placeholder.com/120x120'}}" alt="Room Image"
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
+                        <p>Capacity: {{ $room->capacity }}</p>
+                        <p>Price: {{ $room->price }}</p>
+                        <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
+                        `;
 
-                @if ($dorm->user_id == auth::id())
-                    roomDiv.innerHTML += `
-                                                                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">Edit</button>
-                                                                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
-                                                                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">Delete</button>
-                                                                                                                                                                                                                                                                        `;
-                @elseif($room->status)
-                    roomDiv.innerHTML += `<a href="{{ route('room.inquire', $room->id) }}" class="btn btn-primary">Inquire Room</a>`;
-                @endif
+                                @if ($dorm->user_id == auth::id())
+                                            roomDiv.innerHTML += `
+                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">Edit</button>
+                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
+                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">Delete</button>
+                                    `;
+                                @elseif($room->status)
+                                    roomDiv.innerHTML += `<button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>`;
+                                @endif
 
-                roomGrid.appendChild(roomDiv);
+                                roomGrid.appendChild(roomDiv);
 
-            @endforeach
+                    @endforeach
         @endif
 
         // Close button
@@ -577,5 +664,33 @@
 
 
 </script>
+<script>
+    function openModal(imageSrc, captionText) {
+        var modal = document.getElementById("imageModal");
+        var fullImage = document.getElementById("fullImage");
+        // var caption = document.getElementById("image-caption");
 
+        // Set the image source and caption
+        fullImage.src = imageSrc;
+        // caption.innerHTML = captionText;
+
+        // Display the modal
+        modal.style.display = "flex";
+    }
+
+    // Close the modal when the close button is clicked
+    var modaler = document.getElementById("imageModal");
+    var closeModalBtn = document.getElementsByClassName("closemodal")[0];
+
+    closeModalBtn.onclick = function () {
+        modaler.style.display = "none";
+    }
+
+    // Close the modal if the user clicks outside the images
+    window.onclick = function (event) {
+        if (event.target == modaler) {
+            modaler.style.display = "none";
+        }
+    }
+</script>
 @endsection

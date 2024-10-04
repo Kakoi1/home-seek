@@ -1,99 +1,119 @@
 
-function fetchConvo() {
-    const chatroomsUrl = window.routes.chatroomsUrl; // Access the URL from the global variable
-    const roomchatUrl = window.routes.roomchatUrl;
-    const chatroomUrlTemplate = window.routes.dormUrl;
-    const roomchatUrlTemplate = window.routes.roomUrl;
-    fetch(chatroomsUrl)
-        .then(response => response.json())
-        .then(chatrooms => {
-            console.log('Fetched chatrooms:', chatrooms); // Log the chatrooms data
+// function fetchConvo() {
+//     const chatroomsUrl = window.routes.chatroomsUrl; // Access the URL from the global variable
+//     const roomchatUrl = window.routes.roomchatUrl;
+//     const chatroomUrlTemplate = window.routes.dormUrl;
+//     const roomchatUrlTemplate = window.routes.roomUrl;
+//     fetch(chatroomsUrl)
+//         .then(response => response.json())
+//         .then(chatrooms => {
+//             console.log('Fetched chatrooms:', chatrooms); // Log the chatrooms data
             
-            // Initialize unread message counters
-            let totalUnreadDormInquiries = 0;
-            let totalUnreadRoomInquiries = 0;
+//             // Initialize unread message counters
+//             let totalUnreadDormInquiries = 0;
+//             let totalUnreadRoomInquiries = 0;
 
-            // Fetch room chats
-            fetch(roomchatUrl)
-                .then(response => response.json())
-                .then(roomChats => {
-                    console.log('Fetched room chats:', roomChats); // Log the room chats data
+//             // Fetch room chats
+//             fetch(roomchatUrl)
+//                 .then(response => response.json())
+//                 .then(roomChats => {
+//                     console.log('Fetched room chats:', roomChats); // Log the room chats data
                     
-                    const chatroomDropdownMenu = document.getElementById('chatroomDropdownMenu');
-                    chatroomDropdownMenu.innerHTML = '';
+//                     const chatroomDropdownMenu = document.getElementById('chatroomDropdownMenu');
+//                     chatroomDropdownMenu.innerHTML = '';
                     
-                    // Add chatrooms to dropdown
-                    chatroomDropdownMenu.innerHTML += `<h6>Dorm Inquiries:</h6>`;
-                    chatrooms.chat.forEach(chatroom => {
-                        const unreadCount = chatroom.unread_count;
-                        const chatroomUrl = chatroomUrlTemplate
-                        .replace(':id', chatroom.dorm_id)
-                        .replace(':room_id', chatroom.chatroom_id);
+//                     // Add chatrooms to dropdown
+//                     chatroomDropdownMenu.innerHTML += `<h6>Dorm Inquiries:</h6>`;
+//                     chatrooms.chat.forEach(chatroom => {
+//                         const unreadCount = chatroom.unread_count;
+//                         const chatroomUrl = chatroomUrlTemplate
+//                         .replace(':id', chatroom.dorm_id)
+//                         .replace(':room_id', chatroom.chatroom_id);
     
 
-                        const chatroomItem = document.createElement('a');
-                        chatroomItem.classList.add('dropdown-item');
-                        chatroomItem.href = chatroomUrl;
-                        chatroomItem.textContent = `Chat with ${chatroom.dorm_name} (${chatroom.user_name})`;
+//                         const chatroomItem = document.createElement('a');
+//                         chatroomItem.classList.add('dropdown-item');
+//                         chatroomItem.href = chatroomUrl;
+//                         chatroomItem.textContent = `Chat with ${chatroom.dorm_name} (${chatroom.user_name})`;
                     
-                        // Only add the unread count if there are unread messages
-                        if (unreadCount > 0) {
-                            const messageCount = document.createElement('span');
-                            messageCount.style.color = 'white';
-                            messageCount.classList.add('badge', 'bg-danger', 'ms-2');
-                            messageCount.textContent = ` (${unreadCount})`;
-                            chatroomItem.appendChild(messageCount);
-                            totalUnreadDormInquiries++;
-                        }
+//                         // Only add the unread count if there are unread messages
+//                         if (unreadCount > 0) {
+//                             const messageCount = document.createElement('span');
+//                             messageCount.style.color = 'white';
+//                             messageCount.classList.add('badge', 'bg-danger', 'ms-2');
+//                             messageCount.textContent = ` (${unreadCount})`;
+//                             chatroomItem.appendChild(messageCount);
+//                             totalUnreadDormInquiries++;
+//                         }
                     
-                        chatroomDropdownMenu.appendChild(chatroomItem);
-                    });
+//                         chatroomDropdownMenu.appendChild(chatroomItem);
+//                     });
 
-                    // Add separator
-                    chatroomDropdownMenu.innerHTML += '<hr>';
+//                     // Add separator
+//                     chatroomDropdownMenu.innerHTML += '<hr>';
 
-                    // Add room chats to dropdown
-                    chatroomDropdownMenu.innerHTML += `<h6>Room Inquiries:</h6>`;
-                    roomChats.forEach(roomChat => {
+//                     // Add room chats to dropdown
+//                     chatroomDropdownMenu.innerHTML += `<h6>Room Inquiries:</h6>`;
+//                     roomChats.forEach(roomChat => {
 
-                        const roomchatUrl = roomchatUrlTemplate
-                        .replace(':id', roomChat.room_id)
-                        .replace(':room_id', roomChat.roomchat_id);
+//                         const roomchatUrl = roomchatUrlTemplate
+//                         .replace(':id', roomChat.room_id)
+//                         .replace(':room_id', roomChat.roomchat_id);
 
-                        const roomChatItem = document.createElement('a');
-                        roomChatItem.classList.add('dropdown-item');
-                        roomChatItem.href = roomchatUrl;
-                        roomChatItem.textContent = `Chat in Room ${roomChat.room_number} (${roomChat.user_name})`;
+//                         const roomChatItem = document.createElement('a');
+//                         roomChatItem.classList.add('dropdown-item');
+//                         roomChatItem.href = roomchatUrl;
+//                         roomChatItem.textContent = `Chat in Room ${roomChat.room_number} (${roomChat.user_name})`;
 
-                        const unreadCount = roomChat.unread_count;
+//                         const unreadCount = roomChat.unread_count;
 
-                        if (unreadCount > 0) {
-                            const messageCount = document.createElement('span');
-                            messageCount.style.color = 'white';
-                            messageCount.classList.add('badge', 'bg-danger', 'ms-2');
-                            messageCount.textContent = ` (${unreadCount})`;
-                            roomChatItem.appendChild(messageCount);
-                            totalUnreadRoomInquiries++;
-                        }
+//                         if (unreadCount > 0) {
+//                             const messageCount = document.createElement('span');
+//                             messageCount.style.color = 'white';
+//                             messageCount.classList.add('badge', 'bg-danger', 'ms-2');
+//                             messageCount.textContent = ` (${unreadCount})`;
+//                             roomChatItem.appendChild(messageCount);
+//                             totalUnreadRoomInquiries++;
+//                         }
 
-                        chatroomDropdownMenu.appendChild(roomChatItem);
-                    });
+//                         chatroomDropdownMenu.appendChild(roomChatItem);
+//                     });
 
-                    // Calculate total unread count
-                    const totalUnreadMessages = totalUnreadDormInquiries + totalUnreadRoomInquiries;
+//                     // Calculate total unread count
+//                     const totalUnreadMessages = totalUnreadDormInquiries + totalUnreadRoomInquiries;
 
-                    // Update the messageCount element with the total unread messages count
-                    const messageCountElement = document.getElementById('messageCount');
-                    messageCountElement.textContent = totalUnreadMessages;
+//                     // Update the messageCount element with the total unread messages count
+//                     const messageCountElement = document.getElementById('messageCount');
+//                     messageCountElement.textContent = totalUnreadMessages;
 
-                })
-                .catch(error => console.error('Error fetching room chats:', error));
-        })
-        .catch(error => console.error('Error fetching chatrooms:', error));
-}
+//                 })
+//                 .catch(error => console.error('Error fetching room chats:', error));
+//         })
+//         .catch(error => console.error('Error fetching chatrooms:', error));
+// }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch notifications when page loads
+    fetchNotifications();
+
+    // Select the notification icon and the dropdown menu
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationsMenu = document.getElementById('notificationsMenu');
+
+    // Toggle notification dropdown when the bell icon is clicked
+    notificationIcon.addEventListener('click', function() {
+        notificationsMenu.classList.toggle('show');
+    });
+
+    // Close notification dropdown if clicked outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.notification-wrapper')) {
+            notificationsMenu.classList.remove('show');
+        }
+    });
+});
 
 function fetchNotifications() {
-
     const notifyUrl = window.routes.notificationUrl; // Get the notification URL
 
     fetch(notifyUrl)
@@ -102,20 +122,21 @@ function fetchNotifications() {
             const notificationMenu = document.getElementById('notificationsMenu');
             const notificationCount = document.getElementById('notificationCount');
 
+            // Clear existing notifications
             notificationMenu.innerHTML = '';
-            notificationCount.textContent = data.unread_count;
+            notificationCount.textContent = data.unread_count; // Set the unread count
 
             if (data.notifications.length > 0) {
                 data.notifications.forEach(notification => {
                     const notificationItem = document.createElement('a');
-                    notificationItem.classList.add('dropdown-item');
-                    
+                    notificationItem.classList.add('dropdown-item', 'notification-item');
+
                     // Set href based on room_id and notification type
                     if (notification.room_id) {
-                        const roomEditUrlTemplate = window.routes.roomEditUrl; // Get the room edit URL template
-                        notificationItem.href = roomEditUrlTemplate.replace(':room_id', notification.room_id); // Replace placeholder with room_id
+                        const roomEditUrlTemplate = window.routes.roomEditUrl;
+                        notificationItem.href = roomEditUrlTemplate.replace(':room_id', notification.room_id);
                     } else {
-                        notificationItem.href = window.routes.homeUrl; // Fallback URL
+                        notificationItem.href = window.routes.homeUrl;
                     }
 
                     notificationItem.setAttribute('data-id', notification.id);
@@ -174,25 +195,9 @@ function fetchNotifications() {
                     notificationItem.addEventListener('click', function (e) {
                         e.preventDefault();
 
-                        // Replace placeholder with actual notification ID in markNotificationUrl
                         const markNotificationUrlTemplate = window.routes.markNotificationUrl;
                         const markNotificationUrl = markNotificationUrlTemplate.replace(':id', notification.id);
-                        console.log(markNotificationUrl);
-                        
-                        if (notification.type === 'verification') {
-                            const fullMessageDiv = document.createElement('div');
-                            fullMessageDiv.textContent = notification.data;
-                            fullMessageDiv.classList.add('full-notification');
-
-                            document.body.appendChild(fullMessageDiv);
-
-                            fullMessageDiv.addEventListener('click', function () {
-                                fullMessageDiv.style.display = 'none';
-                                markNotificationAsRead(markNotificationUrl, notificationItem.href,notification.id);
-                            });
-                        } else {
-                            markNotificationAsRead(markNotificationUrl, notificationItem.href);
-                        }
+                        markNotificationAsRead(markNotificationUrl, notificationItem.href);
                     });
 
                     notificationMenu.appendChild(notificationItem);
@@ -204,14 +209,15 @@ function fetchNotifications() {
         .catch(error => console.error('Error fetching notifications:', error));
 }
 
-function markNotificationAsRead(markNotificationUrl, redirectUrl, notid) {
+
+function markNotificationAsRead(markNotificationUrl, redirectUrl) {
     fetch(markNotificationUrl, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: notid })
+        // body: JSON.stringify({ id: notid })
     })
         .then(response => {
             if (response.ok) {
@@ -223,7 +229,7 @@ function markNotificationAsRead(markNotificationUrl, redirectUrl, notid) {
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchNotifications();
-    fetchConvo();
+    // fetchConvo();
 });
 
 

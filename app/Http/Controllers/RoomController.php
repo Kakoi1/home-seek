@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessageEvent;
-use App\Events\NotificationEvent;
+use Carbon\Carbon;
 use App\Models\Dorm;
 use App\Models\Room;
 use App\Models\Message;
 use App\Models\RentForm;
 use App\Models\Roomchat;
+use App\Events\MessageEvent;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -221,108 +222,229 @@ class RoomController extends Controller
 
     }
 
-    public function sendRentFormUrl($roomId, $dormId)
+    // public function sendRentFormUrl($roomId, $dormId)
+    // {
+    //     $userId = Auth::id();
+    //     $room = Room::findOrFail($dormId);
+    //     $dorm = Dorm::findOrFail($room->dorm->id);
+    //     $chat = Roomchat::findOrFail($roomId);
+
+    //     $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
+
+    //     // Ensure that only the dorm owner can send the link
+    //     if (Auth::id() !== $room->dorm->user_id) {
+    //         abort(403, 'Unauthorized action.');
+    //         return response()->json(['status' => 'Unauthorized action.'], 403);
+    //     }
+
+
+    //     $available = Room::where('id', $room->id)
+    //         ->where('status', true)
+    //         ->exists();
+
+    //     if (!$available) {
+    //         return response()->json(['status' => 'Room already occupied']);
+    //     }
+    //     // Generate a signed URL that expires in 1 hour
+    //     $url = URL::temporarySignedRoute(
+    //         'rent.form',
+    //         now()->addHour(),
+    //         ['room' => $dormId]
+    //     );
+
+    //     // Create a new message with the generated URL
+    //     $message = new Message();
+    //     $message->rooms_id = $dormId;
+    //     $message->user_id = $userId;
+    //     $message->message = $url;
+    //     $message->chat_id = $roomId; // Associate the message with the chatroom
+    //     $message->save();
+
+    //     event(new MessageEvent([
+
+    //         'reciever' => $chat_id,
+
+    //     ]));
+
+    //     return response()->json(['status' => 'Link sent successfully']);
+    // }
+
+    public function createBook($roomId, $id = null)
     {
-        $userId = Auth::id();
-        $room = Room::findOrFail($dormId);
-        $dorm = Dorm::findOrFail($room->dorm->id);
-        $chat = Roomchat::findOrFail($roomId);
+        // Fetch the room by ID, and ensure it exists
+        $rooms = Room::where('id', $roomId)->get();
 
-        $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
+        // If an ID is provided, we're in edit mode
+        if ($id) {
+            // Find the rent form for the user and room
+            $rent = RentForm::where('id', $id)
+                ->where('user_id', auth()->id()) // Ensure only the user can edit their own forms
+                ->firstOrFail();
 
-        // Ensure that only the dorm owner can send the link
-        if (Auth::id() !== $room->dorm->user_id) {
-            abort(403, 'Unauthorized action.');
-            return response()->json(['status' => 'Unauthorized action.'], 403);
+            // Convert dates to Carbon instances for formatting in the view
+            $rent->start_date = Carbon::parse($rent->start_date);
+            $rent->end_date = Carbon::parse($rent->end_date);
+
+            // Pass the rent form and room data to the view
+            return view('room.rentForm', compact('rent', 'rooms'));
         }
 
-
-        $available = Room::where('id', $room->id)
-            ->where('status', true)
-            ->exists();
-
-        if (!$available) {
-            return response()->json(['status' => 'Room already occupied']);
-        }
-        // Generate a signed URL that expires in 1 hour
-        $url = URL::temporarySignedRoute(
-            'rent.form',
-            now()->addHour(),
-            ['room' => $dormId]
-        );
-
-        // Create a new message with the generated URL
-        $message = new Message();
-        $message->rooms_id = $dormId;
-        $message->user_id = $userId;
-        $message->message = $url;
-        $message->chat_id = $roomId; // Associate the message with the chatroom
-        $message->save();
-
-        event(new MessageEvent([
-
-            'reciever' => $chat_id,
-
-        ]));
-
-        return response()->json(['status' => 'Link sent successfully']);
+        // If there's no rent form to edit, just return the room for booking
+        return view('room.rentForm', compact('rooms'));
     }
 
-    public function createRentForm($roomId)
-    {
-        // Find the room by its ID
-        $room = Room::findOrFail($roomId);
-        $dorm = Dorm::findOrFail($room->dorm_id);
 
 
-        // Return the view with the room data
-        return view('room.rentForm', compact('room', 'dorm'));
-    }
 
-    public function create($roomId, $dormId)
-    {
-        return view('rent-form.create', compact('roomId', 'dormId'));
-    }
-
-    public function store(Request $request)
+    public function storeBook(Request $request)
     {
         $userId = Auth::id();
         $dorm = Dorm::findOrFail($request->dorm_id);
 
+        // Validate common fields
         $request->validate([
             'start_date' => 'required|date',
-            'duration' => 'required|integer|min:1',
+            'term' => 'required|in:short_term,long_term',
+            'total_price' => 'required',
         ]);
 
+        // Validate fields specific to short-term and long-term rentals
+        if ($request->term == 'short_term') {
+            $request->validate([
+                'end_date' => 'required|date|after_or_equal:start_date',
+            ]);
+
+            // Ensure the end date is within 30 days from the start date
+            $startDate = new \DateTime($request->start_date);
+            $endDate = new \DateTime($request->end_date);
+            $maxEndDate = (clone $startDate)->modify('+30 days');
+
+            if ($endDate > $maxEndDate) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The end date must be within 30 days for short-term rentals.'
+                ], 422);
+            }
+
+            $duration = null;  // No duration for short-term rentals
+        } else if ($request->term == 'long_term') {
+            $request->validate([
+                'duration' => 'required|integer|min:1',
+            ]);
+
+            $endDate = null;  // No end date for long-term rentals
+            $duration = $request->duration;  // Duration in months for long-term rentals
+        }
+
+        // Create the RentForm
         $rentForm = RentForm::create([
             'user_id' => $userId,
             'room_id' => $request->room_id,
             'dorm_id' => $request->dorm_id,
+            'term' => $request->term,
             'start_date' => $request->start_date,
-            'duration' => $request->duration,
-            'status' => 'pending', // initial status
+            'end_date' => $request->end_date, // For short-term rentals
+            'duration' => $duration, // For long-term rentals
+            'total_price' => $request->total_price,
+            'status' => 'pending', // Initial status
         ]);
 
+        // Create a notification for the room owner
         $notification = Notification::create([
             'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
             'data' => 'A new rent form has been submitted for your room.',
             'read' => false,
             'room_id' => $request->room_id,
-            'sender_id' => $userId
+            'sender_id' => $userId,
         ]);
 
+        // Trigger the notification event
         event(new NotificationEvent([
-
             'reciever' => $notification->user_id,
             'message' => $notification->data,
-            'sender' => Auth::id(),
+            'sender' => $userId,
             'rooms' => $notification->id,
             'roomid' => $notification->room_id,
             'action' => 'rent',
         ]));
 
-        return response()->json(['success' => true]);
+        return redirect()->route('dorms.posted', $dorm->id);
+    }
+
+    public function updateBook(Request $request, $id)
+    {
+        // Fetch the rent form by ID and ensure it belongs to the authenticated user
+        $dorm = Dorm::findOrFail($request->dorm_id);
+
+        $rentForm = RentForm::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        // Validate the incoming request data
+        $request->validate([
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'duration' => 'nullable|integer|min:1', // Only required for long-term rentals
+            'term' => 'required|in:short_term,long_term',
+            'total_price' => 'required',// Validate the rental type
+        ]);
+
+        // Check if it's a short-term rental
+        if ($request->input('term') == 'short_term') {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+
+            // Ensure the end date is within 30 days of the start date
+            if ($endDate->diffInDays($startDate) > 30) {
+                return back()->withErrors(['end_date' => 'End date cannot be more than 30 days after the start date.']);
+            }
+
+            // Update rent form for short-term
+            $rentForm->update([
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'duration' => null, // No duration for short-term rentals
+                'term' => 'short_term',
+                'total_price' => $request->total_price,
+            ]);
+
+        } elseif ($request->input('term') == 'long_term') {
+            // For long-term rentals, we don't need an end date, only the duration
+            $duration = $request->input('duration');
+
+            // Update rent form for long-term
+            $rentForm->update([
+                'start_date' => Carbon::parse($request->input('start_date')),
+                'end_date' => null, // No end date for long-term rentals
+                'duration' => $duration,
+                'term' => 'long_term',
+                'total_price' => $request->total_price,
+            ]);
+        }
+
+        // Redirect back with success message
+        return redirect()->route('dorms.posted', $dorm->id);
+    }
+    public function cancel($id)
+    {
+        // Fetch the rent form by ID and ensure it belongs to the authenticated user
+        $rentForm = RentForm::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->where('status', '!=', 'cancelled') // Make sure it's not already cancelled
+            ->firstOrFail();
+
+        // Check if the form is not approved yet
+        if ($rentForm->status === 'approved') {
+            return redirect()->back()->withErrors('You cannot cancel an already approved form.');
+        }
+
+        // Update the status to 'cancelled'
+        $rentForm->status = 'cancelled';
+        $rentForm->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Rent form cancelled successfully.');
     }
 
     public function checkForm(Request $request)

@@ -13,12 +13,14 @@ class RentForm extends Model
         'user_id',
         'room_id',
         'dorm_id',
+        'term',
         'start_date',
+        'end_date',
         'duration',
-        'status',
+        'total_price',
+        'status'
     ];
 
-    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -34,4 +36,5 @@ class RentForm extends Model
         return $this->belongsTo(Dorm::class);
     }
 }
+
 

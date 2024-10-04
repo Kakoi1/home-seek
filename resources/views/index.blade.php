@@ -3,7 +3,7 @@
 @section('title', 'HomeSeek')
 
 @section('content')
-
+<style></style>
 <section class="homepage" id="home">
     <div class="content">
         <div class="text">
@@ -82,7 +82,8 @@
         <li class="card">
             <img src="images/notifs.jpg" alt="img">
             <h3>Real-Time <br>Notifications</h3>
-            <p>Stay updated with instant notifications for booking requests, confirmations, and tenant inquiries. Our timely alerts help you manage your rentals or reservations effortlessly.</p>
+            <p>Stay updated with instant notifications for booking requests, confirmations, and tenant inquiries. Our
+                timely alerts help you manage your rentals or reservations effortlessly.</p>
         </li>
         <!-- <li class="card">
                 <img src="team.jpg" alt="img">
@@ -187,7 +188,7 @@
 
             Join us as we make finding your next home a smooth and enjoyable journey!
 
-            </p>
+        </p>
     </div>
     <div class="row mission-vision">
         <!-- <h3>Our Mission</h3>

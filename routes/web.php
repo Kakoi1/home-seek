@@ -27,7 +27,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Add more admin-specific routes here
 });
-
+Route::get('/yawa', function () {
+    return view('dorm');
+})->name('dds');
 
 Route::get('/', function () {
     return view('index');
@@ -46,6 +48,9 @@ Route::get('/rent-form/{room}', [RoomController::class, 'createRentForm'])
     ->middleware('signed');
 Route::post('/collect-email-phone', [Controller::class, 'collectEmailPhone'])->name('collect.email.phone');
 Route::post('/verify-email', [Controller::class, 'verifyEmail'])->name('verify.email');
+
+Route::get('/send-email/{user}', [Controller::class, 'redirectEmail'])->name('send.email');
+Route::get('/resend/{user}', [Controller::class, 'reSend'])->name('resend.code');
 
 // Middleware group for authenticated users
 Route::middleware('auth')->group(function () {
@@ -87,10 +92,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
     Route::post('/dorm/{id}/delete-rooms', [RoomController::class, 'deleteRooms'])->name('dorm.deleteRooms');
     Route::post('//dorm/{id}/add-rooms', [RoomController::class, 'addRooms'])->name('dorm.addRooms');
+    Route::post('/dorm/{dorm}/favorite', [DormController::class, 'toggleFavorite'])->name('dorm.favorite');
+    Route::post('/dorm/{dorm}/views', [DormController::class, 'trackView'])->name('dorm.view');
+
+    Route::get('/rentForm/{roomid}/create/{id?}', [RoomController::class, 'createBook'])->name('rentForm.create');
+    Route::post('/rentForms/update/{id}', [RoomController::class, 'updateBook'])->name('rentForm.update');
+    Route::post('/rentForms', [RoomController::class, 'storeBook'])->name('rentForm.store');
+    Route::get('/rentForm/{rent}/edit', [RoomController::class, 'editBook'])->name('rentForm.edit');
+    Route::patch('/rentForm/{rent}', [RoomController::class, 'updateBook'])->name('rentForm.update');
+    Route::get('/user/rent-forms', [Controller::class, 'userRentForms'])->name('user.rentForms');
+    Route::post('/rentForm/cancel/{id}', [RoomController::class, 'cancel'])->name('rentForm.cancel');
 
 
 
-    Route::post('/rent-form/store', [RoomController::class, 'store'])->name('rent-form.store');
 
     Route::post('/pusher/auth', function () {
         return Broadcast::auth(request());

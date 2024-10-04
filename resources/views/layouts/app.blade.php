@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'HomeSeek')</title>
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
@@ -18,11 +19,41 @@
     <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        #map {
-            /* display: none; */
-        }
+        @if (request()->routeIs('login.view') || request()->routeIs('register.view'))
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar.active {
+                width: 220px;
+            }
+
+            .home-section {
+                width: calc(100% - 60px);
+                left: 60px;
+            }
+
+            .sidebar.active~.home-section {
+                /* width: calc(100% - 220px); */
+                overflow: hidden;
+                left: 220px;
+            }
+
+            .home-section .user-nav {
+                width: calc(100% - 60px);
+                left: 60px;
+            }
+
+            .sidebar.active~.home-section nav {
+                width: calc(100% - 220px);
+                left: 220px;
+            }
+
+
+        @endif
     </style>
     <script src="{{ asset('js/map.js') }}"></script>
     <script src="{{asset('js/navbar.js')}}"></script>
@@ -33,7 +64,10 @@
 
     @include('partials.pusher')
 
-    @include('partials.navbar')
+    @include('partials.side-bar')
+
+
+
     <div class="" style="overflow: auto">
 
         @if ($errors->any())
@@ -56,20 +90,12 @@
         @endif
 
     </div>
-    @if (session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    title: 'Success!',
-                    text: "{{ session('success') }}",
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-            });
-        </script>
 
-    @endif
-    @yield('content')
+    <section class="home-section">
+        @include('partials.admin-nav')
+        <br><br>
+        @yield('content')
+    </section>
 
     @include('partials.footer')
     <script>
@@ -92,7 +118,32 @@
 
     <script src="{{ asset('js/search.js') }}"></script>
 
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            });
 
+        </script>
+
+    @endif
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let logo = document.querySelector(".logo_name");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+            sidebar.classList.toggle("active");
+            if (sidebar.classList.contains("active")) {
+                sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            } else
+                sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+        }
+    </script>
 </body>
 
 </html>

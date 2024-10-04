@@ -194,8 +194,9 @@
 
         <div class="form-group">
             <label for="address">Address</label>
-            <button type="button" onclick="getUserLocation()" class="btn_address">   <i class="fa fa-map-marker-alt"></i> Get My Address</button> <button type="button"
-                onclick="showMap()"> <i class="fa fa-map"></i> Show Map</button><br><br>
+            <button type="button" onclick="getUserLocation()" class="btn_address"> <i class="fa fa-map-marker-alt"></i>
+                Get My Address</button> <button type="button" onclick="showMap()"> <i class="fa fa-map"></i> Show
+                Map</button><br><br>
             <input type="text" id="address" readonly name="address" value="{{ $dorm->address ?? old('address') }}"
                 required>
         </div>
@@ -220,13 +221,12 @@
         </div>
 
         <div class="form-group">
-            <label for="rooms_available">Rooms Available</label>
-            <input type="number" id="rooms_available" name="rooms_available"
-                value="{{ $dorm->rooms_available ?? old('rooms_available') }}" required>
+            <label for="price">Price / day</label>
+            <input type="text" id="price_day" name="price_day" value="{{ $dorm->price ?? old('price') }}" required>
         </div>
 
         <div class="form-group">
-            <label for="price">Price</label>
+            <label for="price">Price / month</label>
             <input type="text" id="price" name="price" value="{{ $dorm->price ?? old('price') }}" required>
         </div>
 
@@ -263,8 +263,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                                                                                                                                                        {!! json_encode($dorm) !!}
-                                                                                                                                                                    </script>
+                                                                                                                                                                                {!! json_encode($dorm) !!}
+                                                                                                                                                                            </script>
                 @endif
 
             </div>

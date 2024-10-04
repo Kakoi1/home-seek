@@ -37,6 +37,10 @@ class User extends Authenticatable
         return $this->hasMany(Dorm::class);
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany(Dorm::class, 'favorites')->withTimestamps();
+    }
 
 
 }

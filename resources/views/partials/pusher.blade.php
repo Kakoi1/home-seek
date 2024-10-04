@@ -10,6 +10,8 @@
         const chatroomUrlTemplate = window.routes.dormUrl;
         const roomchatUrlTemplate = window.routes.roomUrl;
         const notifyUrl = window.routes.notificationUrl;
+        const roomEditUrlTemplate = window.routes.roomEditUrl;
+        const markNotificationUrlTemplate = window.routes.markNotificationUrl;
         Pusher.logToConsole = true;
 
 
@@ -22,13 +24,13 @@
             var channel = pusher.subscribe('user.' + userId);
             var channel2 = pusher.subscribe('message.' + userId);
 
-            channel2.bind('test.message', function (data) {
-                console.log(data);
+            // channel2.bind('test.message', function (data) {
+            //     console.log(data);
 
-                if (data) {
-                    fetchConvo();
-                }
-            });
+            //     if (data) {
+            //         fetchConvo();
+            //     }
+            // });
 
             channel.bind('test.notification', function (data) {
 
@@ -43,39 +45,15 @@
                     let linker = '';
                     let notificationContent = '';
 
-                    if (data.action === 'inquire') {
-                        linker = roomchatUrlTemplate
-                            .replace(':id', data.rooms)
-                            .replace(':room_id', data.roomid);
-                        fetchConvo();
-                        notificationContent = `
-                <a href="${linker}">
-                    <div class="notification-content" >
-                        <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-                    </div>
-                </a>
-            `;
-                    } else if (data.action === 'dorm') {
-                        linker = chatroomUrlTemplate
-                            .replace(':id', data.rooms)
-                            .replace(':room_id', data.roomid);
-                        fetchConvo();
-                        notificationContent = `
-                <a href="${linker}">
-                    <div class="notification-content" >
-                        <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                        <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-                    </div>
-                </a>
-            `;
-                    }
-                    else if (data.action === 'rent') {
-                        linker = roomEditUrlTemplate.replace(':room_id', notification.room_id);;
+                    if (data.action === 'rent') {
+                        console.log(data.rooms, data.room_id);
+
+                        linker = markNotificationUrlTemplate.replace(':id', data.rooms);
+                        redirectUrl = roomEditUrlTemplate.replace(':room_id', data.roomid);
                         fetchNotifications();
                         notificationContent = `
                
-              <div onclick='markNotificationAsRead(${data.rooms}, "${linker}");' class="notification-content" id="notify">
+              <div onclick='markNotificationAsRead("${linker}", "${redirectUrl}");' class="notification-content" id="notify">
                 <i class="fas fa-user"></i> <span>${data.sender.name}</span>
                 <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
             </div>

@@ -21,19 +21,6 @@
                     <button onclick="window.location.href='{{ route('register') }}'">Register</button>
                 </div>
             @else
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle main" href="#" id="chatroomDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Messages <span id="messageCount" class="badge badge-danger"></span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="chatroomDropdown">
-                        <!-- Chatrooms will be appended here by JavaScript -->
-                        <div id="chatroomDropdownMenu"></div>
-
-                    </div>
-
-
-                </li>
 
                 <li class="nav-item dropdown">
                     <a id="notificationsDropdown" class="nav-link dropdown-toggle main" href="#" role="button"
@@ -81,7 +68,7 @@
             dormUrl: "{{ route('dorm.chat', ['dorm' => ':id', 'chatroom' => ':room_id']) }}",
             roomUrl: "{{ route('room.chat', ['room' => ':id', 'roomchat' => ':room_id']) }}",
             markNotificationUrl: "{{ route('markAsRead', ':id') }}", // Route with placeholder for notification ID
-            roomEditUrl: "{{ route('room.edit', ['id' => ':room_id', 'action' => 'edit']) }}",  // Route with placeholder for room_id
+            roomEditUrl: "{{ route('room.edit', ['id' => ':room_id', 'action' => 'view']) }}",  // Route with placeholder for room_id
             homeUrl: "{{ route('home') }}",
             mapUrl: "{{route('dorms.posted', ':dormId')}}"
         };

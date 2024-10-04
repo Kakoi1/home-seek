@@ -21,7 +21,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
+use Carbon\Carbon;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
@@ -47,8 +47,8 @@ class Controller extends BaseController
                 // If the user exists, simply log them in and redirect to home
                 if (!$user->email) {
                     return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide gmail and Phone no. to login');
-                } else if (!$user->email_verified_at) {
-                    return view('emails.email_verfy', ['user' => $user])->with('success', 'Gmail is not verified yet. a Verification code was sent to your gmail');
+                } else if ($user->email_verified_at == null) {
+                    return redirect()->route('send.email', $user)->withErrors(['logname' => 'Please verify your email to continue.']);
                 } else {
                     Auth::login($user);
                     return redirect('/home');
@@ -89,7 +89,7 @@ class Controller extends BaseController
                 }
 
                 // Generate a verification code
-                $verificationCode = rand(100000, 999999); // Random 6-digit code
+                $verificationCode = rand(100000, 999999);
                 $user->email_verification_code = $verificationCode;
                 $user->profile_picture = $pic;
                 $user->save();
@@ -120,6 +120,49 @@ class Controller extends BaseController
         }
     }
 
+    public function redirectEmail($data)
+    {
+        $user = User::find($data);
+
+        $verificationCode = rand(100000, 999999);
+
+        $user->email_verification_code = $verificationCode;
+        $user->save();
+
+        Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+
+        return view('emails.email_verfy', ['user' => $user]);
+
+
+    }
+    public function reSend($userId)
+    {
+        // Retrieve the user by ID
+        $user = User::find($userId);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.',
+            ], 404); // Return a 404 status code for not found
+        }
+
+        // Generate a new random verification code
+        $verificationCode = rand(100000, 999999);
+
+        Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+        // Save the new verification code to the user
+        $user->email_verification_code = $verificationCode;
+        $user->save();
+
+        // Simulate sending an email (you would typically send the email here)
+        // Mail::to($user->email)->send(new VerificationCodeEmail($verificationCode));
+
+        // Return a successful response
+        return response()->json([
+            'message' => 'A verification code was sent to your email.',
+        ], 200); // Return a 200 status code for success
+    }
 
 
     public function register(Request $request)
@@ -133,9 +176,8 @@ class Controller extends BaseController
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'address' => 'required|string',
         ]);
-
-
 
         // Hash the password
         $fields['password'] = bcrypt($fields['password']);
@@ -150,12 +192,17 @@ class Controller extends BaseController
 
         // Unset password confirmation before creating the user
         unset($fields['password_confirmation']);
-
         // Create the user
-        User::create($fields);
+        $data = User::create($fields);
 
-        // Return a JSON success response
-        return response()->json(['message' => 'Register Success'], 200);
+
+
+        // Redirect the user to a verification page
+        return response()->json([
+            'data' => $data,
+            'message' => 'A Verification code was sent to your Gmail',
+        ], 200);
+
     }
 
 
@@ -175,16 +222,18 @@ class Controller extends BaseController
         if (auth()->attempt(['username' => $fields['logname'], 'password' => $fields['logpassword']])) {
             $request->session()->regenerate();
 
-            // Check the role of the authenticated user
-            if (auth()->user()->role === 'admin') {
-                // Redirect to the admin dashboard if the user is an admin
-                return redirect()->route('admin.dashboard')->with('success', 'Welcome, Admin!');
+            if (auth()->user()->email_verified_at == null) {
+                return redirect()->route('send.email', auth()->user())->withErrors(['logname' => 'Please verify your email to continue.']);
             } else {
-                // Redirect to the home route for regular users
-                return redirect()->route('home')->with('success', 'You have successfully logged in.');
+                if (auth()->user()->role === 'admin') {
+                    // Redirect to the admin dashboard if the user is an admin
+                    return redirect()->route('admin.dashboard');
+                } else {
+                    // Redirect to the home route for regular users
+                    return redirect()->route('home');
+                }
             }
         }
-
         return redirect()->back()->withErrors(['logname' => 'Invalid credentials'])->withInput();
     }
 
@@ -403,4 +452,28 @@ class Controller extends BaseController
 
         return redirect()->back()->with('success', 'Verification Request Sent!');
     }
+
+    public function userRentForms()
+    {
+        $currentRent = RentForm::where('user_id', auth()->id())
+            ->where('status', 'pending')->orWhere('status', 'approved') // Or whatever condition fits
+            ->first();
+
+        if ($currentRent) {
+            $currentRent->start_date = Carbon::parse($currentRent->start_date);
+            $currentRent->end_date = Carbon::parse($currentRent->end_date);
+        }
+
+        $rentHistory = RentForm::where('user_id', auth()->id())
+            ->where('status', '!=', 'pending')
+            ->get()
+            ->each(function ($rent) {
+                $rent->start_date = Carbon::parse($rent->start_date);
+                $rent->end_date = Carbon::parse($rent->end_date);
+            });
+
+        return view('userRentForms', compact('currentRent', 'rentHistory'));
+    }
+
+
 }

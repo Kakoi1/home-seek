@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Dorm;
 use App\Models\Room;
+use App\Models\Favorite;
+use App\Models\PropertyView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +18,7 @@ class DormController extends Controller
             'address' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'rooms_available' => 'required|integer',
+            'price_day' => 'required|numeric',
             'price' => 'required|numeric',
             'type' => 'required|string',
             'image' => 'required|array|min:3|max:6',
@@ -42,6 +44,7 @@ class DormController extends Controller
             'longitude' => $request->longitude,
             'rooms_available' => $request->rooms_available,
             'price' => $request->price,
+            'price_day' => $request->price_day,
             'image' => $imaging,
             'type' => $request->type,
         ]);
@@ -91,7 +94,7 @@ class DormController extends Controller
         }
 
         // Order by latest posted dorms
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('created_at', 'desc')->withCount('favoritedBy');
 
         // Paginate results
         $dorms = $query->paginate(12);
@@ -105,6 +108,7 @@ class DormController extends Controller
                 'pagination' => (string) $dorms->links()
             ]);
         }
+
 
         return view('home', compact('dorms'));
     }
@@ -129,6 +133,56 @@ class DormController extends Controller
 
         return redirect()->back()->with('success', 'Dorm archived successfully!');
     }
+
+    public function toggleFavorite($propertyId)
+    {
+        $userId = auth()->id();
+
+        // Find the dorm with favorite count
+        $dorm = Dorm::withCount('favoritedBy')->findOrFail($propertyId);
+
+        // Check if the user already favorited this dorm
+        $favorite = Favorite::where('user_id', $userId)->where('dorm_id', $propertyId)->first();
+
+        if ($favorite) {
+            // Unfavorite and update favorite count
+            $favorite->delete();
+            $isFavorited = false;
+        } else {
+            // Favorite the dorm and update favorite count
+            Favorite::create(['user_id' => $userId, 'dorm_id' => $propertyId]);
+            $isFavorited = true;
+        }
+
+        // Re-fetch the dorm to get updated favorite count
+        $dorm->refresh();
+
+        // Return the updated favorite count
+        return response()->json([
+            'count' => count($dorm->favoritedBy),
+            'is_favorited' => $isFavorited
+        ]);
+    }
+
+    public function trackView($propertyId)
+    {
+        $userId = auth()->id(); // You can also track views by guests, or use their session ID
+        $findUser = PropertyView::where('user_id', $userId)->where('dorm_id', $propertyId)->first();
+
+        // Check if the user hasn't already viewed the property
+        if (!$findUser) {
+            PropertyView::create([
+                'user_id' => $userId,
+                'dorm_id' => $propertyId,
+            ]);
+
+            return response()->json(['message' => 'Property view tracked.']);
+        }
+
+        // If a record exists, you might want to handle this case (optional)
+        return response()->json(['message' => 'Property view already exists.']);
+    }
+
 
 
 }
