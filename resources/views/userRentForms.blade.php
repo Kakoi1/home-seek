@@ -236,14 +236,20 @@
                 @endif
             </div>
         @else
+        <div style="text-align: center; margin: 20px; ">
+        <img src="{{ asset('images/living-room.svg') }}" alt="No properties" style="max-width: 400px; height: auto; margin-bottom: 10px;">
             <p>No active rented property at the moment.</p>
+            </div>
         @endif
     </div>
 
     <!-- Rent History -->
     <div id="historySection" class="rent-section">
         @if ($rentHistory->isEmpty())
+        <div style="text-align: center; margin: 20px; ">
+        <img src="{{ asset('images/house-searching-animate.svg') }}" alt="No properties" style="max-width: 400px; height: auto; margin-bottom: 10px;">
             <p>No rent history available.</p>
+            </div>
         @else
             <div class="rent-history">
                 @foreach ($rentHistory as $rent)

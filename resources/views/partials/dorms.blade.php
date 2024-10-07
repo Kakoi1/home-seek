@@ -2,7 +2,7 @@
 
 @if($dorms->isEmpty())
     <div style="text-align: center; margin: 20px;">
-        <img src="{{ asset('images/no-results.png') }}" alt="No results found"
+        <img src="{{ asset('images/search-house.svg') }}" alt="No results found"
             style="max-width: 400px; height: auto; margin-bottom: 10px;" />
         <p>No dorms available.</p>
     </div>
