@@ -462,7 +462,7 @@
             @else
                 <div class="property-card">
                 <div style="text-align: center; margin: 20px;">
-                <img src="{{ asset('images/rent-empty.png') }}" alt="No results found" style="max-width: 300px; height: auto; margin-bottom: 10px;" />
+                <img src="{{ asset('images/search-house.svg') }}" alt="No results found" style="max-width: 300px; height: auto; margin-bottom: 10px;" />
                     <h5>No rented properties.</h5>
                 </div> </div>
             @endif
