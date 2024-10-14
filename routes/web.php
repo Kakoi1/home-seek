@@ -102,6 +102,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/rentForm/{rent}', [RoomController::class, 'updateBook'])->name('rentForm.update');
     Route::get('/user/rent-forms', [Controller::class, 'userRentForms'])->name('user.rentForms');
     Route::post('/rentForm/cancel/{id}', [RoomController::class, 'cancel'])->name('rentForm.cancel');
+    Route::post('/rentForm/leave/{id}', [RoomController::class, 'leaveRent'])->name('rentForm.leave');
+    Route::get('/rentForm/extend/{id}', [RoomController::class, 'extendForm'])->name('rentForm.extend');
+    Route::post('/extendSubmit', [Controller::class, 'extendRent'])->name('extend.submit');
+    Route::get('/extendEdit/{id}', [Controller::class, 'extendEdit'])->name('extendEdit');
+    Route::patch('/extendupdate/{id}', [Controller::class, 'extendUpdate'])->name('extendUpdate');
+    Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
 
 
 

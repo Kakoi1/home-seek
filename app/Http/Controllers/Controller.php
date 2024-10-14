@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dorm;
+use App\Models\ExtendRequest;
 use App\Models\User;
 use App\Models\Chatroom;
 use App\Models\RentForm;
+use DB;
 use Illuminate\Http\Request;
 use App\Models\Verifications;
 use Illuminate\Validation\Rule;
@@ -455,9 +457,14 @@ class Controller extends BaseController
 
     public function userRentForms()
     {
-        $currentRent = RentForm::where('user_id', auth()->id())
-            ->where('status', 'pending')->orWhere('status', 'approved') // Or whatever condition fits
+        $currentRent = RentForm::where('user_id', Auth::id())
+            ->where(function ($query) {
+                $query->where('status', 'pending')
+                    ->orWhere('status', 'approved');
+            })
             ->first();
+
+        $extend = ExtendRequest::where('form_id', $currentRent->id)->first();
 
         if ($currentRent) {
             $currentRent->start_date = Carbon::parse($currentRent->start_date);
@@ -465,14 +472,189 @@ class Controller extends BaseController
         }
 
         $rentHistory = RentForm::where('user_id', auth()->id())
-            ->where('status', '!=', 'pending')
+            ->where('status', '!=', 'pending')->Where('status', '!=', 'approved')
             ->get()
             ->each(function ($rent) {
                 $rent->start_date = Carbon::parse($rent->start_date);
                 $rent->end_date = Carbon::parse($rent->end_date);
             });
 
-        return view('userRentForms', compact('currentRent', 'rentHistory'));
+        return view('userRentForms', compact('currentRent', 'rentHistory', 'extend'));
+    }
+    public function extendForm($id)
+    {
+        $rentForm = RentForm::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        if ($rentForm) {
+            $rentForm->start_date = Carbon::parse($rentForm->start_date);
+            $rentForm->end_date = Carbon::parse($rentForm->end_date);
+        }
+        return view('room.extend_rent', compact('rentForm'));
+    }
+    public function extendRent(Request $request)
+    {
+        $rentForm = RentForm::findOrFail($request->form_id);
+
+        // Validation
+        $validatedData = $request->validate([
+            'term' => 'required',
+            'end_date' => 'nullable|date|after:' . $rentForm->end_date,
+            'duration' => 'nullable|integer|min:1',
+            'total_price' => 'required|numeric|min:0',
+        ]);
+
+        // Process extension logic based on the selected term
+        if ($validatedData['term'] == 'short_term') {
+            // For short term, we set a new end date
+            $newEndDate = Carbon::parse($validatedData['end_date']);
+        } elseif ($validatedData['term'] == 'long_term') {
+            $duration = (int) $validatedData['duration'];
+            $newEndDate = Carbon::parse($rentForm->end_date)->addMonths($duration);
+        }
+
+        // Update the rentForm with the new end date
+        ExtendRequest::create([
+            'form_id' => $rentForm->id,
+            'new_end_date' => $newEndDate,
+            'term' => $validatedData['term'],
+            't_price' => $validatedData['total_price'],
+            'new_duration' => $validatedData['duration']
+        ]);
+
+        // Return a response for AJAX
+        return response()->json([
+            'success' => true,
+            'message' => 'Rent extended successfully!',
+            'new_end_date' => $newEndDate->format('Y-m-d')
+        ]);
+    }
+    public function extendEdit($id)
+    {
+        $extend = ExtendRequest::findOrFail($id);
+        $rentForm = RentForm::findOrFail($extend->form_id);
+        if ($rentForm) {
+            $rentForm->start_date = Carbon::parse($rentForm->start_date);
+            $rentForm->end_date = Carbon::parse($rentForm->end_date);
+        }
+
+        $extend->new_date_end = Carbon::parse($extend->new_date_end);
+
+        return view('room.extend_rent', compact('extend', 'rentForm'));
+    }
+    public function extendUpdate(Request $request, $id)
+    {
+        $rentForm = RentForm::findOrFail($request->form_id);
+        $extendForm = ExtendRequest::find($id);
+        // Validation
+        $validatedData = $request->validate([
+            'term' => 'required',
+            'end_date' => 'nullable|date|after:' . $rentForm->end_date,
+            'duration' => 'nullable|integer|min:1',
+            'total_price' => 'required|numeric|min:0',
+        ]);
+
+        // Process extension logic based on the selected term
+        if ($validatedData['term'] == 'short_term') {
+            // For short term, we set a new end date
+            $newEndDate = Carbon::parse($validatedData['end_date']);
+        } elseif ($validatedData['term'] == 'long_term') {
+            $duration = (int) $validatedData['duration'];
+            $newEndDate = Carbon::parse($rentForm->end_date)->addMonths($duration);
+        }
+
+        // Update the rentForm with the new end date
+
+        $extendForm->form_id = $rentForm->id;
+        $extendForm->new_end_date = $newEndDate;
+        $extendForm->term = $validatedData['term'];
+        $extendForm->t_price = $validatedData['total_price'];
+        $extendForm->new_duration = $validatedData['duration'];
+        $extendForm->save();
+
+
+        // Return a response for AJAX
+        return response()->json([
+            'success' => true,
+            'message' => 'updated Successfully!',
+            'new_end_date' => $newEndDate->format('Y-m-d')
+        ]);
+    }
+    // RentFormController.php
+
+    public function showOwnerDashboard()
+    {
+        $ownerId = auth()->id();
+
+        // Fetch all approved rent forms with dorm, room, and tenant data
+        $approvedRentForms = DB::select("
+            SELECT 
+                rf.id as rent_form_id,
+                rf.start_date,
+                rf.duration,
+                rf.total_price,
+                d.name AS dorm_name,
+                d.address AS dorm_location,
+                r.number AS room_number,
+                r.id as room_id,
+                u.name AS tenant_name,
+                u.email AS tenant_email
+            FROM rent_forms rf
+            INNER JOIN dorms d ON rf.dorm_id = d.id
+            INNER JOIN rooms r ON rf.room_id = r.id
+            INNER JOIN users u ON rf.user_id = u.id
+            WHERE d.user_id = ?
+            AND rf.status = 'approved'
+        ", [$ownerId]);
+
+        // Fetch pending rent form submissions
+        $pendingRentForms = DB::select("
+            SELECT 
+                rf.id as rent_form_id,
+                rf.start_date,
+                rf.duration,
+                rf.created_at,
+                d.name AS dorm_name,
+                d.address AS dorm_location,
+                r.number AS room_number,
+                u.name AS tenant_name,
+                u.email AS tenant_email
+            FROM rent_forms rf
+            INNER JOIN dorms d ON rf.dorm_id = d.id
+            INNER JOIN rooms r ON rf.room_id = r.id
+            INNER JOIN users u ON rf.user_id = u.id
+            WHERE d.user_id = ?
+            AND rf.status = 'pending'
+        ", [$ownerId]);
+
+        // Process the approved rent forms into properties -> rooms -> tenants structure
+        $properties = [];
+        foreach ($approvedRentForms as $form) {
+            $propertyKey = $form->dorm_name . ' - ' . $form->dorm_location;
+
+            if (!isset($properties[$propertyKey])) {
+                $properties[$propertyKey] = [
+                    'dorm_name' => $form->dorm_name,
+                    'dorm_location' => $form->dorm_location,
+                    'rooms' => []
+                ];
+            }
+
+            $roomKey = $form->room_id;
+
+            if (!isset($properties[$propertyKey]['rooms'][$roomKey])) {
+                $properties[$propertyKey]['rooms'][$roomKey] = [
+                    'number' => $form->room_number,
+                    'tenants' => []
+                ];
+            }
+
+            // Add tenant details
+            $properties[$propertyKey]['rooms'][$roomKey]['tenants'][] = [
+                'name' => $form->tenant_name,
+                'email' => $form->tenant_email
+            ];
+        }
+
+        return view('manage_tenant', compact('properties', 'pendingRentForms'));
     }
 
 

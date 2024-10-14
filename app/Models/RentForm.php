@@ -35,6 +35,10 @@ class RentForm extends Model
     {
         return $this->belongsTo(Dorm::class);
     }
+    public function extendRequests()
+    {
+        return $this->hasMany(ExtendRequest::class);
+    }
 }
 
 

@@ -316,7 +316,7 @@ class RoomController extends Controller
 
             // Ensure the end date is within 30 days from the start date
             $startDate = new \DateTime($request->start_date);
-            $endDate = new \DateTime($request->end_date);
+            $endDate = $request->end_date;
             $maxEndDate = (clone $startDate)->modify('+30 days');
 
             if ($endDate > $maxEndDate) {
@@ -332,7 +332,7 @@ class RoomController extends Controller
                 'duration' => 'required|integer|min:1',
             ]);
 
-            $endDate = null;  // No end date for long-term rentals
+            $endDate = $request->durdate;  // No end date for long-term rentals
             $duration = $request->duration;  // Duration in months for long-term rentals
         }
 
@@ -343,7 +343,7 @@ class RoomController extends Controller
             'dorm_id' => $request->dorm_id,
             'term' => $request->term,
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date, // For short-term rentals
+            'end_date' => $endDate, // For short-term rentals
             'duration' => $duration, // For long-term rentals
             'total_price' => $request->total_price,
             'status' => 'pending', // Initial status
@@ -416,7 +416,7 @@ class RoomController extends Controller
             // Update rent form for long-term
             $rentForm->update([
                 'start_date' => Carbon::parse($request->input('start_date')),
-                'end_date' => null, // No end date for long-term rentals
+                'end_date' => $request->durdate, // No end date for long-term rentals
                 'duration' => $duration,
                 'term' => 'long_term',
                 'total_price' => $request->total_price,
@@ -426,7 +426,7 @@ class RoomController extends Controller
         // Redirect back with success message
         return redirect()->route('dorms.posted', $dorm->id);
     }
-    public function cancel($id)
+    public function cancel(Request $request, $id)
     {
         // Fetch the rent form by ID and ensure it belongs to the authenticated user
         $rentForm = RentForm::where('id', $id)
@@ -441,6 +441,7 @@ class RoomController extends Controller
 
         // Update the status to 'cancelled'
         $rentForm->status = 'cancelled';
+        $rentForm->note = $request->cancelReason;
         $rentForm->save();
 
         // Redirect back with success message
@@ -484,7 +485,7 @@ class RoomController extends Controller
             $room = Room::findOrFail($rentForm->room_id);
             $room->status = false;
 
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
                 'data' => 'Rent Form approved',
@@ -494,7 +495,7 @@ class RoomController extends Controller
             ]);
 
         } else if ($request->input('status') == 'rejected') {
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
                 'data' => 'Rent Form rejected',
@@ -504,6 +505,14 @@ class RoomController extends Controller
             ]);
         }
 
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => $userId,
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'response',
+        ]));
         return redirect()->back()->with('success', 'Rent form status updated successfully.');
     }
     public function addRooms(Request $request, $id)

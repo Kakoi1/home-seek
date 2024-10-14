@@ -179,6 +179,92 @@
     .rotate {
         transform: rotate(180deg);
     }
+
+    .cancel-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+    }
+
+    /* Modal Content */
+    .cancel-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        z-index: 1001;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    /* Modal Textarea */
+    .cancel-modal textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .
+
+    /* Modal Close Button */
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #555;
+    }
+
+    /* Button Styles */
+
+
+    .btn.submit-cancel-button {
+        background-color: green;
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    .btn.leave-button {
+        background-color: red;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .btn.submit-leave-button {
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .btn.extend-button {
+        background-color: blue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 </style>
 <br>
 <div class="container">
@@ -193,13 +279,14 @@
     <!-- Current Rented Property -->
     <div id="currentSection" class="rent-section rent-section-active">
         @if ($currentRent)
+
+
             <div class="rent-form-card">
                 <h3>Room #{{ $currentRent->room->number }} - {{ $currentRent->room->dorm->name }}</h3>
                 <p>Start Date: {{ $currentRent->start_date->format('F j, Y') }}</p>
                 <p>End Date: {{ $currentRent->end_date->format('F j, Y') }}</p>
                 <p>Rent term: {{ $currentRent->term == 'short_term' ? 'Short Term' : 'Long Term' }}</p>
                 <p>Status: <strong>{{ ucfirst($currentRent->status) }}</strong></p>
-
 
                 <!-- Expandable Section -->
                 <div class="expandable-section">
@@ -209,37 +296,89 @@
                     </button>
                     <div id="extraDetails" class="extra-details" style="display: none;">
                         @if ($currentRent->term == 'short_term')
-                            <p>Price per Day: ₱{{ $currentRent->room->dorm->price_day }}</p>
+                                        @php
+                                            $date1 = date_create($currentRent->start_date);
+                                            $date2 = date_create($currentRent->end_date);
+                                            $diff = date_diff($date1, $date2);
+                                        @endphp
+                                        <p>Price per Day: ₱{{ $currentRent->room->dorm->price_day }}</p>
+                                        <p>Total days: {{ $diff->format("%a days") }}</p>
                         @else
                             <p>Price per Month: ₱{{ $currentRent->room->dorm->price }}</p>
+                            <p>Duration in Months: {{ $currentRent->duration }}</p>
                         @endif
 
-
                         <p>Total Price: <strong>₱{{ $currentRent->total_price }}</strong></p>
-                        <p>Total Calculation:
-                            {{ $currentRent->term == 'short_term' ? 'Days x Price per Day' : 'Months x Price per Month' }}
-                        </p>
                     </div>
                 </div>
 
                 @if ($currentRent->status == 'pending')
                     <div class="btn-div">
-                        <form action="{{ route('rentForm.cancel', $currentRent->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn cancel-button">Cancel Booking</button>
-                        </form>
+                        <!-- Cancel Button with SweetAlert Confirmation -->
+                        <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
+
+
                         <a href="{{ route('rentForm.create', [$currentRent->room_id, $currentRent->id]) }}"
                             class="btn edit-button">Edit</a>
                     </div>
-                @else
-                    <button class="btn disabled-button" disabled>Form can't be edited or canceled</button>
+                @elseif ($currentRent->status == 'approved')
+                        <div class="btn-div">
+                            <button id="leaveButton" class="btn cancel-button">Leave Rent</button>
+                            @php
+                                $today = \Carbon\Carbon::now();
+
+
+                                $remainingTime = $today->diffInDays($currentRent->end_date);
+                            @endphp
+
+                            @if (($currentRent->term == 'short_term' && $remainingTime <= 3) || ($currentRent->term == 'long_term' && $remainingTime <= 30))
+                                @if ($extend)
+                                    <a href="javascript:void(0);" onclick="showExtendAlert()">You already submitted an Extend Request</a>
+                                @else
+
+                                    <a href="{{ route('rentForm.extend', [$currentRent->id]) }}" class="btn edit-button">Extend Stay</a>
+                                @endif
+
+
+                            @endif
+                        </div>
                 @endif
+            </div>
+            <!-- Leave Reason Modal -->
+            <div id="leaveReasonModal" class="cancel-modal">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Why do you want to leave?</h3>
+                    <form action="{{ route('rentForm.leave', $currentRent->id) }}" method="POST">
+                        @csrf
+                        <textarea name="leaveReason" id="leaveReason" rows="4" required
+                            placeholder="Please provide your reason..."></textarea>
+                        <button type="submit" class="btn submit-leave-button">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="cancelReasonModal" class="cancel-modal">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>Why are you canceling this booking?</h3>
+                    <form action="{{ route('rentForm.cancel', $currentRent->id) }}" method="POST">
+                        @csrf
+                        <textarea name="cancelReason" id="cancelReason" rows="4" required
+                            placeholder="Please provide your reason..."></textarea>
+                        <br>
+                        <button type="submit" class="btn submit-cancel-button">Submit Cancellation</button>
+                    </form>
+                </div>
             </div>
         @else
             <p>No active rented property at the moment.</p>
         @endif
     </div>
 
+
+    <!-- Overlay -->
+    <div id="modalOverlay" class="cancel-modal-overlay"></div>
     <!-- Rent History -->
     <div id="historySection" class="rent-section">
         @if ($rentHistory->isEmpty())
@@ -259,6 +398,87 @@
     </div>
 </div>
 
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const leaveButton = document.getElementById('leaveButton');
+        const leaveReasonModal = document.getElementById('leaveReasonModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeButton = document.querySelector('.close-button');
+
+        // SweetAlert Confirmation for Leaving Rent
+        leaveButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to leave the rent?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, leave!',
+                cancelButtonText: 'No, stay'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    leaveReasonModal.style.display = 'block';
+                    modalOverlay.style.display = 'block';
+                }
+            });
+        });
+
+        closeButton.addEventListener('click', function () {
+            leaveReasonModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        modalOverlay.addEventListener('click', function () {
+            leaveReasonModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cancelButton = document.getElementById('cancelButton');
+        const cancelReasonModal = document.getElementById('cancelReasonModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeButton = document.querySelector('.close-button');
+
+        // SweetAlert Confirmation for Cancel Booking
+        cancelButton.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent default form submission
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to cancel your booking?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show the cancellation modal
+                    cancelReasonModal.style.display = 'block';
+                    modalOverlay.style.display = 'block';
+                }
+            });
+        });
+
+        // Close the modal
+        closeButton.addEventListener('click', function () {
+            cancelReasonModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        // Close modal when clicking outside of it
+        modalOverlay.addEventListener('click', function () {
+            cancelReasonModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        // Toggle the expandable details section
+
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const currentTab = document.getElementById('currentTab');
@@ -280,24 +500,37 @@
             currentSection.classList.remove('rent-section-active');
         });
     });
-</script>
-<!-- Script to toggle the expandable section -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const expandButton = document.getElementById('expandButton');
-        const extraDetails = document.getElementById('extraDetails');
-        const arrow = document.querySelector('.expand-button .arrow');
+    const expandButton = document.getElementById('expandButton');
+    const extraDetails = document.getElementById('extraDetails');
+    const arrow = document.querySelector('.expand-button .arrow');
 
-        expandButton.addEventListener('click', function () {
-            if (extraDetails.style.display === 'none') {
-                extraDetails.style.display = 'block';
-                arrow.classList.add('rotate');
-            } else {
-                extraDetails.style.display = 'none';
-                arrow.classList.remove('rotate');
+    expandButton.addEventListener('click', function () {
+        if (extraDetails.style.display === 'none') {
+            extraDetails.style.display = 'block';
+            arrow.classList.add('rotate');
+        } else {
+            extraDetails.style.display = 'none';
+            arrow.classList.remove('rotate');
+        }
+    });
+    function showExtendAlert() {
+        Swal.fire({
+            title: 'Extend Request Already Submitted',
+            text: 'You have already submitted an extend request. Please wait for the owner\'s approval.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Edit Request',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User clicked OK, close the alert
+                Swal.close();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // User clicked 'Edit Request', redirect to edit page or logic
+                window.location.href = '{{isset($extend) ? route("extendEdit", [$extend->id]) : ''}}'; // Edit route if needed
             }
         });
-    });
+    }
 </script>
 
 @endsection

@@ -17,6 +17,9 @@
     transform: scale(1.05);
     box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
 }
+.carder{
+    height: 450px;
+}
 
 .proper-cont {
     max-width: 1200px;
@@ -129,6 +132,7 @@
     /* Add white background */
     border-top: 1px solid #eaeaea;
     /* Add a border for separation */
+    height: 100%;
 }
 
 .cardbody h2,
