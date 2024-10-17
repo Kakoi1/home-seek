@@ -28,6 +28,8 @@
                                 @php
                                     // Check if the currently authenticated user has favorited the dorm
                                     $favouriteClass = $dorm->favoritedBy->contains('id', auth()->id()) ? 'fa-solid' : 'fa-regular';
+                                    $viewClass = $dorm->views->contains('user_id', auth()->id()) ? 'fa-solid' : 'fa-regular';
+                                    $reviewClass = $dorm->reviews->contains('user_id', auth()->id()) ? 'fa-solid' : 'fa-regular';
                                 @endphp
 
                                 <div class="icon-overlay">
@@ -40,14 +42,14 @@
 
                                     <!-- Eye Icon for Views -->
                                     <span class="view-icon">
-                                        <i class="fas fa-eye" style="color: #007bff;"></i>
+                                        <i class="{{$viewClass}} fa-eye" style="color: #007bff;"></i>
                                         <span id="view-count-{{ $dorm->id }}">{{ $dorm->views->count() }}</span>
                                     </span>
 
                                     <!-- Heart Icon for Favorites -->
                                     <span class="favorite-icon" onclick="toggleComments({{ $dorm->id }})">
-                                        <i class="fa-regular fa-comment" style="color: #007bff;"></i>
-                                        <span id="fav-count-{{ $dorm->id }}">{{ $dorm->favorite_count }}12</span>
+                                        <i class="{{$reviewClass}} fa-comment" style="color: #007bff;"></i>
+                                        <span id="fav-count-{{ $dorm->id }}">{{ $dorm->reviews->count() }}</span>
                                     </span>
                                 </div>
                                 <!-- Arrow buttons for image navigation -->

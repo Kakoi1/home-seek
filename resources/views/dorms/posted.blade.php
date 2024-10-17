@@ -128,7 +128,7 @@
 
     .inquire {
         width: 15%;
-        position: absolute;
+        /* position: absolute; */
         top: 8rem;
         right: 25rem !important;
         margin: 0 auto;
@@ -278,6 +278,94 @@
             transform: scale(1);
         }
     }
+
+    .buttoner {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: flex-end;
+    }
+
+    /* Reviews section container */
+    .reviews-section {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    /* Header styles */
+    .reviews-section h3 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* No reviews text */
+    .no-reviews {
+        font-size: 16px;
+        color: #888;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    /* Review item container */
+    .review-item {
+        border-bottom: 1px solid #ddd;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+
+    /* Review header */
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    /* User name and date */
+    .review-header h4 {
+        font-size: 18px;
+        color: #333;
+        margin: 0;
+    }
+
+    .review-header .review-date {
+        font-size: 14px;
+        color: #999;
+    }
+
+    /* Rating stars */
+    .rating {
+        color: gold;
+        font-size: 16px;
+    }
+
+    /* Review body with comments */
+    .review-body p {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    /* No comments provided */
+    .no-comments {
+        font-style: italic;
+        color: #888;
+    }
+
+    .userComment {
+        display: flex;
+        justify-content: space-evenly;
+        width: 18%;
+    }
+
+    .userComment img {
+        border-radius: 120px;
+    }
 </style>
 @php
     // Decode the JSON string into an array
@@ -339,16 +427,20 @@
         <p>Posted by: {{ $dorm->user->name }}</p>
 
         <!-- Room Display Button -->
-        <button type="button" onclick="showRooms()" class="btn btn-primary mt-3">View Rooms</button>
-        <br>
+        <div class="buttoner">
+            <button type="button" onclick="showRooms()" class="btn btn-primary mt-3">View Rooms</button>
+            <br>
 
-        <!-- Chat Box -->
-        @if($dorm->user->id == Auth::id())
-            <button id="manage-rooms-btn" class="btn btn-primary">Manage Rooms</button>
-        @else
-            <a href="{{ route('dorm.inquire', $dorm->id) }}" class="btn btn-primary inquire"><i class="fas fa-envelope"></i>
-                Inquire </a>
-        @endif
+            <!-- Chat Box -->
+            @if($dorm->user->id == Auth::id())
+                <button id="manage-rooms-btn" class="btn btn-primary">Manage Rooms</button>
+            @else
+                <button onclick="location.href='{{ route('dorm.inquire', $dorm->id) }}'" id="manage-rooms-btn"
+                    class="btn btn-primary"><i class="fas fa-envelope"></i>
+                    Inquire </button>
+
+            @endif
+        </div>
     </div>
     <br>
     <div id="map" style="width: 100%; height: 500px;"></div>
@@ -358,9 +450,39 @@
     <!-- Reviews Section -->
     <div class="reviews-section" style="margin-top: 50px;">
         <h3>Reviews</h3>
-        <!-- Placeholder for reviews -->
-        <p>No reviews yet.</p>
+
+        @if($dorm->reviews->isEmpty())
+            <p>No reviews yet.</p>
+        @else
+            @foreach($propertyReview->reviews as $review)
+                <div class="review-item" style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <div class="userComment">
+                        <img src="{{ $review->user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
+                            alt="" width="35px" height="35px">
+                        <h4>{{ $review->user->name }} <span
+                                style="font-size: 14px; color: #888;">({{ $review->created_at->format('M d, Y') }})</span></h4>
+                    </div>
+
+                    <div class="rating" style="color: gold;">
+                        @for($i = 1; $i <= 5; $i++)
+                            @if($i <= $review->rating)
+                                &#9733; <!-- Full star -->
+                            @else
+                                &#9734; <!-- Empty star -->
+                            @endif
+                        @endfor
+                    </div>
+
+                    @if($review->comments)
+                        <p>{{ $review->comments }}</p>
+                    @else
+                        <p>No comments provided.</p>
+                    @endif
+                </div>
+            @endforeach
+        @endif
     </div>
+
 
     <!-- Manage Rooms Button -->
 
@@ -443,32 +565,32 @@
         roomGrid.id = "room-grid";
 
         @if(isset($dorm->rooms))
-                    @foreach($dorm->rooms as $room)
+            @foreach($dorm->rooms as $room)
 
-                                var roomDiv = document.createElement("div");
-                                roomDiv.classList.add("room");
-                                roomDiv.innerHTML = `
-                        <p>Room Number: {{ $room->number }}</p>
-                        <img class='pic' src="{{ $room->images ? asset('storage/room_images/' . $room->images) : 'https://via.placeholder.com/120x120'}}" alt="Room Image"
-                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
-                        <p>Capacity: {{ $room->capacity }}</p>
-                        <p>Price: {{ $room->price }}</p>
-                        <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
-                        `;
+                var roomDiv = document.createElement("div");
+                roomDiv.classList.add("room");
+                roomDiv.innerHTML = `
+                                                                                                                                                <p>Room Number: {{ $room->number }}</p>
+                                                                                                                                                <img class='pic' src="{{ $room->images ? asset('storage/room_images/' . $room->images) : 'https://via.placeholder.com/120x120'}}" alt="Room Image"
+                                                                                                                                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
+                                                                                                                                                <p>Capacity: {{ $room->capacity }}</p>
+                                                                                                                                                <p>Price: {{ $room->price }}</p>
+                                                                                                                                                <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
+                                                                                                                                                `;
 
-                                @if ($dorm->user_id == auth::id())
-                                            roomDiv.innerHTML += `
-                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">Edit</button>
-                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
-                                    <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">Delete</button>
-                                    `;
-                                @elseif($room->status)
-                                    roomDiv.innerHTML += `<button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>`;
-                                @endif
+                @if ($dorm->user_id == auth::id())
+                    roomDiv.innerHTML += `
+                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">Edit</button>
+                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
+                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">Delete</button>
+                                                                                                                                                                                                                        `;
+                @elseif($room->status)
+                    roomDiv.innerHTML += `<button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>`;
+                @endif
 
-                                roomGrid.appendChild(roomDiv);
+                roomGrid.appendChild(roomDiv);
 
-                    @endforeach
+            @endforeach
         @endif
 
         // Close button
@@ -560,7 +682,7 @@
                     .then(data => {
                         // Success alert using SweetAlert
                         Swal.fire({
-                            title: "Auto close alert!",
+                            title: "Success!",
                             html: `${roomsToAdd} room(s) added successfully.`,
                             timer: 2000,
                             timerProgressBar: true,

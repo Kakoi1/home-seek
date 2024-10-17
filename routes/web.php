@@ -108,6 +108,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/extendEdit/{id}', [Controller::class, 'extendEdit'])->name('extendEdit');
     Route::patch('/extendupdate/{id}', [Controller::class, 'extendUpdate'])->name('extendUpdate');
     Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
+    Route::patch('/rentForm/{id}/extendStatus', [Controller::class, 'updateRequest'])->name('rentForm.extendStatus');
+    Route::get('/billings', [Controller::class, 'filterBilling'])->name('billing.filter');
+    Route::post('/make-payment/{id}', [Controller::class, 'makePayment'])->name('makePayment');
+    Route::get('/reviews/{id}', [Controller::class, 'review'])->name('reviews.store');
+    Route::get('/my-reviews', [Controller::class, 'userReviews'])->name('myReviews');
+    Route::patch('/reviews/{id}/submit', [Controller::class, 'submitReview'])->name('reviews.submit');
+
+
 
 
 

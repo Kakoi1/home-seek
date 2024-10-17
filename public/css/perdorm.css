@@ -22,7 +22,7 @@
 }
 
 .proper-cont {
-    max-width: 1200px;
+    max-width: 1500px;
     /* Set a max width for better alignment on large screens */
     width: 100%;
     margin: 0 auto;
@@ -30,7 +30,7 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
     /* Space items evenly */
-    gap: 30px;
+    gap: 10px;
     /* Adjust gap between cards */
 }
 

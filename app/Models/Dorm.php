@@ -36,5 +36,10 @@ class Dorm extends Model
     {
         return $this->hasMany(PropertyView::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Reviews::class);
+    }
 }
 

@@ -50,7 +50,7 @@
     }
 
     .tab-active {
-        background-color: #00b4d8;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
         color: white;
         transform: translateY(-5px);
     }
@@ -265,6 +265,87 @@
         cursor: pointer;
         border-radius: 5px;
     }
+
+    .rent-section {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .billing-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .filter-input {
+        margin-bottom: 10px;
+        padding: 8px;
+        width: calc(100% - 16px);
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .filter-button {
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .tabs {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .tab-button {
+        padding: 10px 15px;
+        margin-right: 5px;
+        background-color: #e9ecef;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .tab-button.active {
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+        color: white;
+    }
+
+    .tab-content {
+        border: 1px solid #ccc;
+        padding: 15px;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+    .payment-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .payment-card {
+        background-color: #f1f1f1;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 4px;
+        width: calc(50% - 20px);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .due-date,
+    .paid-date {
+        color: #666;
+        font-size: 14px;
+    }
 </style>
 <br>
 <div class="container">
@@ -274,6 +355,12 @@
     <div class="tabs">
         <div class="tab tab-active" id="currentTab">Current Rented Property</div>
         <div class="tab" id="historyTab">Rent History</div>
+        <div class="tab" id="billingTab">Billing
+            @if ($billingCount != 0)
+                <span class="badge badge-danger">{{$billingCount}}</span>
+            @endif
+
+        </div>
     </div>
 
     <!-- Current Rented Property -->
@@ -287,6 +374,10 @@
                 <p>End Date: {{ $currentRent->end_date->format('F j, Y') }}</p>
                 <p>Rent term: {{ $currentRent->term == 'short_term' ? 'Short Term' : 'Long Term' }}</p>
                 <p>Status: <strong>{{ ucfirst($currentRent->status) }}</strong></p>
+                @if ($checkExtend != null)
+                    <p><strong>Rent Extended</strong></p>
+                @endif
+
 
                 <!-- Expandable Section -->
                 <div class="expandable-section">
@@ -321,27 +412,29 @@
                         <a href="{{ route('rentForm.create', [$currentRent->room_id, $currentRent->id]) }}"
                             class="btn edit-button">Edit</a>
                     </div>
-                @elseif ($currentRent->status == 'approved')
-                        <div class="btn-div">
-                            <button id="leaveButton" class="btn cancel-button">Leave Rent</button>
-                            @php
-                                $today = \Carbon\Carbon::now();
+                @elseif ($currentRent->status == 'active')
+                        @php
+                            $today = \Carbon\Carbon::now();
+                            $remainingTime = $today->diffInDays($currentRent->end_date);
+                        @endphp
+                        @if (!$pendingBills)
+                            <div class="btn-div">
+                                <button id="leaveButton" class="btn cancel-button">Leave Rent</button>
 
 
-                                $remainingTime = $today->diffInDays($currentRent->end_date);
-                            @endphp
+                                @if (($currentRent->term == 'short_term' && $remainingTime <= 3) || ($currentRent->term == 'long_term' && $remainingTime <= 30))
+                                    @if ($extend && $extend->status == 'pending')
+                                        <a href="javascript:void(0);" onclick="showExtendAlert()">You already submitted an Extend Request</a>
+                                    @else
+                                        <a href="{{ route('rentForm.extend', [$currentRent->id]) }}" class="btn edit-button">Extend Stay</a>
+                                    @endif
 
-                            @if (($currentRent->term == 'short_term' && $remainingTime <= 3) || ($currentRent->term == 'long_term' && $remainingTime <= 30))
-                                @if ($extend)
-                                    <a href="javascript:void(0);" onclick="showExtendAlert()">You already submitted an Extend Request</a>
-                                @else
 
-                                    <a href="{{ route('rentForm.extend', [$currentRent->id]) }}" class="btn edit-button">Extend Stay</a>
                                 @endif
+                            </div>
+                        @endif
 
 
-                            @endif
-                        </div>
                 @endif
             </div>
             <!-- Leave Reason Modal -->
@@ -372,9 +465,10 @@
                 </div>
             </div>
         @else
-        <div style="text-align: center; margin: 20px; ">
-        <img src="{{ asset('images/living-room.svg') }}" alt="No properties" style="max-width: 400px; height: auto; margin-bottom: 10px;">
-            <p>No active rented property at the moment.</p>
+            <div style="text-align: center; margin: 20px; ">
+                <img src="{{ asset('images/living-room.svg') }}" alt="No properties"
+                    style="max-width: 400px; height: auto; margin-bottom: 10px;">
+                <p>No active rented property at the moment.</p>
             </div>
         @endif
     </div>
@@ -385,9 +479,10 @@
     <!-- Rent History -->
     <div id="historySection" class="rent-section">
         @if ($rentHistory->isEmpty())
-        <div style="text-align: center; margin: 20px; ">
-        <img src="{{ asset('images/house-searching-animate.svg') }}" alt="No properties" style="max-width: 400px; height: auto; margin-bottom: 10px;">
-            <p>No rent history available.</p>
+            <div style="text-align: center; margin: 20px; ">
+                <img src="{{ asset('images/house-searching-animate.svg') }}" alt="No properties"
+                    style="max-width: 400px; height: auto; margin-bottom: 10px;">
+                <p>No rent history available.</p>
             </div>
         @else
             <div class="rent-history">
@@ -402,6 +497,68 @@
             </div>
         @endif
     </div>
+    <div id="billingSection" class="rent-section">
+        <h3 class="billing-title">Billing Information</h3>
+
+        <!-- Date Filter -->
+        <label for="month" class="filter-label">Filter by Month:</label>
+        <input type="month" id="monthFilter" name="month" value="{{ request('month') }}" class="filter-input">
+
+        <!-- Tabs for Payments -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="pending-payments">Pending Payments</button>
+            <button class="tab-button" data-tab="paid-payments">Paid Payments</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Pending Payments Tab -->
+            <div class="tab-pane active" id="pending-payments">
+                <h4>Pending Payments</h4>
+                <div id="pendingPaymentsContent" class="payment-container">
+                    @if ($pendingPayments == [])
+                        <p>No pending payments for the selected month.</p>
+                    @else
+                        @foreach ($pendingPayments as $payment)
+                            <div class="payment-card">
+                                <strong>Room #{{ $payment->rentForm->room->number }}</strong>
+                                <p>{{ $payment->rentForm->room->dorm->name }}</p>
+                                <p>₱{{ $payment->amount }}</p>
+                                <p class="due-date">Due Date: {{ $payment->billing_date }}</p>
+                                <!-- Payment form -->
+                                <form class="payment-form" data-payment-id="{{ $payment->id }}" method="POST"
+                                    action="{{ route('makePayment', $payment->id) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">Pay Now</button>
+                                </form>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+            <!-- Paid Payments Tab -->
+            <div class="tab-pane" id="paid-payments">
+                <h4>Paid Payments</h4>
+                <div id="paidPaymentsContent" class="payment-container">
+                    @if ($paidPayments->isEmpty())
+                        <p>No payments made for the selected month.</p>
+                    @else
+                        @foreach ($paidPayments as $payment)
+                            <div class="payment-card">
+                                <strong>Room #{{ $payment->rentForm->room->number }}</strong>
+                                <p>{{ $payment->rentForm->room->dorm->name }}</p>
+                                <p>₱{{ $payment->amount }}</p>
+                                <p class="paid-date">Paid on: {{ $payment->paid_at }}</p>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
 </div>
 
 <!-- Scripts -->
@@ -492,18 +649,31 @@
         const currentSection = document.getElementById('currentSection');
         const historySection = document.getElementById('historySection');
 
+        billingTab.addEventListener('click', function () {
+            billingTab.classList.add('tab-active');
+            currentTab.classList.remove('tab-active');
+            historyTab.classList.remove('tab-active');
+            billingSection.classList.add('rent-section-active');
+            currentSection.classList.remove('rent-section-active');
+            historySection.classList.remove('rent-section-active');
+        });
+
         currentTab.addEventListener('click', function () {
             currentTab.classList.add('tab-active');
+            billingTab.classList.remove('tab-active');
             historyTab.classList.remove('tab-active');
             currentSection.classList.add('rent-section-active');
+            billingSection.classList.remove('rent-section-active');
             historySection.classList.remove('rent-section-active');
         });
 
         historyTab.addEventListener('click', function () {
             historyTab.classList.add('tab-active');
+            billingTab.classList.remove('tab-active');
             currentTab.classList.remove('tab-active');
             historySection.classList.add('rent-section-active');
             currentSection.classList.remove('rent-section-active');
+            billingSection.classList.remove('rent-section-active');
         });
     });
     const expandButton = document.getElementById('expandButton');
@@ -533,10 +703,152 @@
                 Swal.close();
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 // User clicked 'Edit Request', redirect to edit page or logic
-                window.location.href = '{{isset($extend) ? route("extendEdit", [$extend->id]) : ''}}'; // Edit route if needed
+                window.location.href = '{{$extend != null ? route("extendEdit", [$extend->id]) : ''}}'; // Edit route if needed
             }
         });
     }
-</script>
 
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Handle filtering by month
+        $('#monthFilter').change(function () {
+            var selectedMonth = $('#monthFilter').val();
+            var activeTab = $('.tab-button.active').data('tab');
+
+            if (selectedMonth) {
+                fetchPayments(selectedMonth, activeTab);
+            }
+        });
+
+        // Handle tab switching
+        $('.tab-button').on('click', function () {
+            var selectedMonth = $('#monthFilter').val();
+            var activeTab = $(this).data('tab'); // Get the active tab
+
+            if (selectedMonth) {
+                fetchPayments(selectedMonth, activeTab);
+            }
+        });
+
+        // AJAX function to fetch payments
+        // Function to fetch payments
+        function fetchPayments(month, tab) {
+            var url = "{{ route('billing.filter') }}";
+            var type = (tab === 'pending-payments') ? 'pending' : 'paid';
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: { month: month, type: type },
+                success: function (response) {
+                    var payments = response.payments;
+                    if (type === 'pending') {
+                        updatePendingPayments(payments);
+                    } else {
+                        updatePaidPayments(payments);
+                    }
+                },
+                error: function () {
+                    alert('Error fetching payments. Please try again.');
+                }
+            });
+        }
+
+        // Function to update pending payments HTML
+        function updatePendingPayments(payments) {
+            var content = '';
+
+            if (payments.length === 0) {
+                content = '<p>No pending payments for the selected month.</p>';
+            } else {
+                payments.forEach(function (payment) {
+                    content += '<div class="payment-card">' +
+                        '<strong>Room #' + payment.rent_form.room.number + '</strong>' +
+                        '<p>' + payment.rent_form.room.dorm.name + '</p>' +
+                        '<p>₱' + payment.amount + '</p>' +
+                        '<p class="due-date">Due Date: ' + payment.billing_date + '</p>' +
+                        '<form class="payment-form" data-payment-id="' + payment.id + '" method="POST" action="/make-payment/' + payment.id + '">' +
+                        '<input type="hidden" name="_token" value="' + $('meta[name="csrf-token"]').attr('content') + '">' +
+                        '<button type="submit" class="btn btn-success">Pay Now</button>' +
+                        '</form>' +
+                        '</div>';
+                });
+            }
+
+            $('#pendingPaymentsContent').html(content);
+
+            // Intercept form submission for each payment form
+            $('.payment-form').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                var form = $(this);
+                var formData = form.serialize(); // Serialize form data, including the CSRF token
+
+                $.ajax({
+                    url: form.attr('action'),  // Get the form action URL
+                    type: 'POST',
+                    data: formData,  // Send serialized form data
+                    success: function (response) {
+                        alert('Payment successful!');
+                        // Optionally, update the UI with the new data, like refreshing payment info
+                        updatePendingPayments(response.pendingPayments);
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Payment failed. Please try again.');
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        }
+
+
+
+
+        // Function to update paid payments HTML
+        function updatePaidPayments(payments) {
+            var content = '';
+
+            if (payments.length === 0) {
+                content = '<p>No payments made for the selected month.</p>';
+            } else {
+                payments.forEach(function (payment) {
+                    content += '<div class="payment-card">' +
+                        '<strong>Room #' + payment.rent_form.room.number + '</strong>' +
+                        '<p>' + payment.rent_form.room.dorm.name + '</p>' +
+                        '<p>₱' + payment.amount + '</p>' +
+                        '<p class="paid-date">Paid on: ' + payment.paid_at + '</p>' +
+                        '</div>';
+                });
+            }
+
+            $('#paidPaymentsContent').html(content);
+        }
+    });
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.style.display = 'none';
+            });
+
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            // Show the corresponding tab pane
+            const tabToShow = button.getAttribute('data-tab');
+            document.getElementById(tabToShow).style.display = 'block';
+        });
+    });
+
+    // Initialize by showing only the active tab pane on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.tab-pane.active').style.display = 'block';
+    });
+</script>
 @endsection

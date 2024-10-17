@@ -15,10 +15,11 @@
     }
 
     .nav-tabs .nav-link.active {
-        background-color: #007bff;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
         color: white;
         border: none;
         font-weight: bold;
+        border-radius: 10px;
     }
 
     /* Card styles */
@@ -30,7 +31,7 @@
     }
 
     .card-header {
-        background-color: #007bff;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
         color: white;
         padding: 10px 15px;
         font-weight: bold;
@@ -69,7 +70,20 @@
     /* Action buttons */
     .action-buttons {
         margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
     }
+
+    .action-buttons button {
+        width: 150px;
+        height: 35px;
+        border-radius: 8px;
+        margin: 4px;
+    }
+
 
     .btn {
         border-radius: 4px;
@@ -209,8 +223,10 @@
                                     style="display: inline;">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="approve-btn" name="status" value="approved">Approve</button>
-                                    <button type="submit" class="reject-btn" name="status" value="rejected">Reject</button>
+                                    <button type="submit" class="approve-btn btn-success" name="status"
+                                        value="approved">Approve</button>
+                                    <button type="submit" class="reject-btn btn-danger" name="status"
+                                        value="rejected">Reject</button>
                                 </form>
                             </div>
                         </div>
@@ -219,7 +235,60 @@
             @endif
         </div>
 
-        {{-- Extension Requests Tab --}}
+        <div class="tab-pane fade show" id="extendRequests" role="tabpanel" aria-labelledby="extend-requests-tab">
+            <!-- Extend Requests content goes here -->
+            @forelse($extendRequestData as $property)
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h3>{{ $property['dorm_name'] }} - {{ $property['dorm_location'] }}</h3>
+                    </div>
+                    <div class="card-body">
+                        @if(empty($property['rooms']))
+                            <p>No rooms in this property.</p>
+                        @else
+                            @foreach($property['rooms'] as $room)
+                                <div class="room-section mb-3">
+                                    <h4>Room {{ $room['number'] }}</h4>
+                                    @if(empty($room['extend_requests']))
+                                        <p>No extend requests in this room.</p>
+                                    @else
+                                        @foreach($room['extend_requests'] as $request)
+                                            <div class="extend-request-card p-3 mb-2 border rounded">
+                                                <h5>Extend Request for Tenant: {{ $request['tenant_name'] }}</h5>
+                                                <p>Email: <a href="mailto:{{ $request['tenant_email'] }}">{{ $request['tenant_email'] }}</a>
+                                                </p>
+                                                <p>New End Date: {{ $request['new_end_date'] }}</p>
+
+                                                @if ($request['new_duration'])
+                                                    <p>New Duration: {{ $request['new_duration'] }} months</p>
+                                                @endif
+
+                                                <p>Total Price: {{ $request['t_price'] }}</p>
+                                                <p>Status: {{ ucfirst($request['extend_status']) }}</p>
+                                                <div class="action-buttons">
+                                                    <form action="{{ route('rentForm.extendStatus', $request['extend_request_id']) }}"
+                                                        method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="approve-btn  btn-success" name="status"
+                                                            value="approved">Approve</button>
+                                                        <button type="submit" class="reject-btn btn-danger" name="status"
+                                                            value="rejected">Reject</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <p>No extend requests available.</p>
+            @endforelse
+        </div>
+
 
     </div>
 

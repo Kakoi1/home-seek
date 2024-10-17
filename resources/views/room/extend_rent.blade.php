@@ -152,9 +152,21 @@
 <script>
     function valiDate() {
         const selectedStartDate = document.getElementById('start_date').value;
+        const maxDate = new Date(selectedStartDate);
+        const minDate = new Date(selectedStartDate);
+        maxDate.setDate(maxDate.getDate() + 30);
+        minDate.setDate(minDate.getDate() + 1);
 
         if (selectedStartDate) {
-            document.getElementById('end_date').setAttribute('min', selectedStartDate);
+            // Set min attribute for end date
+            document.getElementById('end_date').setAttribute('min', minDate.toISOString().split('T')[0]);
+
+            // Set max attribute for end date
+            const maxDateISO = maxDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            document.getElementById('end_date').setAttribute('max', maxDateISO);
+
+            // Optionally reset end date value
+            document.getElementById('end_date').value = '';
         }
     }
 
@@ -250,6 +262,7 @@
         longTermRadio.on('change', handleTermChange);
         endDateInput.on('change', calculateTotal);
         durationInput.on('input', calculateTotal);
+        shortTermRadio.on('change', valiDate)
 
         // Initialize form state
         handleTermChange();

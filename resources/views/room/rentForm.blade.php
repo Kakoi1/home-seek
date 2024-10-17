@@ -126,6 +126,9 @@
         <label for="end_date" id="end_date_label" style="display: none;">End Date (for short-term)</label>
         <input type="date" id="end_date" name="end_date"
             value="{{ isset($rent) ? $rent->end_date->format('Y-m-d') : old('end_date') }}" style="display: none;">
+        @if (isset($rent))
+            <p>Your Current end date: {{ $rent->end_date->format('Y-m-d') }}</p>
+        @endif
 
         <!-- Duration (for long-term rent) -->
         <label for="duration" id="duration_label" style="display: none;">Duration (in months)</label>
@@ -166,11 +169,24 @@
 <script>
     function valiDate() {
         const selectedStartDate = document.getElementById('start_date').value;
+        const maxDate = new Date(selectedStartDate);
+        const minDate = new Date(selectedStartDate);
+        maxDate.setDate(maxDate.getDate() + 30);
+        minDate.setDate(minDate.getDate() + 1);
+
         if (selectedStartDate) {
-            document.getElementById('end_date').setAttribute('min', selectedStartDate);
-            // document.getElementById('end_date').value = '';
+            // Set min attribute for end date
+            document.getElementById('end_date').setAttribute('min', minDate.toISOString().split('T')[0]);
+
+            // Set max attribute for end date
+            const maxDateISO = maxDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            document.getElementById('end_date').setAttribute('max', maxDateISO);
+
+            // Optionally reset end date value
+            document.getElementById('end_date').value = '';
         }
     }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const shortTermRadio = document.getElementById('short_term');

@@ -123,7 +123,8 @@ class DormController extends Controller
 
         $dorm = Dorm::with('user')->findOrFail($id);
         $rooms = Room::where('dorm_id', $dorm->id)->count();
-        return view('dorms.posted', compact('dorm', 'rooms'));
+        $propertyReview = Dorm::with('reviews')->findOrFail($id);
+        return view('dorms.posted', compact('dorm', 'rooms', 'propertyReview'));
     }
 
     public function archive($id)
