@@ -28,6 +28,8 @@ use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Diglactic\Breadcrumbs\Breadcrumbs;
+use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 class Controller extends BaseController
 {
@@ -235,6 +237,8 @@ class Controller extends BaseController
                 if (auth()->user()->role === 'admin') {
                     // Redirect to the admin dashboard if the user is an admin
                     return redirect()->route('admin.dashboard');
+                } else if (auth()->user()->role === 'owner') {
+                    return redirect()->route('owner.Dashboard');
                 } else {
                     // Redirect to the home route for regular users
                     return redirect()->route('home');
@@ -338,6 +342,10 @@ class Controller extends BaseController
     public function edit($id)
     {
         $dorm = Dorm::find($id);
+        Breadcrumbs::for('dorms.adddorm', function (BreadcrumbTrail $trail) use ($dorm) {
+            $trail->parent('owner.Property');
+            $trail->push('edit ' . $dorm->name, route('dorms.adddorm', $dorm->id));
+        });
         return view('dorms.adddorm', compact('dorm'));
     }
 
@@ -356,9 +364,10 @@ class Controller extends BaseController
             'address' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'rooms_available' => 'required|integer',
             'price' => 'required|numeric',
-            'type' => 'required|string',
+            'capacity' => 'required|numeric',
+            'beds' => 'required|numeric',
+            'bedroom' => 'required|numeric',
             'image' => 'nullable|array',
             'image.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'existing_images' => 'array',
@@ -405,10 +414,11 @@ class Controller extends BaseController
             'address' => $request->address,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'rooms_available' => $request->rooms_available,
             'price' => $request->price,
+            'capacity' => $request->guest_capacity,
+            'beds' => $request->beds,
+            'bedroom' => $request->bedrooms,
             'image' => json_encode($allImages),
-            'type' => $request->type,
         ]);
 
         return redirect()->back()->with('success', 'Dorm updated successfully!');
@@ -455,6 +465,7 @@ class Controller extends BaseController
             'rooms' => null,
             'roomid' => null,
             'action' => 'verify',
+            'route' => route('admin.manageuser')
         ]));
 
         return redirect()->back()->with('success', 'Verification Request Sent!');
@@ -475,14 +486,11 @@ class Controller extends BaseController
             })
             ->first();
         if ($currentRent) {
-            $extend = ExtendRequest::where('form_id', $currentRent->id)->Where('status', 'pending')->first();
-            $checkExtend = ExtendRequest::where('form_id', $currentRent->id)->Where('status', 'approved')->first();
             $pendingBills = Billing::where('rent_form_id', $currentRent->id)->where('status', 'pending')->first();
             $pendingPayments = Billing::where('rent_form_id', $currentRent->id)->where('status', 'pending')->whereMonth('billing_date', now()->month)->get();
 
             $billingCount = Billing::where('status', 'pending')
                 ->where('user_id', Auth::id())
-                ->whereMonth('billing_date', now()->month)
                 ->count();
         }
 
@@ -498,6 +506,7 @@ class Controller extends BaseController
                 $query->where('status', '!=', 'pending')
                     ->Where('status', '!=', 'approved')
                     ->Where('status', '!=', 'active');
+
             })
             ->get()
             ->each(function ($rent) {
@@ -519,7 +528,7 @@ class Controller extends BaseController
             $pendingPayments = Billing::where('user_id', $userId)
                 ->whereMonth('billing_date', '=', date('m', strtotime($month)))
                 ->where('status', 'pending')
-                ->with(['rentForm.room', 'rentForm.room.dorm']) // Load relationships
+                ->with(['rentForm.dorm']) // Load relationships
                 ->get();
 
             return response()->json(['payments' => $pendingPayments]);
@@ -528,7 +537,7 @@ class Controller extends BaseController
             $paidPayments = Billing::where('user_id', $userId)
                 ->whereMonth('paid_at', '=', date('m', strtotime($month)))
                 ->where('status', 'paid')
-                ->with(['rentForm.room', 'rentForm.room.dorm']) // Load relationships
+                ->with(['rentForm.dorm']) // Load relationships
                 ->get();
 
             return response()->json(['payments' => $paidPayments]);
@@ -576,6 +585,25 @@ class Controller extends BaseController
             't_price' => $validatedData['total_price'],
             'new_duration' => $validatedData['duration']
         ]);
+
+        $notification = Notification::create([
+            'user_id' => $rentForm->dorm->user_id, // Assuming the owner is linked to the room
+            'type' => 'review',
+            'data' => $rentForm->user->name . ' has sent A Extend Request',
+            'read' => false,
+            'room_id' => $rentForm->room_id,
+            'sender_id' => $rentForm->user_id
+        ]);
+
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => $rentForm->user_id,
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'rent',
+            'route' => route('managetenant')
+        ]));
 
         // Return a response for AJAX
         return response()->json([
@@ -627,7 +655,6 @@ class Controller extends BaseController
         $extendForm->new_duration = $validatedData['duration'];
         $extendForm->save();
 
-
         // Return a response for AJAX
         return response()->json([
             'success' => true,
@@ -645,21 +672,21 @@ class Controller extends BaseController
         $approvedRentForms = DB::select("
             SELECT 
                 rf.id as rent_form_id,
-                rf.start_date,
-                rf.duration,
+                rf.start_date as start_date,
+                rf.end_date as end_date,
+                rf.status as rent_status,
                 rf.total_price,
                 d.name AS dorm_name,
                 d.address AS dorm_location,
-                r.number AS room_number,
-                r.id as room_id,
+                d.id as dorm_id,
+                u.id as user_id,
                 u.name AS tenant_name,
                 u.email AS tenant_email
             FROM rent_forms rf
             INNER JOIN dorms d ON rf.dorm_id = d.id
-            INNER JOIN rooms r ON rf.room_id = r.id
             INNER JOIN users u ON rf.user_id = u.id
             WHERE d.user_id = ?
-            AND rf.status = 'approved'
+            AND rf.status = 'approved' OR rf.status = 'active'
         ", [$ownerId]);
 
         // Fetch pending rent form submissions
@@ -667,46 +694,42 @@ class Controller extends BaseController
             SELECT 
                 rf.id as rent_form_id,
                 rf.start_date,
-                rf.duration,
                 rf.created_at,
                 d.name AS dorm_name,
                 d.address AS dorm_location,
-                r.number AS room_number,
+                 d.id as dorm_id,
                 u.name AS tenant_name,
                 u.email AS tenant_email
             FROM rent_forms rf
             INNER JOIN dorms d ON rf.dorm_id = d.id
-            INNER JOIN rooms r ON rf.room_id = r.id
             INNER JOIN users u ON rf.user_id = u.id
             WHERE d.user_id = ?
             AND rf.status = 'pending'
         ", [$ownerId]);
 
-        $extendRequests = DB::select("
+        $cancellations = DB::select("
         SELECT 
-            er.id as extend_request_id,
-            er.new_end_date,
-            er.term,
-            er.t_price,
-            er.new_duration,
-            er.status AS extend_status,
             rf.id as rent_form_id,
+            rf.start_date,
+            rf.created_at,
+            rf.updated_at,
             d.name AS dorm_name,
+              rf.status as rent_status,
             d.address AS dorm_location,
-            r.number AS room_number,
-            r.id as room_id,
+            rf.note AS cancel_reason,
+             d.id as dorm_id,
             u.name AS tenant_name,
             u.email AS tenant_email
-        FROM extend_requests er
-        INNER JOIN rent_forms rf ON er.form_id = rf.id
+        FROM rent_forms rf
         INNER JOIN dorms d ON rf.dorm_id = d.id
-        INNER JOIN rooms r ON rf.room_id = r.id
         INNER JOIN users u ON rf.user_id = u.id
         WHERE d.user_id = ?
-        AND er.status = 'pending'
+        AND rf.note != '' AND rf.status != 'pending' AND rf.status != 'cancelled'
     ", [$ownerId]);
 
+
         // Process the approved rent forms into properties -> rooms -> tenants structure
+
         $properties = [];
         foreach ($approvedRentForms as $form) {
             $propertyKey = $form->dorm_name . ' - ' . $form->dorm_location;
@@ -715,130 +738,65 @@ class Controller extends BaseController
                 $properties[$propertyKey] = [
                     'dorm_name' => $form->dorm_name,
                     'dorm_location' => $form->dorm_location,
-                    'rooms' => []
+                    'dorms' => []
                 ];
             }
 
-            $roomKey = $form->room_id;
+            $dormKey = $form->dorm_id;
 
-            if (!isset($properties[$propertyKey]['rooms'][$roomKey])) {
-                $properties[$propertyKey]['rooms'][$roomKey] = [
-                    'number' => $form->room_number,
+            if (!isset($properties[$propertyKey]['dorms'][$dormKey])) {
+                $properties[$propertyKey]['dorms'][$dormKey] = [
+                    'name' => $form->dorm_name,
                     'tenants' => []
                 ];
             }
 
+            $pendingPayments = Billing::where('rent_form_id', $form->rent_form_id)->where('status', 'pending')->get();
+            $paidPayments = Billing::where('rent_form_id', $form->rent_form_id)->where('status', 'paid')->get();
+
             // Add tenant details
-            $properties[$propertyKey]['rooms'][$roomKey]['tenants'][] = [
+            $properties[$propertyKey]['dorms'][$dormKey]['tenants'][] = [
+                'user_id' => $form->user_id,
                 'name' => $form->tenant_name,
-                'email' => $form->tenant_email
+                'email' => $form->tenant_email,
+                'start_date' => $form->start_date,
+                'end_date' => $form->end_date,
+                'status' => $form->rent_status,
+                'pending_bills' => $pendingPayments,
+                'paid_bills' => $paidPayments
             ];
         }
 
-        $extendRequestData = [];
-        foreach ($extendRequests as $request) {
-            $propertyKey = $request->dorm_name . ' - ' . $request->dorm_location;
 
-            if (!isset($extendRequestData[$propertyKey])) {
-                $extendRequestData[$propertyKey] = [
-                    'dorm_name' => $request->dorm_name,
-                    'dorm_location' => $request->dorm_location,
-                    'rooms' => []
-                ];
-            }
-
-            $roomKey = $request->room_id;
-
-            if (!isset($extendRequestData[$propertyKey]['rooms'][$roomKey])) {
-                $extendRequestData[$propertyKey]['rooms'][$roomKey] = [
-                    'number' => $request->room_number,
-                    'tenants' => [],
-                    'extend_requests' => []
-                ];
-            }
-
-            // Add extend request details
-            $extendRequestData[$propertyKey]['rooms'][$roomKey]['extend_requests'][] = [
-                'extend_request_id' => $request->extend_request_id,
-                'new_end_date' => $request->new_end_date,
-                'term' => $request->term,
-                't_price' => $request->t_price,
-                'new_duration' => $request->new_duration,
-                'extend_status' => $request->extend_status,
-                'tenant_name' => $request->tenant_name,
-                'tenant_email' => $request->tenant_email
-            ];
-        }
-
-        return view('manage_tenant', compact('properties', 'pendingRentForms', 'extendRequestData'));
+        return view('manage_tenant', compact('properties', 'pendingRentForms', 'cancellations'));
     }
 
     public function updateRequest(Request $request, $id)
     {
         $userId = Auth::id();
-        $today = Carbon::now()->toDateString();
-        $extendRent = ExtendRequest::findOrFail($id);
-
-        $rentForm = RentForm::findOrFail($extendRent->form_id);
-        $extendRent->status = $request->input('status');
-
+        $rentForm = RentForm::findOrFail($id);
 
         if ($request->input('status') == 'approved') {
-            $room = Room::findOrFail($rentForm->room_id);
-            $room->status = false;
-
+            $rentForm->status = 'cancelled';
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
-                'type' => 'Form Response',
-                'data' => 'Extend Request approved',
+                'type' => 'Cancel Response',
+                'data' => 'Booking Cancellation Approved',
                 'read' => false,
-                'room_id' => $rentForm->room_id,
+                'route' => route('user.rentForms'),
+                'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
-            $rentForm->total_price = $extendRent->t_price;
-            $rentForm->term = $extendRent->term;
-            $rentForm->end_date = $extendRent->new_end_date;
-            if ($rentForm->term == 'long_term') {
-                $rentForm->duration = $extendRent->new_duration;
-            }
-
-            if ($rentForm->term == 'short_term') {
-                // Create a billing entry for the full amount (short term)
-                Billing::create([
-                    'user_id' => $rentForm->user_id,
-                    'rent_form_id' => $rentForm->id,
-                    'amount' => $rentForm->total_price,
-                    'billing_date' => $rentForm->end_date,
-                    'status' => 'pending', // Set initial status to pending
-                ]);
-            } elseif ($rentForm->term == 'long_term') {
-                // Calculate the monthly payment
-                $monthlyPayment = $rentForm->total_price / $rentForm->duration;
-
-                // Generate billing for each month
-                for ($i = 1; $i < $rentForm->duration + 1; $i++) {
-                    // Calculate the billing date for each month
-                    $billingDate = Carbon::parse($today)->addMonths($i)->toDateString();
-
-                    // Create billing entry for the specific month
-                    Billing::create([
-                        'user_id' => $rentForm->user_id,
-                        'rent_form_id' => $rentForm->id,
-                        'amount' => $monthlyPayment,
-                        'billing_date' => $billingDate,
-                        'status' => 'pending', // Set initial status to pending
-                    ]);
-                }
-            }
-
 
         } else if ($request->input('status') == 'rejected') {
+            $rentForm->note = null;
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
-                'type' => 'Form Response',
-                'data' => 'Extend Request rejected',
+                'type' => 'Cancel Response',
+                'data' => 'Booking Cancellation Rejected',
                 'read' => false,
-                'room_id' => $rentForm->room_id,
+                'route' => route('user.rentForms'),
+                'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
         }
@@ -848,11 +806,11 @@ class Controller extends BaseController
             'message' => $notification->data,
             'sender' => $userId,
             'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
+            'roomid' => $notification->dorm_id,
             'action' => 'response',
+            'route' => route('user.rentForms')
         ]));
         $rentForm->save();
-        $extendRent->save();
         return redirect()->back()->with('success', 'status updated successfully.');
     }
     public function makePayment($paymentId)
@@ -874,14 +832,16 @@ class Controller extends BaseController
     public function review($id)
     {
         $review = Reviews::findOrFail($id);
-
+        $dorm = Dorm::find($review->dorm_id);
         // Make sure the logged-in user is the owner of the review
         if (auth()->id() !== $review->user_id) {
             abort(403, 'Unauthorized action.');
         }
-        if ($review->comments && $review->rating) {
-            abort(403, 'Review Already submitted');
-        }
+
+        Breadcrumbs::for('reviews.store', function (BreadcrumbTrail $trail) use ($dorm) {
+            $trail->parent('myReviews');
+            $trail->push('Review: ' . $dorm->name, route('reviews.store', $dorm->id));
+        });
 
         return view('reviews', compact('review'));
     }
@@ -889,13 +849,6 @@ class Controller extends BaseController
     public function submitReview(Request $request, $id)
     {
         $review = Reviews::findOrFail($id);
-
-        // Make sure the logged-in user is the owner of the review
-        if (auth()->id() !== $review->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        // Validate the input
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comments' => 'nullable|string|max:1000',
@@ -917,16 +870,53 @@ class Controller extends BaseController
         // Fetch pending reviews where the user hasn't submitted a rating yet
         $pendingReviews = Reviews::where('user_id', $userId)
             ->whereNull('rating')
-            ->with('room.dorm')
+            ->with('dorm')
             ->get();
 
         // Fetch past reviews where the user has already submitted a rating
         $pastReviews = Reviews::where('user_id', $userId)
             ->whereNotNull('rating')
-            ->with('room.dorm')
+            ->with('dorm')
             ->get();
 
         return view('user_reviews', compact('pendingReviews', 'pastReviews'));
     }
+
+    public function ownerDashboard()
+    {
+        $userid = auth()->id();
+
+        // Fetch all dorms owned by the user
+        $ownerDorms = Dorm::where('user_id', $userid)->get();
+
+        // Count total properties (dorms)
+        $totalProperties = $ownerDorms->count();
+
+        // Collect all tenants with 'active' or 'approved' status for the owner's dorms
+        $tenants = RentForm::whereIn('dorm_id', $ownerDorms->pluck('id'))
+            ->whereIn('status', ['active', 'approved'])
+            ->with('tenant')
+            ->get();
+
+        // Count the number of unique tenants
+        $totalTenants = $tenants->unique('tenant_id')->count();
+
+        // Collect all pending rent requests for the owner's dorms
+        $pendingRequests = RentForm::whereIn('dorm_id', $ownerDorms->pluck('id'))
+            ->where('status', 'pending')
+            ->get();
+
+        // Calculate total earnings for the current month from paid bills
+        $monthlyEarnings = Billing::whereHas('rentForm', function ($query) use ($ownerDorms) {
+            $query->whereIn('dorm_id', $ownerDorms->pluck('id'));
+        })
+            ->where('status', 'paid') // Assuming 'paid' is the status for paid bills
+            ->whereMonth('billing_date', now()->month)
+            ->sum('amount');
+
+        return view('owner-home', compact('totalProperties', 'totalTenants', 'pendingRequests', 'monthlyEarnings'));
+    }
+
+
 
 }

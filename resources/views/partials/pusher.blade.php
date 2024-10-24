@@ -49,11 +49,10 @@
                         console.log(data.rooms, data.room_id);
 
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
-                        redirectUrl = roomEditUrlTemplate.replace(':room_id', data.roomid);
                         fetchNotifications();
                         notificationContent = `
                
-              <div onclick='markNotificationAsRead("${linker}", "${redirectUrl}");' class="notification-content" id="notify">
+              <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="notify">
                 <i class="fas fa-user"></i> <span>${data.sender.name}</span>
                 <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
             </div>
@@ -63,10 +62,9 @@
                     else {
                         fetchNotifications();
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
-                        redirectUrl = roomEditUrlTemplate.replace(':room_id', data.roomid);
                         notificationContent = `
                
-              <div onclick='markNotificationAsRead("${linker}", "/user/rent-forms");' class="notification-content" id="">
+              <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="">
                 <i class="fas fa-user"></i> <span>${data.sender.name}</span>
                 <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
             </div>

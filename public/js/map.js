@@ -135,20 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function getAddress(latitude, longitude) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/get-coor", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                document.getElementById("address").value = xhr.responseText;
-            }
-        };
-        xhr.send("latitude=" + latitude + "&longitude=" + longitude);
-    }
-
     function showMap() {
         document.getElementById('map-overlay').style.display = 'flex';
         setTimeout(() => {
@@ -167,6 +153,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     initMap();
 });
+
+function getAddress(latitude, longitude) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/get-coor", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            document.getElementById("address").value = xhr.responseText;
+        }
+    };
+    xhr.send("latitude=" + latitude + "&longitude=" + longitude);
+}
+
 
 function getUserLocation() {
     if (navigator.geolocation) {

@@ -11,12 +11,10 @@ class RentForm extends Model
 
     protected $fillable = [
         'user_id',
-        'room_id',
         'dorm_id',
-        'term',
         'start_date',
         'end_date',
-        'duration',
+        'guest',
         'total_price',
         'status'
     ];
@@ -26,11 +24,6 @@ class RentForm extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function room()
-    {
-        return $this->belongsTo(Room::class);
-    }
-
     public function dorm()
     {
         return $this->belongsTo(Dorm::class);
@@ -38,6 +31,10 @@ class RentForm extends Model
     public function extendRequests()
     {
         return $this->hasMany(ExtendRequest::class);
+    }
+    public function tenant()
+    {
+        return $this->belongsTo(User::class, 'user_id');  // Assuming a tenant is a User
     }
 }
 

@@ -7,6 +7,9 @@ use App\Models\Favorite;
 use App\Models\PropertyView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Diglactic\Breadcrumbs\Breadcrumbs;
+use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
+use User;
 
 class DormController extends Controller
 {
@@ -18,9 +21,10 @@ class DormController extends Controller
             'address' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'price_day' => 'required|numeric',
             'price' => 'required|numeric',
-            'type' => 'required|string',
+            'guest_capacity' => 'required|numeric',
+            'beds' => 'required|numeric',
+            'bedrooms' => 'required|numeric',
             'image' => 'required|array|min:3|max:6',
             'image.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -42,11 +46,11 @@ class DormController extends Controller
             'address' => $request->address,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'rooms_available' => $request->rooms_available,
             'price' => $request->price,
-            'price_day' => $request->price_day,
+            'capacity' => $request->guest_capacity,
+            'beds' => $request->beds,
+            'bedroom' => $request->bedrooms,
             'image' => $imaging,
-            'type' => $request->type,
         ]);
 
 
@@ -94,8 +98,8 @@ class DormController extends Controller
         }
 
         // Order by latest posted dorms
-        $query->orderBy('created_at', 'desc')->withCount('favoritedBy');
-
+        $query->orderBy('created_at', 'desc')->withCount('favoritedBy')->where('availability', false)->where('archive', false)->where('flag', false);
+        $query->with('reviews');
         // Paginate results
         $dorms = $query->paginate(12);
 
@@ -116,6 +120,10 @@ class DormController extends Controller
     public function adddorm()
     {
         $dorm = '';
+        Breadcrumbs::for('adddorm', function (BreadcrumbTrail $trail) use ($dorm) {
+            $trail->parent('owner.Property');
+            $trail->push('list a property', route('adddorm'));
+        });
         return view('dorms.adddorm', compact('dorm'));
     }
     public function show($id)
@@ -123,7 +131,22 @@ class DormController extends Controller
 
         $dorm = Dorm::with('user')->findOrFail($id);
         $rooms = Room::where('dorm_id', $dorm->id)->count();
+
         $propertyReview = Dorm::with('reviews')->findOrFail($id);
+
+        if (auth()->user()->role == 'owner') {
+            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                $trail->parent('owner.Property');
+                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+            });
+        } elseif (auth()->user()->role == 'tenant') {
+            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                $trail->parent('home');
+                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+            });
+        } else {
+
+        }
         return view('dorms.posted', compact('dorm', 'rooms', 'propertyReview'));
     }
 
@@ -184,6 +207,33 @@ class DormController extends Controller
         return response()->json(['message' => 'Property view already exists.']);
     }
 
+    public function favourites()
+    {
+        $dorms = Dorm::whereHas('favourites', function ($query) {
+            $query->where('user_id', auth()->id())->where('availability', false)->where('archive', false)->where('flag', false);
+        })->get();
+
+        return view('user-fav', compact('dorms'));
+    }
+
+    public function ownerProperty(Request $request)
+    {
+        $userid = auth()->id();
+        $properties = Dorm::where('user_id', $userid)
+            ->where('archive', 0)
+            ->orderBy('created_at', 'desc')
+            ->withCount('favoritedBy')
+            ->paginate(12); // Adjust the number as needed
+
+        if ($request->ajax()) {
+            return response()->json([
+                'dorms' => view('partials.property-list', compact('properties'))->render(),
+                'pagination' => (string) $properties->links()
+            ]);
+        }
+
+        return view('manage-listing', compact('properties'));
+    }
 
 
 }

@@ -117,7 +117,7 @@
         width: 100%;
         padding: 25px;
         overflow: hidden;
-        width: 46rem;
+        /* width: 46rem; */
 
     }
 
@@ -126,18 +126,11 @@
         color: blue;
     }
 
-    .inquire {
-        width: 15%;
-        /* position: absolute; */
-        top: 8rem;
-        right: 25rem !important;
-        margin: 0 auto;
-    }
 
     .dorm-container {
         max-width: 1300px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 10px;
     }
 
     .carousel-thumbnails img:hover {
@@ -366,10 +359,123 @@
     .userComment img {
         border-radius: 120px;
     }
+
+    /* General container */
+    .booking-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Room details section */
+    .room-details {
+        width: 60%;
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+
+    .rating-star {
+        color: gold;
+        font-weight: bold;
+    }
+
+    .review-count {
+        color: gray;
+    }
+
+    .host-info {
+        margin-top: 20px;
+    }
+
+    .features {
+        margin-top: 15px;
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .features li {
+        margin-bottom: 10px;
+    }
+
+    /* Booking form section */
+    .booking-form {
+        width: 35%;
+        max-width: 400px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .price {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .btn-reserve {
+        width: 100%;
+        padding: 10px;
+        background-color: #ff385c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .price-details {
+        margin-top: 20px;
+    }
+
+    .price-details p {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .price-details hr {
+        margin: 10px 0;
+    }
 </style>
 @php
     // Decode the JSON string into an array
     $imag = json_decode($dorm->image, true);
+    $totalRating = 0;
+    $rating = 0;
+    foreach ($propertyReview->reviews as $review) {
+
+        $totalRating += $review->rating;
+
+    }
+    if ($propertyReview->reviews->count()) {
+        $rating = $totalRating / $propertyReview->reviews->count();
+    }
+
 @endphp
 <br>
 <br>
@@ -419,28 +525,84 @@
     </div>
     <br>
     <div class="info" style="margin-top: 30px; margin: 0 auto;">
-        <h1>{{ $dorm->name }}</h1>
-        <h4>{{ $dorm->description }}</h4>
-        <p><i class="fas fa-map-marker-alt"></i> {{ $dorm->address }}</p>
-        <p>Rooms Available: {{ $rooms }}</p>
-        <p>Price: ₱ <span>{{ $dorm->price }}</span></p>
-        <p>Posted by: {{ $dorm->user->name }}</p>
 
-        <!-- Room Display Button -->
-        <div class="buttoner">
-            <button type="button" onclick="showRooms()" class="btn btn-primary mt-3">View Rooms</button>
-            <br>
+        <div class="booking-container">
+            <div class="room-details">
+                <h1>{{ $dorm->name }}</h1>
+                <h4>{{ $dorm->description }}</h4>
+                <p><i class="fas fa-map-marker-alt"></i> {{ $dorm->address }}</p>
+                <p><strong>{{$dorm->capacity}}</strong> Capacity · <strong>{{$dorm->bedroom}}</strong> bedrooms ·
+                    <strong>{{$dorm->beds}}</strong> beds
+                </p>
 
-            <!-- Chat Box -->
-            @if($dorm->user->id == Auth::id())
-                <button id="manage-rooms-btn" class="btn btn-primary">Manage Rooms</button>
-            @else
-                <button onclick="location.href='{{ route('dorm.inquire', $dorm->id) }}'" id="manage-rooms-btn"
-                    class="btn btn-primary"><i class="fas fa-envelope"></i>
-                    Inquire </button>
+                <!-- Review and Rating Section -->
+                <div class="rating">
+                    @if ($rating >= 4)
+                        <span class="badge">Guest favorite</span>
+                    @endif
 
+                    <span class="rating-star">★ {{$rating}}</span>
+                    <span class="review-count">({{$propertyReview->reviews->count()}} reviews)</span>
+                </div>
+
+                <!-- Host Information -->
+                <div class="host-info">
+                    <p>Posted by {{ $dorm->user->name }}</p>
+                    <p><strong>Date Posted</strong> ·
+                        @if ($dorm->created_at->diffInYears() < 1)
+                            {{ $dorm->created_at->diffForHumans() }}
+                        @else
+                            {{ $dorm->created_at->format('Y F') }}
+                        @endif
+                    </p>
+
+                </div>
+
+            </div>
+            @if (Auth::id() != $dorm->user_id)
+                <div class="booking-form">
+                    <div class="price">
+                        <span>{{ $dorm->price }}</span> / day
+                    </div>
+
+                    <form id="bookingForm" action="{{route('rentForm.store')}}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="checkin">Check-in</label>
+                            <input type="date" id="checkin" name="start_date">
+                        </div>
+                        <input type="hidden" name="dorm_id" id="" value="{{$dorm->id}}">
+                        <input type="hidden" name="total_price" id="tprice">
+                        <div class="form-group">
+                            <label for="checkout">Check-out</label>
+                            <input type="date" id="checkout" name="end_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="guests">Guests</label>
+                            <select id="guests" name="guests">
+                                @for ($i = 1; $i <= $dorm->capacity; $i++)
+                                    <option value="{{ $i }}">{{ $i }} guest{{ $i > 1 ? 's' : '' }}</option>
+                                @endfor
+
+
+                                <!-- Add more options -->
+                            </select>
+                        </div>
+
+                        <button type="submit" id="Book" class="btn-reserve">Book now</button>
+                    </form>
+
+                    <!-- Pricing Details -->
+                    <div class="price-details">
+                        <p>₱{{ $dorm->price }} x <span id="nights">0</span> nights</p>
+                        <hr>
+                        <p>Total <span id="total-price">₱0</span></p>
+                    </div>
+                </div>
             @endif
+
         </div>
+        <!-- Room Display Button -->
     </div>
     <br>
     <div id="map" style="width: 100%; height: 500px;"></div>
@@ -536,76 +698,55 @@
 
 <br><br>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const propertyId = {{ $dorm->id }};
+    @if (Auth::id() != $dorm->user_id)
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkinInput = document.getElementById("checkin");
+            const checkoutInput = document.getElementById("checkout");
+            const pricePerNight = {{ $dorm->price }};
+            const cleaningFee = 1500;
 
-        const url = `{{ route('dorm.view', ':dormId') }}`.replace(':dormId', propertyId);
+            // Set today's date as minimum for check-in
+            const today = new Date().toISOString().split("T")[0];
+            checkinInput.setAttribute("min", today);
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json',
+            // Update the checkout min date once checkin is selected
+            checkinInput.addEventListener("change", function () {
+                const checkinDate = checkinInput.value;
+                checkoutInput.setAttribute("min", checkinDate);
+                calculateTotal();  // Recalculate the total price
+            });
+
+            // Calculate the total price when check-out is selected
+            checkoutInput.addEventListener("change", function () {
+                calculateTotal();
+            });
+
+            function calculateTotal() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                // Ensure checkout is after checkin
+                if (checkoutDate > checkinDate) {
+                    const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Days between checkin and checkout
+
+                    // Update the nights and total price display
+                    document.getElementById("nights").textContent = nights;
+                    const totalPrice = nights * pricePerNight;
+                    document.getElementById("total-price").textContent = `₱${totalPrice.toLocaleString()}`;
+                    document.getElementById("tprice").value = totalPrice;
+                    const finalTotal = totalPrice + cleaningFee;
+                    document.getElementById("final-total").textContent = `₱${finalTotal.toLocaleString()}`;
+                } else {
+                    // Reset the totals if dates are invalid
+                    document.getElementById("nights").textContent = 0;
+                    document.getElementById("total-price").textContent = "₱0";
+                    document.getElementById("final-total").textContent = "₱0";
+                }
             }
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.message); // Optionally show a message
-            })
-            .catch(error => console.error('Error:', error));
-    });
-
-    function showRooms() {
-        // Create the overlay element
-        var overlay = document.createElement("div");
-        overlay.id = "overlay";
-
-        // Create the room grid container
-        var roomGrid = document.createElement("div");
-        roomGrid.id = "room-grid";
-
-        @if(isset($dorm->rooms))
-            @foreach($dorm->rooms as $room)
-
-                var roomDiv = document.createElement("div");
-                roomDiv.classList.add("room");
-                roomDiv.innerHTML = `
-                                                                                                                                                <p>Room Number: {{ $room->number }}</p>
-                                                                                                                                                <img class='pic' src="{{ $room->images ? asset('storage/room_images/' . $room->images) : 'https://via.placeholder.com/120x120'}}" alt="Room Image"
-                                                                                                                                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px;">
-                                                                                                                                                <p>Capacity: {{ $room->capacity }}</p>
-                                                                                                                                                <p>Price: {{ $room->price }}</p>
-                                                                                                                                                <p>{{ $room->status ? 'Available' : 'Not Available' }}</p>
-                                                                                                                                                `;
-
-                @if ($dorm->user_id == auth::id())
-                    roomDiv.innerHTML += `
-                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'edit']) }}'">Edit</button>
-                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>
-                                                                                                                                                                                                                        <button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'delete']) }}'">Delete</button>
-                                                                                                                                                                                                                        `;
-                @elseif($room->status)
-                    roomDiv.innerHTML += `<button onclick="window.location.href='{{ route('room.edit', ['id' => $room->id, 'action' => 'view']) }}'">View</button>`;
-                @endif
-
-                roomGrid.appendChild(roomDiv);
-
-            @endforeach
-        @endif
-
-        // Close button
-        var closeButton = document.createElement("button");
-        closeButton.id = "close-button";
-        closeButton.innerHTML = "&times;";
-        overlay.appendChild(closeButton);
-        overlay.appendChild(roomGrid);
-
-        document.body.appendChild(overlay);
-
-        closeButton.addEventListener("click", function () {
-            overlay.remove();
         });
-    }
+    @endif
+
 
     // Function to jump to a specific carousel slide
     function jumpToSlide(index) {

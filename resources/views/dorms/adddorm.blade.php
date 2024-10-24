@@ -171,6 +171,28 @@
     .close-map-btn:hover {
         background-color: darkred;
     }
+
+    .horizontal-inputs {
+        display: flex;
+        gap: 20px;
+        /* Adjust space between inputs */
+    }
+
+    .horizontal-inputs>div {
+        flex: 1;
+        /* Ensure equal width for each input */
+    }
+
+    .horizontal-inputs label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .horizontal-inputs input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
 </style>
 <div>
     <h1>{{ $dorm ? 'Edit Property' : 'List Property' }}</h1>
@@ -183,7 +205,7 @@
         @endif
 
         <div class="form-group">
-            <label for="name">Name</label>
+            <label for="name">Property name</label>
             <input type="text" id="name" name="name" value="{{ $dorm->name ?? old('name') }}" required>
         </div>
 
@@ -201,14 +223,25 @@
                 required>
         </div>
 
-        <div class="form-group">
-            <label for="type">Type</label>
-            <select id="type" name="type">
-                <option value="" disabled {{ old('type') == '' ? 'selected' : '' }}>Select Type</option>
-                <option value="dorm" {{ (old('type') == 'dorm' || (isset($dorm) && is_object($dorm) && $dorm->type == 'dorm')) ? 'selected' : '' }}>Dorm</option>
-                <option value="apartment" {{ (old('type') == 'apartment' || (isset($dorm) && is_object($dorm) && $dorm->type == 'apartment')) ? 'selected' : '' }}>Apartment</option>
-            </select>
+        <div class="form-group horizontal-inputs">
+            <div>
+                <label for="guest_capacity">Guest Capacity</label>
+                <input type="number" id="guest_capacity" name="guest_capacity"
+                    value="{{ $dorm->capacity ?? old('guest_capacity') }}" required>
+            </div>
+
+            <div>
+                <label for="bedrooms">Bedrooms</label>
+                <input type="number" id="bedrooms" name="bedrooms" value="{{ $dorm->bedroom ?? old('bedrooms') }}"
+                    required>
+            </div>
+
+            <div>
+                <label for="beds">Beds</label>
+                <input type="number" id="beds" name="beds" value="{{ $dorm->beds ?? old('beds') }}" required>
+            </div>
         </div>
+
 
         <div class="form-group">
             <input type="hidden" id="latitude" name="latitude" value="{{ $dorm->latitude ?? old('latitude') }}"
@@ -220,10 +253,6 @@
                 required>
         </div>
 
-        <div class="form-group">
-            <label for="price">Price / day</label>
-            <input type="text" id="price_day" name="price_day" value="{{ $dorm->price ?? old('price') }}" required>
-        </div>
 
         <div class="form-group">
             <label for="price">Price / month</label>
@@ -263,8 +292,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                                                                                                                                                                {!! json_encode($dorm) !!}
-                                                                                                                                                                            </script>
+                                                                                                                                                                                                        {!! json_encode($dorm) !!}
+                                                                                                                                                                                                    </script>
                 @endif
 
             </div>

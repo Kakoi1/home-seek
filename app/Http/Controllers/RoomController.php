@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Dorm;
 use App\Models\Room;
 use App\Models\Message;
+use App\Models\Reviews;
 use App\Models\RentForm;
 use App\Models\Roomchat;
 use App\Events\MessageEvent;
@@ -133,6 +134,7 @@ class RoomController extends Controller
                 'rooms' => $roomId,
                 'roomid' => $roomchatId,
                 'action' => 'inquire',
+                'route' => route('managetenant')
             ]));
 
         } else {
@@ -299,63 +301,33 @@ class RoomController extends Controller
     public function storeBook(Request $request)
     {
         $userId = Auth::id();
-        $dorm = Dorm::findOrFail($request->dorm_id);
-
-        // Validate common fields
         $request->validate([
-            'start_date' => 'required|date',
-            'term' => 'required|in:short_term,long_term',
-            'total_price' => 'required',
+            'dorm_id' => 'required',
+            'start_date' => 'required|date|after:today',
+            'end_date' => 'required|date|after:start_date',
+            'guests' => 'required|integer|min:1',
+            'total_price' => 'required|numeric|min:0',
         ]);
-
-        // Validate fields specific to short-term and long-term rentals
-        if ($request->term == 'short_term') {
-            $request->validate([
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
-
-            // Ensure the end date is within 30 days from the start date
-            $startDate = new \DateTime($request->start_date);
-            $endDate = $request->end_date;
-            $maxEndDate = (clone $startDate)->modify('+30 days');
-
-            if ($endDate > $maxEndDate) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'The end date must be within 30 days for short-term rentals.'
-                ], 422);
-            }
-
-            $duration = null;  // No duration for short-term rentals
-        } else if ($request->term == 'long_term') {
-            $request->validate([
-                'duration' => 'required|integer|min:1',
-            ]);
-
-            $endDate = $request->durdate;  // No end date for long-term rentals
-            $duration = $request->duration;  // Duration in months for long-term rentals
-        }
-
-        // Create the RentForm
-        $rentForm = RentForm::create([
-            'user_id' => $userId,
-            'room_id' => $request->room_id,
-            'dorm_id' => $request->dorm_id,
-            'term' => $request->term,
-            'start_date' => $request->start_date,
-            'end_date' => $endDate, // For short-term rentals
-            'duration' => $duration, // For long-term rentals
-            'total_price' => $request->total_price,
-            'status' => 'pending', // Initial status
+        $dorm = Dorm::findOrFail($request->dorm_id);
+        // Save the booking
+        RentForm::create([
+            'user_id' => $userId, // Assuming the user is logged in
+            'dorm_id' => $request->input('dorm_id'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'guest' => $request->input('guests'),
+            'total_price' => $request->input('total_price'),
+            'status' => 'pending' // Default status
         ]);
 
         // Create a notification for the room owner
         $notification = Notification::create([
             'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
-            'data' => 'A new rent form has been submitted for your room.',
+            'data' => 'Someone Booked your Property',
             'read' => false,
-            'room_id' => $request->room_id,
+            'route' => route('managetenant'),
+            'dorm_id' => $request->dorm_id,
             'sender_id' => $userId,
         ]);
 
@@ -365,8 +337,9 @@ class RoomController extends Controller
             'message' => $notification->data,
             'sender' => $userId,
             'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
+            'roomid' => $notification->dorm_id,
             'action' => 'rent',
+            'route' => route('managetenant')
         ]));
 
         return redirect()->route('dorms.posted', $dorm->id);
@@ -430,22 +403,54 @@ class RoomController extends Controller
     {
         // Fetch the rent form by ID and ensure it belongs to the authenticated user
         $rentForm = RentForm::where('id', $id)
+            ->with('dorm')
             ->where('user_id', auth()->id())
             ->where('status', '!=', 'cancelled') // Make sure it's not already cancelled
             ->firstOrFail();
+        $message = '';
+        $data = '';
+
+        if ($request->cancelReason == 'Other') {
+            $request->cancelReason = $request->otherReasonText;
+        }
 
         // Check if the form is not approved yet
         if ($rentForm->status === 'approved') {
-            return redirect()->back()->withErrors('You cannot cancel an already approved form.');
+            $rentForm->note = $request->cancelReason;
+            $message = 'Cancellation Request has Sent';
+            $data = 'Booking Cancellation request';
+        } else {
+
+            $rentForm->status = 'cancelled';
+            $rentForm->note = $request->cancelReason;
+            $message = 'Booking form cancelled successfully';
+            $data = 'Booking Cancelled';
         }
-
-        // Update the status to 'cancelled'
-        $rentForm->status = 'cancelled';
-        $rentForm->note = $request->cancelReason;
-        $rentForm->save();
-
         // Redirect back with success message
-        return redirect()->back()->with('success', 'Rent form cancelled successfully.');
+
+
+        $notification = Notification::create([
+            'user_id' => $rentForm->dorm->user_id, // Assuming the owner is linked to the room
+            'type' => 'Booking Cancellation',
+            'data' => $data,
+            'read' => false,
+            'route' => route('managetenant'),
+            'dorm_id' => $rentForm->dorm_id,
+            'sender_id' => auth()->id(),
+        ]);
+
+        // Trigger the notification event
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => $notification->sender_id,
+            'rooms' => $notification->id,
+            'roomid' => $notification->dorm_id,
+            'action' => 'rent',
+            'route' => route('managetenant')
+        ]));
+        $rentForm->save();
+        return redirect()->back()->with('success', $message);
     }
 
     public function checkForm(Request $request)
@@ -479,30 +484,33 @@ class RoomController extends Controller
 
         $rentForm = RentForm::findOrFail($id);
         $rentForm->status = $request->input('status');
-        $rentForm->save();
+        $dorm = Dorm::find($rentForm->dorm_id);
 
         if ($request->input('status') == 'approved') {
-            $room = Room::findOrFail($rentForm->room_id);
-            $room->status = false;
 
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
-                'data' => 'Rent Form approved',
+                'data' => 'Booking Form approved',
                 'read' => false,
-                'room_id' => $rentForm->room_id,
+                'route' => route('user.rentForms'),
+                'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+            $dorm->availability = true;
+            $dorm->save();
 
         } else if ($request->input('status') == 'rejected') {
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
-                'data' => 'Rent Form rejected',
+                'data' => 'Booking Form rejected',
                 'read' => false,
-                'room_id' => $rentForm->room_id,
+                'route' => route('user.rentForms'),
+                'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+            $rentForm->note = $request->rejection_reason;
         }
 
         event(new NotificationEvent([
@@ -510,9 +518,11 @@ class RoomController extends Controller
             'message' => $notification->data,
             'sender' => $userId,
             'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
+            'roomid' => $notification->dorm_id,
             'action' => 'response',
+            'route' => route('user.rentForms')
         ]));
+        $rentForm->save();
         return redirect()->back()->with('success', 'Rent form status updated successfully.');
     }
     public function addRooms(Request $request, $id)
@@ -563,5 +573,66 @@ class RoomController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function leaveRent(Request $request, $id)
+    {
 
+        $rentForm = RentForm::findOrFail($id);
+        $rentForm->status = 'completed';
+        $rentForm->note = $request->input('leaveReason');
+        $rentForm->save();
+
+        Reviews::create([
+            'user_id' => $rentForm->user_id,
+            'room_id' => $rentForm->room_id,
+            'dorm_id' => $rentForm->room->dorm_id,  // Assuming property_id refers to the dorm
+            'rating' => null,  // Leave the rating as null
+            'comments' => null,  // Leave the comments as null
+        ]);
+
+        $notification = Notification::create([
+            'user_id' => $rentForm->dorm->user_id, // Assuming the owner is linked to the room
+            'type' => 'review',
+            'data' => $rentForm->user->name . ' has left From your Property',
+            'read' => false,
+            'dorm_id' => $rentForm->dorm_id,
+            'sender_id' => $rentForm->user_id
+        ]);
+
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => $rentForm->user_id,
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'rent',
+            'route' => route('managetenant')
+        ]));
+
+        return redirect()->back();
+    }
+    public function notifyTenant($id)
+    {
+        $rentForm = RentForm::findOrFail($id);
+
+        $notification = Notification::create([
+            'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
+            'type' => 'Bills',
+            'data' => 'Owner is Notifying you for payment',
+            'read' => false,
+            'route' => route('user.rentForms'),
+            'dorm_id' => $rentForm->dorm_id,
+            'sender_id' => Auth::id()
+        ]);
+
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => $rentForm->user_id,
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'Bills',
+            'route' => route('user.rentForms')
+        ]));
+        return redirect()->back();
+    }
 }

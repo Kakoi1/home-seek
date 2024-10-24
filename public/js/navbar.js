@@ -132,12 +132,9 @@ function fetchNotifications() {
                     notificationItem.classList.add('dropdown-item', 'notification-item');
 
                     // Set href based on room_id and notification type
-                    if (notification.room_id) {
-                        const roomEditUrlTemplate = window.routes.roomEditUrl;
-                        notificationItem.href = roomEditUrlTemplate.replace(':room_id', notification.room_id);
-                    } else {
-                        notificationItem.href = window.routes.homeUrl;
-                    }
+            
+                        notificationItem.href = notification.route;
+                    
 
                     notificationItem.setAttribute('data-id', notification.id);
 
@@ -159,6 +156,8 @@ function fetchNotifications() {
 
                     const senderElement = document.createElement('p');
                     senderElement.textContent = `Sent by: ${notification.sender.name}`;
+                    console.log(notification.sender.name);
+                    
                     senderElement.style.margin = 0;
                     senderElement.style.fontSize = 'smaller';
 

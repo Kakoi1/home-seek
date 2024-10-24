@@ -8,7 +8,8 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('billing:process')->daily();
+Schedule::command('billing:process')->everyFiveSeconds();
 Schedule::command('rentform:complete-and-create-reviews')->everyFiveSeconds();
+Schedule::command('app:notify-check-in')->everyFiveSeconds();
 
 // Schedule::command('app:test-job')->everySecond();

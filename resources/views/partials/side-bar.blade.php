@@ -8,45 +8,20 @@
     @endif
     <ul class="nav-links">
         @guest
-            @if (request()->routeIs('index'))
-                <li><a class="link-item" href="/"><i class='bx bx-home-alt'></i><span class="links_name">Home</span></a></li>
-                <li><a class="link-item" href="#services"><i class='bx bx-headphone'></i><span
-                            class="links_name">Services</span></a></li>
-                <li><a class="link-item" href="#portfolio"><i class='bx bx-briefcase-alt-2'></i><span
-                            class="links_name">Overview</span></a></li>
-                <li><a class="link-item" href="#about"><i class='bx bx-message-alt-check'></i><span class="links_name">About
-                            us</span></a></li>
-                <li><a class="link-item" href="#contact"><i class='bx bx-phone-call'></i><span class="links_name">Contact
-                            Us</span></a></li>
-                <br>
 
-            @endif
         @else
             @if (auth()->user()->role == 'owner')
                 <!-- Owner------------------------ -->
                 <li>
-                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">
+                    <a href="{{ route('owner.Dashboard') }}"
+                        class="{{ request()->routeIs('owner.Dashboard') ? 'active' : '' }}">
                         <i class='bx bx-grid-alt'></i>
                         <span class="links_name">Dashboard</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{{ route('user.rentForms') }}" class="{{ request()->routeIs('user.rentForms') ? 'active' : '' }}">
-                        <i class='bx bxs-book'></i>
-                        <span class="links_name">Booked Property</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('home') }}" class="{{ request()->routeIs('') ? 'active' : '' }}">
-                        <i class='bx bxs-heart-square'></i>
-                        <span class="links_name">Favourites</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('home') }}" class="{{ request()->routeIs('') ? 'active' : '' }}">
+                    <a href="{{ route('owner.Property') }}" class="{{ request()->routeIs('owner.Property') ? 'active' : '' }}">
                         <i class='bx bx-list-check'></i>
                         <span class="links_name">Manage Listings</span>
                     </a>
@@ -58,6 +33,7 @@
                         <span class="links_name">Manage Tenants</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="{{ route('myReviews') }}" class="{{ request()->routeIs('myReviews') ? 'active' : '' }}">
                         <i class="fa-solid fa-comments"></i>
@@ -113,7 +89,7 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('home') }}" class="{{ request()->routeIs('') ? 'active' : '' }}">
+                    <a href="{{ route('favourites') }}" class="{{ request()->routeIs('favourites') ? 'active' : '' }}">
                         <i class='bx bxs-heart-square'></i>
                         <span class="links_name">Favourites</span>
                     </a>

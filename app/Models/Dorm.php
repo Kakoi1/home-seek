@@ -6,16 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dorm extends Model
 {
-    protected $fillable = ['name', 'description', 'address', 'latitude', 'longitude', 'image', 'price', 'price_day', 'user_id', 'archive', 'type'];
+    protected $fillable = ['name', 'description', 'address', 'latitude', 'longitude', 'image', 'price', 'capacity', 'beds', 'bedroom', 'user_id', 'archive', 'availability', 'flag'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function messages()
-    {
-        return $this->hasMany(Message::class);
     }
     protected $casts = [
         'image' => 'array',
@@ -40,6 +35,14 @@ class Dorm extends Model
     public function reviews()
     {
         return $this->hasMany(Reviews::class);
+    }
+    public function favourites()
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'dorm_id', 'user_id');
+    }
+    public function tenants()
+    {
+        return $this->hasMany(RentForm::class);  // Adjust if tenants are stored differently
     }
 }
 

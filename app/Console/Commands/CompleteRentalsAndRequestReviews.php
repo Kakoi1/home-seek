@@ -3,9 +3,10 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use App\Models\Dorm;
 use App\Models\Reviews;
-use App\Models\RentForm;
 
+use App\Models\RentForm;
 use App\Models\Notification;
 use Illuminate\Console\Command;
 
@@ -32,10 +33,13 @@ class CompleteRentalsAndRequestReviews extends Command
             ->get();
 
         foreach ($rentForms as $rentForm) {
+            $dorm = Dorm::find($rentForm->dorm_id);
             // Mark rentform as completed
             $rentForm->status = 'completed';
             $rentForm->save();
 
+            $dorm->availability = true;
+            $dorm->save();
             // Create an empty review with null fields for rating and comments
             Reviews::create([
                 'user_id' => $rentForm->user_id,
@@ -50,7 +54,7 @@ class CompleteRentalsAndRequestReviews extends Command
                 'type' => 'review',
                 'data' => 'Your Rent has Ended',
                 'read' => false,
-                'room_id' => $rentForm->room_id,
+                'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => null
             ]);
 

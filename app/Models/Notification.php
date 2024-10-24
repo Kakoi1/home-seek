@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    protected $fillable = ['user_id', 'type', 'data', 'read', 'room_id', 'sender_id', 'created_at'];
+    protected $fillable = ['user_id', 'type', 'data', 'read', 'route', 'dorm_id', 'sender_id', 'created_at'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function room()
+    public function dorm()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Dorm::class);
     }
 
     public function sender()

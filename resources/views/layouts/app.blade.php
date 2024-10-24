@@ -1,3 +1,6 @@
+@php
+    use Diglactic\Breadcrumbs\Breadcrumbs;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,38 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        @if (request()->routeIs('login.view') || request()->routeIs('register.view'))
-            .sidebar {
-                width: 60px;
-            }
 
-            .sidebar.active {
-                width: 220px;
-            }
-
-            .home-section {
-                width: calc(100% - 60px);
-                left: 60px;
-            }
-
-            .sidebar.active~.home-section {
-                /* width: calc(100% - 220px); */
-                overflow: hidden;
-                left: 220px;
-            }
-
-            .home-section .user-nav {
-                width: calc(100% - 60px);
-                left: 60px;
-            }
-
-            .sidebar.active~.home-section nav {
-                width: calc(100% - 220px);
-                left: 220px;
-            }
-
-
-        @endif
     </style>
     <script src="{{ asset('js/map.js') }}"></script>
     <script src="{{asset('js/navbar.js')}}"></script>
@@ -61,10 +33,24 @@
 </head>
 
 <body>
+    @if (Auth::user())
+        @include('partials.pusher')
+        @include('partials.side-bar')
 
-    @include('partials.pusher')
+    @else
+        <style>
+            .home-section .user-nav {
+                width: calc(100% - 0px);
+                left: 0px;
+            }
 
-    @include('partials.side-bar')
+            .home-section {
+                min-height: 100vh;
+                width: calc(100% - 0px);
+                left: 0px;
+            }
+        </style>
+    @endif
 
 
 
@@ -93,7 +79,14 @@
 
     <section class="home-section">
         @include('partials.admin-nav')
-        <br><br>
+        @if (Auth::user())
+            <br><br>
+            @if (!request()->routeIs('owner.Dashboard') && !request()->routeIs('home') && !request()->routeIs('admin.Dashboard'))
+                {{ Breadcrumbs::render() }}
+            @endif
+
+            <br><br>
+        @endif
         @yield('content')
     </section>
 

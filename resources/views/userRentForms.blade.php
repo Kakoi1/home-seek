@@ -239,33 +239,6 @@
         margin-top: 10px;
     }
 
-    .btn.leave-button {
-        background-color: red;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-
-    .btn.submit-leave-button {
-        background-color: green;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-
-    .btn.extend-button {
-        background-color: blue;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-
     .rent-section {
         padding: 20px;
         background-color: #f9f9f9;
@@ -353,8 +326,8 @@
 
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab tab-active" id="currentTab">Current Rented Property</div>
-        <div class="tab" id="historyTab">Rent History</div>
+        <div class="tab tab-active" id="currentTab">Current Booked Property</div>
+        <div class="tab" id="historyTab">Booking History</div>
         <div class="tab" id="billingTab">Billing
             @if ($billingCount != 0)
                 <span class="badge badge-danger">{{$billingCount}}</span>
@@ -366,104 +339,106 @@
     <!-- Current Rented Property -->
     <div id="currentSection" class="rent-section rent-section-active">
         @if ($currentRent)
+                @php
+                    $today = \Carbon\Carbon::now();
+                    $date1 = date_create($currentRent->created_at->format("F j, Y"));
+                    $date2 = date_create($today->format("F j, Y"));
+                    $remainingTime = date_diff($date1, $date2);
+                @endphp
+                <div class="rent-form-card">
+                    <h3>{{ $currentRent->dorm->name }}</h3>
+                    <p>Check in Date: {{ $currentRent->start_date->format('F j, Y') }}</p>
+                    <p>Check out Date: {{ $currentRent->end_date->format('F j, Y') }}</p>
+                    <p>Status: <strong>{{ ucfirst($currentRent->status) }}</strong></p>
+                    @if ($currentRent->status == 'active')
+                        <p>Days before check out: <strong>{{ $remainingTime->format("%a days")}}</strong></p>
+                    @endif
+
+                    <!-- Expandable Section -->
+                    <div class="expandable-section">
+                        <button id="expandButton" class="expand-button">
+                            <span>Details</span>
+                            <span class="arrow">▼</span>
+                        </button>
+                        <div id="extraDetails" class="extra-details" style="display: none;">
+                            @php
+                                $date1 = date_create($currentRent->start_date);
+                                $date2 = date_create($currentRent->end_date);
+                                $diff = date_diff($date1, $date2);
+                            @endphp
+                            <p>Price per Day: ₱{{ $currentRent->dorm->price }}</p>
+                            <p>Total days: {{ $diff->format("%a days") }}</p>
 
 
-            <div class="rent-form-card">
-                <h3>Room #{{ $currentRent->room->number }} - {{ $currentRent->room->dorm->name }}</h3>
-                <p>Start Date: {{ $currentRent->start_date->format('F j, Y') }}</p>
-                <p>End Date: {{ $currentRent->end_date->format('F j, Y') }}</p>
-                <p>Rent term: {{ $currentRent->term == 'short_term' ? 'Short Term' : 'Long Term' }}</p>
-                <p>Status: <strong>{{ ucfirst($currentRent->status) }}</strong></p>
-                @if ($checkExtend != null)
-                    <p><strong>Rent Extended</strong></p>
-                @endif
-
-
-                <!-- Expandable Section -->
-                <div class="expandable-section">
-                    <button id="expandButton" class="expand-button">
-                        <span>Details</span>
-                        <span class="arrow">▼</span>
-                    </button>
-                    <div id="extraDetails" class="extra-details" style="display: none;">
-                        @if ($currentRent->term == 'short_term')
-                                        @php
-                                            $date1 = date_create($currentRent->start_date);
-                                            $date2 = date_create($currentRent->end_date);
-                                            $diff = date_diff($date1, $date2);
-                                        @endphp
-                                        <p>Price per Day: ₱{{ $currentRent->room->dorm->price_day }}</p>
-                                        <p>Total days: {{ $diff->format("%a days") }}</p>
-                        @else
-                            <p>Price per Month: ₱{{ $currentRent->room->dorm->price }}</p>
-                            <p>Duration in Months: {{ $currentRent->duration }}</p>
-                        @endif
-
-                        <p>Total Price: <strong>₱{{ $currentRent->total_price }}</strong></p>
+                            <p>Total Price: <strong>₱{{$currentRent->total_price }}</strong></p>
+                        </div>
                     </div>
-                </div>
 
-                @if ($currentRent->status == 'pending')
-                    <div class="btn-div">
-                        <!-- Cancel Button with SweetAlert Confirmation -->
-                        <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
-
-
-                        <a href="{{ route('rentForm.create', [$currentRent->room_id, $currentRent->id]) }}"
-                            class="btn edit-button">Edit</a>
-                    </div>
-                @elseif ($currentRent->status == 'active')
-                        @php
-                            $today = \Carbon\Carbon::now();
-                            $remainingTime = $today->diffInDays($currentRent->end_date);
-                        @endphp
-                        @if (!$pendingBills)
+                    @if ($currentRent->status == 'pending')
+                        <div class="btn-div">
+                            <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
+                            <a href="{{ route('rentForm.create', [$currentRent->dorm_id, $currentRent->id]) }}"
+                                class="btn edit-button">Edit</a>
+                        </div>
+                    @elseif($currentRent->status == 'approved')
+                        @if ($remainingTime->format("%a") <= 2)
                             <div class="btn-div">
-                                <button id="leaveButton" class="btn cancel-button">Leave Rent</button>
-
-
-                                @if (($currentRent->term == 'short_term' && $remainingTime <= 3) || ($currentRent->term == 'long_term' && $remainingTime <= 30))
-                                    @if ($extend && $extend->status == 'pending')
-                                        <a href="javascript:void(0);" onclick="showExtendAlert()">You already submitted an Extend Request</a>
-                                    @else
-                                        <a href="{{ route('rentForm.extend', [$currentRent->id]) }}" class="btn edit-button">Extend Stay</a>
-                                    @endif
-
-
+                                @if ($currentRent->note == '')
+                                    <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
+                                @else
+                                    <p><strong>You requested a Canellation</strong></p>
                                 @endif
+
                             </div>
                         @endif
 
 
-                @endif
-            </div>
-            <!-- Leave Reason Modal -->
-            <div id="leaveReasonModal" class="cancel-modal">
-                <div class="modal-content">
-                    <span class="close-button">&times;</span>
-                    <h3>Why do you want to leave?</h3>
-                    <form action="{{ route('rentForm.leave', $currentRent->id) }}" method="POST">
-                        @csrf
-                        <textarea name="leaveReason" id="leaveReason" rows="4" required
-                            placeholder="Please provide your reason..."></textarea>
-                        <button type="submit" class="btn submit-leave-button">Submit</button>
-                    </form>
+                    @endif
                 </div>
-            </div>
+                <div id="cancelReasonModal" class="cancel-modal">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h3>Why are you canceling this booking?</h3>
+                        <form action="{{ route('rentForm.cancel', $currentRent->id) }}" method="POST">
+                            @csrf
 
-            <div id="cancelReasonModal" class="cancel-modal">
-                <div class="modal-content">
-                    <span class="close-button">&times;</span>
-                    <h3>Why are you canceling this booking?</h3>
-                    <form action="{{ route('rentForm.cancel', $currentRent->id) }}" method="POST">
-                        @csrf
-                        <textarea name="cancelReason" id="cancelReason" rows="4" required
-                            placeholder="Please provide your reason..."></textarea>
-                        <br>
-                        <button type="submit" class="btn submit-cancel-button">Submit Cancellation</button>
-                    </form>
+                            <!-- Predefined reasons as radio buttons -->
+                            <div class="cancel-reasons">
+                                <label>
+                                    <input type="radio" name="cancelReason" value="Change of plans" required> Change of plans
+                                </label><br>
+                                <label>
+                                    <input type="radio" name="cancelReason" value="Found a better place" required> Found a
+                                    better place
+                                </label><br>
+                                <label>
+                                    <input type="radio" name="cancelReason" value="Personal reasons" required> Personal reasons
+                                </label><br>
+                                <label>
+                                    <input type="radio" name="cancelReason" value="Financial reasons" required> Financial
+                                    reasons
+                                </label><br>
+                                <label>
+                                    <input type="radio" name="cancelReason" value="Issue with booking process" required> Issue
+                                    with booking process
+                                </label><br>
+
+                                <!-- Other reason with text input -->
+                                <label>
+                                    <input type="radio" id="otherReasonRadio" name="cancelReason" value="Other" required> Other
+                                </label>
+                                <br>
+                                <textarea name="otherReasonText" id="otherReasonText" rows="3" style="display:none;"
+                                    placeholder="Please provide more details..."></textarea>
+                            </div>
+
+                            <br>
+                            <button type="submit" class="btn submit-cancel-button">Submit Cancellation</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
+
+
         @else
             <div style="text-align: center; margin: 20px; ">
                 <img src="{{ asset('images/living-room.svg') }}" alt="No properties"
@@ -488,10 +463,13 @@
             <div class="rent-history">
                 @foreach ($rentHistory as $rent)
                     <div class="rent-form-card">
-                        <h3>Room #{{ $rent->room->number }} - {{ $rent->room->dorm->name }}</h3>
+                        <h3>{{ $rent->dorm->name }}</h3>
                         <p>Start Date: {{ $rent->start_date->format('F j, Y') }}</p>
                         <p>End Date: {{ $rent->end_date->format('F j, Y') }}</p>
                         <p>Status: <strong>{{ ucfirst($rent->status) }}</strong></p>
+                        @if ($rent->status == 'rejected' || $rent->status == 'cancelled')
+                            <p>Reason: <strong>{{$rent->note}}</strong></p>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -520,8 +498,8 @@
                     @else
                         @foreach ($pendingPayments as $payment)
                             <div class="payment-card">
-                                <strong>Room #{{ $payment->rentForm->room->number }}</strong>
-                                <p>{{ $payment->rentForm->room->dorm->name }}</p>
+                                <strong>Room #{{ $payment->rentForm->dorm->name }}</strong>
+                                <p>{{ $payment->rentForm->dorm->name }}</p>
                                 <p>₱{{ $payment->amount }}</p>
                                 <p class="due-date">Due Date: {{ $payment->billing_date }}</p>
                                 <!-- Payment form -->
@@ -545,8 +523,7 @@
                     @else
                         @foreach ($paidPayments as $payment)
                             <div class="payment-card">
-                                <strong>Room #{{ $payment->rentForm->room->number }}</strong>
-                                <p>{{ $payment->rentForm->room->dorm->name }}</p>
+                                <strong>{{ $payment->rentForm->dorm->name }}</strong>
                                 <p>₱{{ $payment->amount }}</p>
                                 <p class="paid-date">Paid on: {{ $payment->paid_at }}</p>
                             </div>
@@ -564,41 +541,7 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const leaveButton = document.getElementById('leaveButton');
-        const leaveReasonModal = document.getElementById('leaveReasonModal');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const closeButton = document.querySelector('.close-button');
 
-        // SweetAlert Confirmation for Leaving Rent
-        leaveButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you really want to leave the rent?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, leave!',
-                cancelButtonText: 'No, stay'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    leaveReasonModal.style.display = 'block';
-                    modalOverlay.style.display = 'block';
-                }
-            });
-        });
-
-        closeButton.addEventListener('click', function () {
-            leaveReasonModal.style.display = 'none';
-            modalOverlay.style.display = 'none';
-        });
-
-        modalOverlay.addEventListener('click', function () {
-            leaveReasonModal.style.display = 'none';
-            modalOverlay.style.display = 'none';
-        });
-
-    });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -850,5 +793,17 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.tab-pane.active').style.display = 'block';
     });
+
+    document.querySelectorAll('input[name="cancelReason"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const otherReasonText = document.getElementById('otherReasonText');
+            if (this.value === 'Other') {
+                otherReasonText.style.display = 'block'; // Show the text area for "Other"
+            } else {
+                otherReasonText.style.display = 'none';  // Hide the text area for other reasons
+            }
+        });
+    });
+
 </script>
 @endsection

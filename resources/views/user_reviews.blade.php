@@ -20,8 +20,8 @@
                 <div class="review-list">
                     @foreach($pendingReviews as $review)
                         <div class="review-item">
-                            <h5>{{ $review->room->dorm->name }} - Room {{ $review->room->number }}</h5>
-                            <p>Located at: {{ $review->room->dorm->address }}</p>
+                            <h5>{{ $review->dorm->name }}</h5>
+                            <p>Located at: {{ $review->dorm->address }}</p>
                             <a href="{{ route('reviews.store', $review->id) }}" class="btn">Leave a Review</a>
                         </div>
                     @endforeach
@@ -38,8 +38,8 @@
                 <div class="review-list">
                     @foreach($pastReviews as $review)
                         <div class="review-item">
-                            <h5>{{ $review->room->dorm->name }} - Room {{ $review->room->number }}</h5>
-                            <p>Located at: {{ $review->room->dorm->address }}</p>
+                            <h5>{{ $review->dorm->name }}</h5>
+                            <p>Located at: {{ $review->dorm->address }}</p>
                             <div class="rating">
                                 Rating:
                                 @for($i = 1; $i <= 5; $i++)

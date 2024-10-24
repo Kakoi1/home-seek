@@ -65,6 +65,7 @@ class AdminController extends Controller
                 'rooms' => $notification->id,
                 'roomid' => $notification->room_id,
                 'action' => 'verify',
+                'route' => route('home')
             ]));
 
             return response()->json(['message' => 'Verification approved successfully.']);
@@ -101,6 +102,7 @@ class AdminController extends Controller
                 'rooms' => $notification->id,
                 'roomid' => $notification->room_id,
                 'action' => 'verify',
+                'route' => route('home')
             ]));
 
             return response()->json(['message' => 'Verification rejected successfully.']);

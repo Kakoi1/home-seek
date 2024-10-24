@@ -63,6 +63,7 @@ class NotificationEvent implements ShouldBroadcastNow
             'roomid' => $this->data['roomid'],
             'action' => $this->data['action'],
             'rooms' => $this->data['rooms'],
+            'route' => $this->data['route']
         ];
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reviews extends Model
 {
-    protected $fillable = ['user_id', 'room_id', 'dorm_id', 'rating', 'comments'];
+    protected $fillable = ['user_id', 'dorm_id', 'rating', 'comments'];
 
     // Define relationships
     public function user()
@@ -15,9 +15,9 @@ class Reviews extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function room()
+    public function dorm()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Dorm::class);
     }
 
     public function property()

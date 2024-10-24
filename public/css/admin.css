@@ -444,13 +444,10 @@
     .user-nav .sidebar-button .dashboard,
     .user-nav .profile-details .admin_name,
     .user-nav .profile-details i {
-          display: none;
+          display: flex ;
       }
 
-      .home-section .user-nav .profile-details {
-          height: 50px;
-          min-width: 40px;
-      }
+
 
       .home-content .sales-boxes .sales-details {
           width: 560px;
