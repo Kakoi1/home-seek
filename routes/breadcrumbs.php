@@ -18,10 +18,18 @@ Breadcrumbs::for('admin.dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('admin.dashboard'));
 });
 
+Breadcrumbs::for('admin.manageuser', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Manage Users', route('admin.manageuser'));
+});
 
 Breadcrumbs::for('owner.Property', function (BreadcrumbTrail $trail) {
     $trail->parent('owner.Dashboard');
     $trail->push('Properties', route('owner.Property'));
+});
+Breadcrumbs::for('owner.history', function (BreadcrumbTrail $trail) {
+    $trail->parent('managetenant');
+    $trail->push('History', route('owner.history'));
 });
 Breadcrumbs::for('managetenant', function (BreadcrumbTrail $trail) {
     $trail->parent('owner.Dashboard');

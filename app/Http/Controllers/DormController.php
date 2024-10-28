@@ -15,6 +15,7 @@ class DormController extends Controller
 {
     public function saveDorm(Request $request)
     {
+        // Validate form input
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -29,16 +30,18 @@ class DormController extends Controller
             'image.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // Process and store images
         $imagePaths = [];
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $image) {
                 $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/dorm_pictures', $filename);
-                $imagePaths[] = $filename;
+                $path = $image->storeAs('dorm_pictures', $filename, 'gcs');
+                $imagePaths[] = $path;
             }
         }
         $imaging = json_encode($imagePaths);
 
+        // Create dorm record
         $dorm = Dorm::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
@@ -53,10 +56,10 @@ class DormController extends Controller
             'image' => $imaging,
         ]);
 
-
-
+        // Redirect with success message
         return redirect()->back()->with('success', 'Dorm added successfully!');
     }
+
     public function showDorms()
     {
         $dorms = Dorm::all();
@@ -234,7 +237,10 @@ class DormController extends Controller
 
         return view('manage-listing', compact('properties'));
     }
+    public function featuredList()
+    {
 
+    }
 
 }
 

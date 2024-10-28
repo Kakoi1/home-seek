@@ -10,7 +10,8 @@
                 @if (is_array($images) && !empty($images))
                     <!-- Carousel container -->
                     <div class="image-carousel" id="carousel-{{ $dorm->id }}" data-images="{{ json_encode($images) }}"
-                        data-current-image="0" style="background-image: url('{{ asset('storage/dorm_pictures/' . $images[0]) }}');">
+                        data-current-image="0"
+                        style="background-image: url('{{ asset('https://storage.googleapis.com/homeseek-profile-image/' . $images[0]) }}');">
                         <div class="overlay-content">
 
                         </div>

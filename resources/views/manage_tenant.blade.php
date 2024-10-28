@@ -201,6 +201,10 @@
 </style>
 <div class="container">
     <!-- Tabs Navigation -->
+    <div class="btn">
+        <i class="fa-solid fa-clock-rotate-left"></i><a href="{{route('owner.history')}}">History</a>
+    </div>
+    <br>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="tenants-tab" data-toggle="tab" href="#tenants" role="tab"

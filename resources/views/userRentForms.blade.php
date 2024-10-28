@@ -498,8 +498,7 @@
                     @else
                         @foreach ($pendingPayments as $payment)
                             <div class="payment-card">
-                                <strong>Room #{{ $payment->rentForm->dorm->name }}</strong>
-                                <p>{{ $payment->rentForm->dorm->name }}</p>
+                                <strong>{{ $payment->rentForm->dorm->name }}</strong>
                                 <p>₱{{ $payment->amount }}</p>
                                 <p class="due-date">Due Date: {{ $payment->billing_date }}</p>
                                 <!-- Payment form -->
@@ -708,8 +707,7 @@
             } else {
                 payments.forEach(function (payment) {
                     content += '<div class="payment-card">' +
-                        '<strong>Room #' + payment.rent_form.room.number + '</strong>' +
-                        '<p>' + payment.rent_form.room.dorm.name + '</p>' +
+                        '<strong>Room #' + payment.rent_form.dorm.name + '</strong>' +
                         '<p>₱' + payment.amount + '</p>' +
                         '<p class="due-date">Due Date: ' + payment.billing_date + '</p>' +
                         '<form class="payment-form" data-payment-id="' + payment.id + '" method="POST" action="/make-payment/' + payment.id + '">' +
@@ -758,8 +756,7 @@
             } else {
                 payments.forEach(function (payment) {
                     content += '<div class="payment-card">' +
-                        '<strong>Room #' + payment.rent_form.room.number + '</strong>' +
-                        '<p>' + payment.rent_form.room.dorm.name + '</p>' +
+                        '<strong>Room #' + payment.rent_form.dorm.name + '</strong>' +
                         '<p>₱' + payment.amount + '</p>' +
                         '<p class="paid-date">Paid on: ' + payment.paid_at + '</p>' +
                         '</div>';

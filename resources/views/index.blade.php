@@ -3,7 +3,35 @@
 @section('title', 'HomeSeek')
 
 @section('content')
-<style></style>
+<style>
+    .carousel {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        overflow: hidden;
+    }
+
+    .carousel-item {
+        display: none;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        /* Smooth transition for fading in/out */
+    }
+
+    .carousel-item.active {
+        display: block;
+        opacity: 1;
+        /* Fully visible when active */
+    }
+
+    .card img {
+        object-fit: cover !important;
+        border-radius: 15px !important;
+        /* height:  !important; */
+        height: 300px !important;
+    }
+</style>
 <section class="homepage" id="home">
     <div class="content">
         <div class="text">
@@ -102,75 +130,56 @@
             </li> -->
     </ul>
 </section>
-
 <section class="listings d-flex justify-content-center" id="listings">
-    <h2>Featured Listings</h2>
+    <h2>Top Rated Listings</h2>
     <div class="row listing">
-
-
         <ul class="cards">
-            <li class="card">
-                <img src="images/living room.jpg" alt="John Doe">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Cozy Studio Apartment</h4>
-                        <p>Studio apartment with modern furnishings and city views.</p>
-                    </div>
-                </div>
-            </li>
-            <li class="card">
-                <img src="images/student dorm.jpg" alt="Jane Smith">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Student Dorm</h4>
-                        <p>
-                            Very close to universities and colleges in Minglanilla. Has common
-                            facilities.</p>
-                    </div>
-                </div>
-            </li>
-            <li class="card">
-                <img src="images/house-with-garden.jpg" alt="Mark Johnson">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Family House with Garden</h4>
-                        <p>Suitable for families. It has multiple bedrooms, large garden, and parking space.</p>
-                    </div>
-                </div>
-            </li>
-            <li class="card">
-                <img src="images/houseclosetomall.jpg" alt="Sarah Brown">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Convenient Locations</h4>
-                        <p>Close to shopping centers and restaurants. And Easy access to public transportation.</p>
-                    </div>
-                </div>
-            </li>
-            <li class="card">
-                <img src="images/houseemployes.jpg" alt="Sarah Brown">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Apartment for Employees</h4>
-                        <p>Convenient locations close to business districts.
-                            High-speed internet and utilities included.</p>
-                    </div>
-                </div>
-            </li>
-            <li class="card">
-                <img src="images/beach.jpg" alt="Sarah Brown">
-                <div class="overlay">
-                    <div class="text">
-                        <h4>Vacation Rentals</h4>
-                        <p>Comfortable apartments ideal for short-term stays. Close to tourist attractions and
-                            beaches.
-                        </p>
-                    </div>
-                </div>
-            </li>
+            @foreach ($topRatedDorms as $dorm)
+                        @php
+                            $images = json_decode($dorm->image, true);
+                        @endphp
+                        <li class="card">
+                            <div id="carousel-{{ $dorm->id }}" class="carousel slide" data-ride="carousel" data-interval="3000">
+                                <div class="carousel-inner">
+                                    @if (is_array($images) && !empty($images))
+                                        @foreach($images as $key => $image)
+                                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                <img class="d-block w-100" src="{{ asset('storage/dorm_pictures/' . $image) }}"
+                                                    alt="{{ $dorm->name }}">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="carousel-item active">
+                                            <p>No images available.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Optional: Add controls (prev/next) -->
+                                <a class="carousel-control-prev" href="#carousel-{{ $dorm->id }}" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carousel-{{ $dorm->id }}" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+
+                            <div class="overlay">
+                                <div class="text">
+                                    <h4>{{ $dorm->name }}</h4>
+                                    <p>{{ $dorm->address }}</p>
+                                    <p>Rating: {{ number_format($dorm->reviews_avg_rating, 1) }} / 5</p>
+                                </div>
+                            </div>
+                        </li>
+            @endforeach
         </ul>
     </div>
 </section>
+>
+
 
 <section class="about d-flex justify-content-center" id="about">
     <h2>About Us</h2>
@@ -235,3 +244,14 @@
 
 </section>
 @endsection
+<script>
+    $('.carousel').on('slide.bs.carousel', function () {
+        $('.carousel-item').css('opacity', 0); // Set opacity to 0 when sliding
+    });
+
+    $('.carousel').on('slid.bs.carousel', function () {
+        $('.carousel-item.active').css('opacity', 1); // Fade in the active item
+    });
+
+
+</script>

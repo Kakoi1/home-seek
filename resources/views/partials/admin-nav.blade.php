@@ -198,7 +198,7 @@
             </div>
 
             <div class="profile-details">
-                <img src="{{ $user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
+                <img src="{{ $user->profile_picture ? asset('https://storage.googleapis.com/homeseek-profile-image/' . $user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
                     alt="Profile Picture" width="40px" height="40px">
                 <span class="admin_name">{{ $user->name }}</span>
                 <i class='bx bx-chevron-down'></i>

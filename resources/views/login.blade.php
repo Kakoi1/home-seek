@@ -154,8 +154,8 @@
                 <h2>Sign In</h2>
                 <div class="input-box">
                     <span class="icon"><i class='bx bxs-envelope'></i></span>
-                    <input type="text" required name='logname' placeholder=" ">
-                    <label>Username</label>
+                    <input type="email" required name='logname' placeholder=" ">
+                    <label>Email</label>
                 </div>
                 <div class="input-box">
                     <span class="icon"><i class='bx bxs-lock'></i></span>

@@ -33,7 +33,7 @@
 </head>
 
 <body>
-    @if (Auth::user())
+    @if (Auth::user() && !request()->routeIs('index') && !request()->routeIs('dds') && !Auth::user()->email_verified_at == null)
         @include('partials.pusher')
         @include('partials.side-bar')
 
@@ -81,8 +81,9 @@
         @include('partials.admin-nav')
         @if (Auth::user())
             <br><br>
-            @if (!request()->routeIs('owner.Dashboard') && !request()->routeIs('home') && !request()->routeIs('admin.Dashboard'))
+            @if (!request()->routeIs('owner.Dashboard') && !request()->routeIs('dds') && !request()->routeIs('home') && !request()->routeIs('admin.Dashboard') && !request()->routeIs('index') && !Auth::user()->email_verified_at == null)
                 {{ Breadcrumbs::render() }}
+
             @endif
 
             <br><br>
@@ -94,7 +95,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             @if ($errors->any())
-                alert('There were some errors with your submission. Please check the fields and try again.');
+                // alert('There were some errors with your submission. Please check the fields and try again.');
             @endif
         });
     </script>

@@ -27,7 +27,7 @@ function updateCarousel(carousel, dormId, currentImage) {
     const images = JSON.parse(carousel.getAttribute('data-images'));
 
     // Update the background image
-    carousel.style.backgroundImage = 'url(/storage/dorm_pictures/' + images[currentImage] + ')';
+    carousel.style.backgroundImage = 'url(https://storage.googleapis.com/homeseek-profile-image/' + images[currentImage] + ')';
     carousel.setAttribute('data-current-image', currentImage);
 
     // Update dots
@@ -46,7 +46,7 @@ function updateCarousel(carousel, dormId, currentImage) {
 
     setTimeout(() => {
         // Update the background image after fade-out
-        carousel.style.backgroundImage = 'url(/storage/dorm_pictures/' + images[currentImage] + ')';
+        carousel.style.backgroundImage = 'url(https://storage.googleapis.com/homeseek-profile-image/' + images[currentImage] + ')';
         carousel.setAttribute('data-current-image', currentImage);
 
         // After changing the image, add fade-in effect

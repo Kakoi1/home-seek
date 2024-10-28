@@ -30,6 +30,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
+use Str;
 
 class Controller extends BaseController
 {
@@ -117,15 +118,19 @@ class Controller extends BaseController
     {
         $user = User::find($request->user_id);
 
-        if ($user && $user->email_verification_code == $request->verification_code) {
-            $user->email_verified_at = now();
-            $user->email_verification_code = null;
-            $user->save();
+        if ($user) {
+            if ($user->email_verification_code == $request->verification_code) {
+                $user->email_verified_at = now();
+                $user->email_verification_code = null;
+                $user->save();
+                Auth::login($user);
 
-            Auth::login($user);
-            return redirect('/home')->with('success', 'Email verified successfully!');
+                return redirect('/home')->with('success', 'Email verified successfully!');
+            } else {
+                return redirect()->back()->withErrors('Invalid verification code.');
+            }
         } else {
-            return redirect()->back()->withErrors('Invalid verification code.');
+            return redirect()->back()->withErrors('User not found.');
         }
     }
 
@@ -134,11 +139,11 @@ class Controller extends BaseController
         $user = User::find($data);
 
         $verificationCode = rand(100000, 999999);
-
-        $user->email_verification_code = $verificationCode;
-        $user->save();
-
-        Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+        if ($user->email_verification_code == null) {
+            $user->email_verification_code = $verificationCode;
+            $user->save();
+            Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+        }
 
         return view('emails.email_verfy', ['user' => $user]);
 
@@ -176,7 +181,7 @@ class Controller extends BaseController
 
     public function register(Request $request)
     {
-        // Validate form data
+        // Validate form data with conditional fields for owner
         $fields = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('users', 'name')],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
@@ -184,34 +189,55 @@ class Controller extends BaseController
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'address' => 'required|string',
+            'valid_id' => $request->role === 'owner' ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable',
+            'business_permit' => $request->role === 'owner' ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable',
         ]);
 
         // Hash the password
         $fields['password'] = bcrypt($fields['password']);
 
-        // Handle profile picture upload
+        // Handle profile picture upload to Google Cloud Storage
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/profile_pictures', $filename);
-            $fields['profile_picture'] = $filename;
+            $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('profile_picture', $filename, 'gcs');
+            $fields['profile_picture'] = $path;
         }
 
-        // Unset password confirmation before creating the user
-        unset($fields['password_confirmation']);
         // Create the user
-        $data = User::create($fields);
+        $user = User::create($fields);
 
+        // Additional steps if the user is an owner
+        if ($request->role === 'owner') {
+            $verify = new Verifications();
+            $verify->user_id = $user->id;
 
+            // Upload valid_id if provided
+            if ($request->hasFile('valid_id')) {
+                $validIdFile = $request->file('valid_id');
+                $validIdFilename = Str::random(25) . '.' . $validIdFile->getClientOriginalExtension();
+                $validIdPath = $validIdFile->storeAs('owner_documents/valid_id', $validIdFilename, 'gcs');
+                $verify->id_document = $validIdPath;
+            }
+
+            // Upload business_permit if provided
+            if ($request->hasFile('business_permit')) {
+                $businessPermitFile = $request->file('business_permit');
+                $businessPermitFilename = Str::random(25) . '.' . $businessPermitFile->getClientOriginalExtension();
+                $businessPermitPath = $businessPermitFile->storeAs('owner_documents/business_permit', $businessPermitFilename, 'gcs');
+                $verify->business_permit = $businessPermitPath;
+            }
+
+            $verify->save();
+        }
 
         // Redirect the user to a verification page
         return response()->json([
-            'data' => $data,
+            'data' => $user,
             'message' => 'A Verification code was sent to your Gmail',
         ], 200);
-
     }
 
 
@@ -228,7 +254,8 @@ class Controller extends BaseController
             'logpassword' => 'required|string',
         ]);
 
-        if (auth()->attempt(['username' => $fields['logname'], 'password' => $fields['logpassword']])) {
+        if (auth()->attempt(['email' => $fields['logname'], 'password' => $fields['logpassword']])) {
+
             $request->session()->regenerate();
 
             if (auth()->user()->email_verified_at == null) {
@@ -365,15 +392,16 @@ class Controller extends BaseController
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'price' => 'required|numeric',
-            'capacity' => 'required|numeric',
+            'guest_capacity' => 'required|numeric',
             'beds' => 'required|numeric',
-            'bedroom' => 'required|numeric',
-            'image' => 'nullable|array',
+            'bedrooms' => 'required|numeric',
+            'image' => 'nullable|array|min:3|max:6',
             'image.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'existing_images' => 'array',
             'existing_images.*' => 'string',
         ]);
 
+        // Prepare existing and new images
         $existingImages = $request->input('existing_images', []);
         $newImageCount = $request->hasFile('image') ? count($request->file('image')) : 0;
 
@@ -381,33 +409,28 @@ class Controller extends BaseController
             return redirect()->back()->withErrors(['image' => 'You must have between 3 and 6 images in total.']);
         }
 
-        // Handle new images
+        // Collect new image paths
         $newImagePaths = [];
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $image) {
                 $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/dorm_pictures', $filename);
-                $newImagePaths[] = $filename;
+                $path = $image->storeAs('dorm_pictures', $filename, 'gcs');
+                $newImagePaths[] = $path;
             }
         }
 
-        // Get existing images from the form
-        $existingImages = $request->input('existing_images', []);
-
-        // Combine new images with existing ones
+        // Merge existing and new images
         $allImages = array_merge($existingImages, $newImagePaths);
 
-        // Remove images that are not present in the updated list
-        $currentImages = json_decode($dorm->image, true);
-        if (!empty($currentImages)) {
-            foreach ($currentImages as $currentImage) {
-                if (!in_array($currentImage, $allImages)) {
-                    Storage::delete('public/dorm_pictures/' . $currentImage);
-                }
+        // Remove any old images not included in the update
+        $currentImages = json_decode($dorm->image, true) ?? [];
+        foreach ($currentImages as $currentImage) {
+            if (!in_array($currentImage, $allImages)) {
+                Storage::disk('gcs')->delete($currentImage);  // Delete only missing images
             }
         }
 
-        // Update dorm information
+        // Update dorm record with all new data
         $dorm->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -911,7 +934,7 @@ class Controller extends BaseController
             $query->whereIn('dorm_id', $ownerDorms->pluck('id'));
         })
             ->where('status', 'paid') // Assuming 'paid' is the status for paid bills
-            ->whereMonth('billing_date', now()->month)
+            ->whereMonth('paid_at', now()->month)
             ->sum('amount');
 
         return view('owner-home', compact('totalProperties', 'totalTenants', 'pendingRequests', 'monthlyEarnings'));

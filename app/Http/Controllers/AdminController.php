@@ -53,6 +53,7 @@ class AdminController extends Controller
                 'type' => 'verification',
                 'data' => 'Your Verification is Approved',
                 'read' => false,
+                'route' => route('home'),
                 'room_id' => null,
                 'sender_id' => auth::id(),
             ]);

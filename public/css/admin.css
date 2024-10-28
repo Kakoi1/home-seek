@@ -902,7 +902,7 @@
     right: -10px; /* Adjust position if needed */
 }
 /* Modal styling */
-.modal {
+.modals {
     display: none; /* Hidden by default */
     position: fixed;
     z-index: 9999; /* Sit on top */
@@ -915,12 +915,13 @@
 }
 
 /* Modal Content/Box */
-.modal-content {
+.modal-contents {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 0 auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 70% !important; 
+    overflow: auto;/* Could be more or less, depending on screen size */
     /* max-width: 600px; */
 }
 

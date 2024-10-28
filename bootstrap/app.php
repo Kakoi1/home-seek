@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'email.verified' => \App\Http\Middleware\CheckEmailVerified::class,
+            'owner.verified' => \App\Http\Middleware\CheckOwnerVerify::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -266,7 +266,7 @@
                 @if($dorm && $dorm->image)
                     @foreach(json_decode($dorm->image) as $index => $images)
                         <div class="image-preview" id="image-preview-{{ $index }}">
-                            <img src="{{ asset('storage/dorm_pictures/' . $images) }}">
+                            <img src="{{ asset('https://storage.googleapis.com/homeseek-profile-image/' . $images) }}">
                             <button type="button" onclick="removeExistingImage({{ $index }})">X</button>
                             <input type="hidden" name="existing_images[]" value="{{ $images }}">
                         </div>
@@ -292,8 +292,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                                                                                                                                                                                        {!! json_encode($dorm) !!}
-                                                                                                                                                                                                    </script>
+                                                                                                                                                                                                            {!! json_encode($dorm) !!}
+                                                                                                                                                                                                        </script>
                 @endif
 
             </div>

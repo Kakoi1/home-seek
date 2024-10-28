@@ -464,7 +464,6 @@
 </style>
 @php
     // Decode the JSON string into an array
-    $imag = json_decode($dorm->image, true);
     $totalRating = 0;
     $rating = 0;
     foreach ($propertyReview->reviews as $review) {
@@ -492,7 +491,9 @@
             @if (is_array($imag) && !empty($imag))
                 @foreach($imag as $key => $image)
                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                        <img class="d-block w-80" src="{{ asset('storage/dorm_pictures/' . $image) }}" alt="{{ $dorm->name }}"
+                        <img class="d-block w-80"
+                            src="{{ asset('https://storage.googleapis.com/homeseek-profile-image/' . $image) }}"
+                            alt="{{ $dorm->name }}"
                             style="height: 500px; object-fit: cover; border-radius: 15px; margin: 0 auto;">
                     </div>
                 @endforeach
@@ -517,9 +518,10 @@
         <!-- Thumbnail indicators -->
         <div class="carousel-thumbnails" style="display: flex; justify-content: center; margin-top: 15px;">
             @foreach($imag as $key => $image)
-                <img src="{{ asset('storage/dorm_pictures/' . $image) }}" alt="{{ $dorm->name }}"
+                <img src="{{ asset('https://storage.googleapis.com/homeseek-profile-image/' . $image) }}"
+                    alt="{{ $dorm->name }}"
                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px; cursor: pointer; margin-right: 10px;"
-                    onclick="openModal('{{ asset('storage/dorm_pictures/' . $image) }}', '{{ $dorm->name }}')">
+                    onclick="openModal('{{ asset(path: 'https://storage.googleapis.com/homeseek-profile-image/' . $image) }}', '{{ $dorm->name }}')">
             @endforeach
         </div>
     </div>
@@ -619,7 +621,7 @@
             @foreach($propertyReview->reviews as $review)
                 <div class="review-item" style="border-bottom: 1px solid #ddd; padding: 10px 0;">
                     <div class="userComment">
-                        <img src="{{ $review->user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
+                        <img src="{{ $review->user->profile_picture ? asset('https://storage.googleapis.com/homeseek-profile-image/' . $review->user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
                             alt="" width="35px" height="35px">
                         <h4>{{ $review->user->name }} <span
                                 style="font-size: 14px; color: #888;">({{ $review->created_at->format('M d, Y') }})</span></h4>

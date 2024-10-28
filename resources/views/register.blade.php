@@ -20,7 +20,7 @@
         padding: 50px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
+        max-width: 900px;
         width: 100%;
     }
 
@@ -66,7 +66,9 @@
     /* Input section */
     .input-section {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        gap: 20px;
+        justify-content: space-evenly;
     }
 
     .input-box {
@@ -77,7 +79,7 @@
     .input-box input,
     .input-box select {
         width: 100%;
-        padding: 15px 45px;
+        padding: 15px 45px 15px 10px;
         font-size: 16px;
         border: 2px solid #ddd;
         border-radius: 8px;
@@ -106,6 +108,10 @@
     .submit-section {
         text-align: center;
         margin-top: 30px;
+    }
+
+    input[type="file"] {
+        padding: 15px 0px 15px 10px !important;
     }
 
     .btn-owner {
@@ -140,10 +146,16 @@
         text-decoration: underline;
     }
 
+
     /* Responsive design */
-    @media (max-width: 500px) {
+    @media (max-width: 700px) {
         .containers.register {
             padding: 25px;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
         }
 
         #profile-pic-preview {
@@ -151,8 +163,105 @@
             height: 150px;
         }
     }
+
+    /* Updated wrapper-radio styling */
+    .wrapper-radio {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .wrapper-radio .option {
+        background: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 2px solid lightgrey;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .wrapper-radio .option .dot {
+        height: 20px;
+        width: 20px;
+        background: #d9d9d9;
+        border-radius: 50%;
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .wrapper-radio .option .dot::before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 12px;
+        height: 12px;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+        border-radius: 50%;
+        opacity: 0;
+        transform: scale(1.5);
+        transition: all 0.3s ease;
+    }
+
+    #option-1:checked~.option-1,
+    #option-2:checked~.option-2 {
+        border-color: white;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+    }
+
+    #option-1:checked~.option-1 .dot,
+    #option-2:checked~.option-2 .dot {
+        background: #fff;
+    }
+
+    #option-1:checked~.option-1 .dot::before,
+    #option-2:checked~.option-2 .dot::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .wrapper-radio .option span {
+        font-size: 16px;
+        color: #808080;
+    }
+
+    #option-1:checked~.option-1 span,
+    #option-2:checked~.option-2 span {
+        color: #fff;
+    }
+
+    .info-icon {
+        display: inline-block;
+        margin-left: 5px;
+        color: #007bff;
+        /* Change color as needed */
+        cursor: pointer;
+        position: relative;
+    }
+
+    .info-icon:hover::after {
+        content: attr(title);
+        position: absolute;
+        left: 0;
+        bottom: 20px;
+        /* Adjust as needed */
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        font-size: 12px;
+        /* Adjust font size as needed */
+    }
 </style>
 <br>
+<br><br>
 <div class="register-wrapper">
     <div class="containers register">
         <div class="logreg-box">
@@ -172,41 +281,79 @@
 
                 <!-- Input fields -->
                 <div class="input-section">
-                    <div class="input-box">
-                        <input type="text" id="name" name="name" required>
-                        <label for="name">Full Name</label>
-                    </div>
+                    <div>
+                        <div class="input-box">
+                            <input type="text" id="name" name="name" required>
+                            <label for="name">Full Name</label>
+                        </div>
 
-                    <div class="input-box">
-                        <input type="email" id="email" name="email" required>
-                        <label for="email">Email Address</label>
-                    </div>
+                        <div class="input-box">
+                            <input type="email" id="email" name="email" required>
+                            <label for="email">Email Address</label>
+                        </div>
 
-                    <div class="input-box">
-                        <input type="text" id="username" name="username" required>
-                        <label for="username">Username</label>
-                    </div>
+                        <div class="input-box">
+                            <input type="text" id="username" name="username" required>
+                            <label for="username">Username</label>
+                        </div>
 
-                    <div class="input-box">
-                        <input type="password" id="password" name="password" required>
-                        <label for="password">Password</label>
-                    </div>
 
-                    <div class="input-box">
-                        <input type="password" id="password_confirmation" name="password_confirmation" required>
-                        <label for="password_confirmation">Confirm Password</label>
-                    </div>
 
-                    <div class="input-box">
-                        <input type="text" id="phone" name="phone">
-                        <label for="phone">Phone Number</label>
-                    </div>
+                        <div class="input-box">
+                            <input type="text" id="phone" name="phone">
+                            <label for="phone">Phone Number</label>
+                        </div>
 
-                    <div class="input-box">
-                        <input type="text" id="address" name="address">
-                        <label for="address">Address</label>
+                        <div class="input-box">
+                            <input type="text" id="address" name="address">
+                            <label for="address">Address</label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-b">
+                            <label for="wrapper">Sign up as:</label>
+                            <span class="info-icon"
+                                title="Choose 'Tenant' if you are renting a property, or 'Owner' if you own a property.">?</span>
+                            <div class="wrapper-radio" id="wrapper">
+                                <input type="radio" hidden name="role" id="option-1" value="tenant"
+                                    onclick="toggleOwnerInputs()">
+                                <input type="radio" hidden name="role" id="option-2" value="owner"
+                                    onclick="toggleOwnerInputs()">
+                                <label for="option-1" class="option option-1">
+                                    <div class="dot"></div>
+                                    <span>Tenant</span>
+                                </label>
+                                <label for="option-2" class="option option-2">
+                                    <div class="dot"></div>
+                                    <span>Owner</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="owner-inputs" style="display: none;">
+                            <div class="input-box">
+                                <label for="valid-id">Upload Valid ID:</label>
+                                <input type="file" id="valid-id" name="valid_id" accept="image/*">
+                            </div>
+                            <div class="input-box">
+                                <label for="business-permit">Upload Business Permit:</label>
+                                <input type="file" id="business-permit" name="business_permit" accept="image/*">
+                            </div>
+                            <br>
+                        </div>
+
+                        <div class="input-box">
+                            <input type="password" id="password" name="password" required>
+                            <label for="password">Password</label>
+                        </div>
+
+                        <div class="input-box">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required>
+                            <label for="password_confirmation">Confirm Password</label>
+                        </div>
                     </div>
                 </div>
+
 
                 <!-- Register button -->
                 <div class="submit-section">
@@ -284,6 +431,13 @@
             });
         }
     });
+</script>
+<script>
+    function toggleOwnerInputs() {
+        const isOwner = document.getElementById('option-2').checked;
+        const ownerInputs = document.getElementById('owner-inputs');
+        ownerInputs.style.display = isOwner ? 'block' : 'none';
+    }
 </script>
 @endsection
 <!-- Styles -->
