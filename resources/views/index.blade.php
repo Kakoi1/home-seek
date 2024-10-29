@@ -144,7 +144,8 @@
                                     @if (is_array($images) && !empty($images))
                                         @foreach($images as $key => $image)
                                             <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                <img class="d-block w-100" src="{{ asset('storage/dorm_pictures/' . $image) }}"
+                                                <img class="d-block w-100"
+                                                    src="{{ asset('https://storage.googleapis.com/homeseek-profile-image/' . $image) }}"
                                                     alt="{{ $dorm->name }}">
                                             </div>
                                         @endforeach
