@@ -1,278 +1,174 @@
 @extends('layouts.app')
 
-@section('title', 'Rent Form')
-
 @section('content')
 
 <style>
-    /* Styles */
-    .rent-form-container {
-        width: 50%;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f7f7f7;
+    /* Center the form on the page */
+    .container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    /* Form styling */
+    form {
+        /* background-color: #ffffff; */
+        /* border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
     }
 
-    .rent-form-container h2 {
-        text-align: center;
-        margin-bottom: 20px;
+    /* Form title styling */
+    h2 {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.5rem;
     }
 
-    .rent-form-container label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
+    /* Form group styling */
+    .form-group {
+        margin-bottom: 1.5rem;
     }
 
-    .rent-form-container input[type="text"],
-    .rent-form-container input[type="number"],
-    .rent-form-container input[type="date"],
-    .rent-form-container select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
+    /* Label styling */
+    .form-label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    /* Input and select styling */
+    .form-control {
+        border-radius: 4px;
         border: 1px solid #ccc;
+        /* padding: 0.75rem; */
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
         border-radius: 4px;
     }
 
-    .rent-form-container button {
-        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        width: 100%;
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
     }
 
-    .rent-form-container button:hover {
-        background-color: #218838;
-    }
-
-    .rent-form-container .back-link {
-        display: block;
+    /* Text center for the button container */
+    .text-center {
         text-align: center;
-        margin-top: 20px;
     }
 
-    .term-selection {
-        margin-bottom: 20px;
-    }
-
-    .term-selection label {
-        margin-right: 15px;
-    }
-
-    .price-info {
-        /* margin-bottom: 20px; */
-        /* text-align: center; */
-        font-weight: bold;
-        display: flex;
-        justify-content: flex-start;
-    }
-
-    .infoCont {
-        font-weight: bold;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 0px 0px 0px 20px;
-        border: solid .5px;
-        border-radius: 8px;
-        line-height: 2;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Add subtle hover effect for form fields */
+    .form-control:hover {
+        background-color: #f9f9f9;
     }
 </style>
-<br><br>
-<div class="rent-form-container">
-    <h2>{{ isset($rent) ? 'Edit Booking' : 'Book a Room' }}</h2>
+<div class="container">
+    <h2 class="text-center mb-4">Edit Rent Form</h2>
 
-    <form action="{{ isset($rent) ? route('rentForm.update', $rent->id) : route('rentForm.store') }}" method="POST">
+    <form action="{{ route('rentForm.update', $rent->id) }}" method="POST" class="">
         @csrf
-        @if (isset($rent))
-            @method('PATCH')
-        @endif
+        @method('PUT')
 
-        <!-- Room Selection -->
-        <label for="room_id">Room</label>
-        <select name="room_id" id="room_id" required>
-            <option value="">Select Room</option>
-            @foreach($rooms as $room)
-                <option value="{{ $room->id }}" data-price-day="{{ $room->dorm->price_day }}"
-                    data-price-month="{{ $room->dorm->price }}" {{ isset($rent) && $rent->room_id == $room->id ? 'selected' : '' }}>
-                    Room #{{ $room->number }} - {{ $room->dorm->name }}
-                </option>
-            @endforeach
-        </select>
+        <!-- Hidden Fields -->
+        <input type="hidden" name="user_id" value="{{ $rent->user_id }}">
+        <input type="hidden" name="dorm_id" value="{{ $rent->dorm_id }}">
 
-        <p>Price / month: <strong>{{ isset($rent) ? $rent->room->dorm->price : $room->dorm->price }}</strong></p>
-        <p>Price / day: <strong> {{ isset($rent) ? $rent->room->dorm->price_day : $room->dorm->price_day }}</strong>
-        </p>
-        <input type="hidden" id="price_day"
-            value="{{ isset($rent) ? $rent->room->dorm->price_day : $room->dorm->price_day }}">
-        <input type="hidden" id="price_month"
-            value="{{ isset($rent) ? $rent->room->dorm->price : $room->dorm->price }}">
+        <!-- Property Price Per Day (Hidden) -->
+        <input type="hidden" id="property_price" value="{{ $property->price}}">
 
         <!-- Start Date -->
-        <label for="start_date">Start Date</label>
-        <input type="date" id="start_date" name="start_date"
-            value="{{ isset($rent) ? $rent->start_date->format('Y-m-d') : old('start_date') }}" required
-            onchange="valiDate()">
-
-        <!-- End Date (for short-term rent) -->
-        <label for="end_date" id="end_date_label" style="display: none;">End Date (for short-term)</label>
-        <input type="date" id="end_date" name="end_date"
-            value="{{ isset($rent) ? $rent->end_date->format('Y-m-d') : old('end_date') }}" style="display: none;">
-        @if (isset($rent))
-            <p>Your Current end date: {{ $rent->end_date->format('Y-m-d') }}</p>
-        @endif
-
-        <!-- Duration (for long-term rent) -->
-        <label for="duration" id="duration_label" style="display: none;">Duration (in months)</label>
-        <input type="number" id="duration" name="duration" min="2"
-            value="{{ isset($rent) ? $rent->duration : old('duration') }}" style="display: none;">
-        <input type="hidden" name="dorm_id" value="{{ isset($rent) ? $rent->room->dorm_id : $room->dorm_id}}">
-        <input type="hidden" id="durdate" name="durdate"
-            value="{{ isset($rent) ? $rent->end_date->format('Y-m-d') : old('end_date') }}">
-
-        <!-- Rental Term Selection -->
-        <div class="term-selection">
-            <label>
-                <input type="radio" name="term" value="short_term" id="short_term" {{ isset($rent) && $rent->duration <= 1 ? 'checked' : '' }}> Short Term (Max 30 Days)
-            </label>
-            <label>
-                <input type="radio" name="term" value="long_term" id="long_term" {{ isset($rent) && $rent->duration > 1 ? 'checked' : '' }}> Long Term (Months)
-            </label>
+        <div class="form-group mb-3">
+            <label for="start_date" class="form-label">Start Date</label>
+            <input type="date" name="start_date" id="start_date" class="form-control"
+                value="{{ old('start_date', $rent->start_date) }}" required>
         </div>
 
-        <div class="infoCont" id="infoCont">
-            <div class="price-info" id="price_info">
-            </div>
-            <!-- Total Price Display -->
-            <p>Total Rent: <strong id="total_price">{{isset($rent) ? $rent->total_price : old('duration')}}</strong></p>
-
+        <!-- End Date -->
+        <div class="form-group mb-3">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" name="end_date" id="end_date" class="form-control"
+                value="{{ old('end_date', $rent->end_date) }}" required>
         </div>
-        <br>
-        <input type="hidden" name="total_price" id="tprice"
-            value="{{isset($rent) ? $rent->total_price : old('duration')}}">
 
-        <button type="submit">{{ isset($rent) ? 'Update Rent Form' : 'Submit Rent Form' }}</button>
+        <!-- Guest -->
+        <div class="form-group mb-3">
+            <label for="guest" class="form-label">Number of Guests</label>
+            <select name="guest" id="guest" class="form-control" required>
+                @for ($i = 1; $i <= $property->capacity; $i++)
+                    <option value="{{ $i }}" {{ old('guest', $rent->guest) == $i ? 'selected' : '' }}>
+                        {{ $i }} {{ Str::plural('guest', $i) }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+
+
+        <!-- Total Price -->
+        <div class="form-group mb-3">
+            <label for="total_price" class="form-label">Total Price</label>
+            <input type="number" name="total_price" id="total_price" class="form-control"
+                value="{{ old('total_price', $rent->total_price) }}" readonly>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Update Rent Details</button>
+        </div>
     </form>
-
-    <a href="{{ route('dorms.posted', ['id' => $room->dorm_id]) }}" class="back-link">Go Back</a>
 </div>
 
-<!-- Script for form logic and calculation -->
+<!-- JavaScript for Total Price Calculation -->
 <script>
-    function valiDate() {
-        const selectedStartDate = document.getElementById('start_date').value;
-        const maxDate = new Date(selectedStartDate);
-        const minDate = new Date(selectedStartDate);
-        maxDate.setDate(maxDate.getDate() + 30);
-        minDate.setDate(minDate.getDate() + 1);
-
-        if (selectedStartDate) {
-            // Set min attribute for end date
-            document.getElementById('end_date').setAttribute('min', minDate.toISOString().split('T')[0]);
-
-            // Set max attribute for end date
-            const maxDateISO = maxDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
-            document.getElementById('end_date').setAttribute('max', maxDateISO);
-
-            // Optionally reset end date value
-            document.getElementById('end_date').value = '';
-        }
-    }
-
-
     document.addEventListener('DOMContentLoaded', function () {
-        const shortTermRadio = document.getElementById('short_term');
-        const longTermRadio = document.getElementById('long_term');
         const startDateInput = document.getElementById('start_date');
         const endDateInput = document.getElementById('end_date');
-        const durationInput = document.getElementById('duration');
-        const roomSelect = document.getElementById('room_id');
-        const totalPriceDisplay = document.getElementById('total_price');
-        const priceDayInput = document.getElementById('price_day');
-        const priceMonthInput = document.getElementById('price_month');
-        const durationLabel = document.getElementById('duration_label');
-        const enddateLabel = document.getElementById('end_date_label');
-        const tpriceInput = document.getElementById('tprice');
-        const priceInfoDiv = document.getElementById('price_info');
+        const totalPriceInput = document.getElementById('total_price');
+        const propertyPrice = parseFloat(document.getElementById('property_price').value);
 
+        // Set today's date as the minimum date
         const today = new Date().toISOString().split('T')[0];
         startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
 
-        function setPriceValues() {
-            const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
-            const priceDay = selectedRoom.getAttribute('data-price-day');
-            const priceMonth = selectedRoom.getAttribute('data-price-month');
-            // priceDayInput.value = priceDay;
-            // priceMonthInput.value = priceMonth;
-            calculateTotal();
-            handleTermChange();
-        }
+        function calculateTotalPrice() {
+            const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+            const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
 
-        function calculateTotal() {
-            let total = 0;
-            const priceDay = parseFloat(priceDayInput.value);
-            const priceMonth = parseFloat(priceMonthInput.value);
-
-            if (shortTermRadio.checked && startDateInput.value && endDateInput.value) {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-                const numberOfDays = Math.ceil((endDate - startDate) / (1000 * 3600 * 24)) + 1;
-                total = priceDay * numberOfDays;
-                priceInfoDiv.innerHTML = `You selected ${numberOfDays} day(s). <br> Price per day: $${priceDay}.`;
-            } else if (longTermRadio.checked && durationInput.value) {
-                const durationInMonths = parseInt(durationInput.value, 10);
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(startDate.setMonth(startDate.getMonth() + durationInMonths));
-                total = priceMonth * durationInMonths;
-                priceInfoDiv.innerHTML = `Your rental ends on: ${endDate.toISOString().split('T')[0]}.`;
-                document.getElementById('durdate').value = endDate.toISOString().split('T')[0];
-            }
-
-            totalPriceDisplay.textContent = total.toFixed(2);
-            tpriceInput.value = total;
-            checkPrice()
-        }
-        function checkPrice() {
-            if (tpriceInput.value == 0) {
-                document.getElementById('infoCont').style.display = 'none'
+            if (startDate && endDate && startDate <= endDate) {
+                const days = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                const totalPrice = days * propertyPrice;
+                totalPriceInput.value = totalPrice.toFixed(2);
             } else {
-                document.getElementById('infoCont').style.display = 'flex'
+                totalPriceInput.value = ''; // Clear total price if invalid dates
             }
         }
-        function handleTermChange() {
-            if (shortTermRadio.checked) {
-                durationLabel.style.display = 'none';
-                durationInput.style.display = 'none';
-                durationInput.value = ''; // Clear duration
-                endDateInput.style.display = 'block';
-                enddateLabel.style.display = 'block';
-                endDateInput.setAttribute('required', true);
-                valiDate();
-            } else if (longTermRadio.checked) {
-                endDateInput.style.display = 'none';
-                enddateLabel.style.display = 'none';
-                endDateInput.removeAttribute('required');
-                durationInput.style.display = 'block';
-                durationLabel.style.display = 'block';
-                endDateInput.value = '';
+
+        // Event listener to adjust min date for end date based on start date
+        startDateInput.addEventListener('change', function () {
+            const startDate = startDateInput.value;
+            if (startDate) {
+                endDateInput.setAttribute('min', startDate); // Set end date min to start date
             }
-            calculateTotal(); // Recalculate when the term changes
-        }
-        startDateInput.addEventListener('change', calculateTotal);
-        endDateInput.addEventListener('change', calculateTotal);
-        durationInput.addEventListener('input', calculateTotal);
-        roomSelect.addEventListener('change', setPriceValues);
-        shortTermRadio.addEventListener('change', handleTermChange);
-        longTermRadio.addEventListener('change', handleTermChange);
-        setPriceValues();
+            calculateTotalPrice(); // Update price calculation
+        });
+
+        // Recalculate total price when end date changes
+        endDateInput.addEventListener('change', calculateTotalPrice);
     });
 </script>
+
+
 @endsection

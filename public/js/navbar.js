@@ -121,7 +121,7 @@ function fetchNotifications() {
         .then(data => {
             const notificationMenu = document.getElementById('notificationsMenu');
             const notificationCount = document.getElementById('notificationCount');
-
+            notificationMenu.style.width = '600px'
             // Clear existing notifications
             notificationMenu.innerHTML = '';
             notificationCount.textContent = data.unread_count; // Set the unread count
@@ -144,19 +144,19 @@ function fetchNotifications() {
                     messageDiv.style.display = 'flex';
                     messageDiv.style.justifyContent = 'space-between';
 
-                    const maxLength = 50;
+                    const maxLength = 25;
                     let truncatedMessage = notification.data;
                     if (truncatedMessage.length > maxLength) {
                         truncatedMessage = truncatedMessage.substring(0, maxLength) + '...';
                     }
 
                     const messageElement = document.createElement('h6');
-                    messageElement.textContent = truncatedMessage;
+                    messageElement.innerHTML = truncatedMessage;
                     messageElement.style.margin = 0;
+                    messageElement.style.textWrap = 'pretty'
 
                     const senderElement = document.createElement('p');
-                    senderElement.textContent = `Sent by: ${notification.sender.name}`;
-                    console.log(notification.sender.name);
+                    senderElement.textContent = `Sent by: ${notification.sender.name}`; 
                     
                     senderElement.style.margin = 0;
                     senderElement.style.fontSize = 'smaller';
@@ -193,11 +193,20 @@ function fetchNotifications() {
                     // Handle click event
                     notificationItem.addEventListener('click', function (e) {
                         e.preventDefault();
-
+                    
                         const markNotificationUrlTemplate = window.routes.markNotificationUrl;
                         const markNotificationUrl = markNotificationUrlTemplate.replace(':id', notification.id);
-                        markNotificationAsRead(markNotificationUrl, notificationItem.href);
+                    
+                        if (notification.route === null) {
+                            // Show popup if route is null
+                            openPopup(notification.data, null);
+                            markNotificationAsRead(markNotificationUrl, null);
+                        } else {
+                            openPopup(notification.data, notification.route);
+                            markNotificationAsRead(markNotificationUrl, null);
+                        }
                     });
+                    
 
                     notificationMenu.appendChild(notificationItem);
                 });
@@ -220,7 +229,12 @@ function markNotificationAsRead(markNotificationUrl, redirectUrl) {
     })
         .then(response => {
             if (response.ok) {
-                window.location.href = redirectUrl;
+                if (redirectUrl == null) {
+                    fetchNotifications();
+                }else{
+             window.location.href = redirectUrl;
+                }
+              
             }
         })
         .catch(error => console.error('Error marking notification as read:', error));
@@ -229,7 +243,41 @@ function markNotificationAsRead(markNotificationUrl, redirectUrl) {
 document.addEventListener('DOMContentLoaded', function () {
     fetchNotifications();
     // fetchConvo();
+  
+    
 });
+
+    // Your code that accesses DOM elements goes here
+    function openPopup(message, redirectUrl) {
+        document.getElementById('popupMessage').innerHTML = message;
+        document.getElementById('userNot').style.display = 'flex';
+
+        var closeButton = document.getElementById('closeButton');
+        if (closeButton) {
+            closeButton.onclick = function() {
+                closePopup(redirectUrl);
+            };
+        } else {
+            console.error('Close button not found in the DOM');
+        }
+    }
+
+
+function closePopup(redirectUrl) {
+    // Hide the popup
+    document.getElementById('userNot').style.display = 'none';
+
+    // Check if redirectUrl is not null or undefined
+    if (redirectUrl) {
+        // If there is a redirect URL, redirect to the passed URL
+        window.location.href = redirectUrl;
+    } else {
+        // Optionally, you can log or perform any other action when there's no URL
+        console.log('No redirect URL provided.');
+    }
+}
+
+
 
 
 // Fetch data every 2 seconds

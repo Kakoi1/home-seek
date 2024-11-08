@@ -53,7 +53,7 @@
 <div class="home-container">
     <br>
     <div class="top-area-container">
-        <h2>Property Listings</h2>
+        <h2>Property Available</h2>
         <h5>Filter by:</h5>
 
         <!-- Search Form -->

@@ -353,7 +353,7 @@
     .userComment {
         display: flex;
         justify-content: space-evenly;
-        width: 18%;
+        width: 21%;
     }
 
     .userComment img {
@@ -474,7 +474,11 @@
     if ($propertyReview->reviews->count()) {
         $rating = $totalRating / $propertyReview->reviews->count();
     }
+    $fullAddress = $dorm->address;
 
+    // Split the string by commas
+    $addressParts = explode(',', $fullAddress);
+    $shortAddress = implode(', ', array_slice($addressParts, 0, 3));
 @endphp
 <br>
 <br>
@@ -532,7 +536,7 @@
             <div class="room-details">
                 <h1>{{ $dorm->name }}</h1>
                 <h4>{{ $dorm->description }}</h4>
-                <p><i class="fas fa-map-marker-alt"></i> {{ $dorm->address }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> {{ $shortAddress }}</p>
                 <p><strong>{{$dorm->capacity}}</strong> Capacity · <strong>{{$dorm->bedroom}}</strong> bedrooms ·
                     <strong>{{$dorm->beds}}</strong> beds
                 </p>
@@ -549,7 +553,9 @@
 
                 <!-- Host Information -->
                 <div class="host-info">
-                    <p>Posted by {{ $dorm->user->name }}</p>
+                    <p onclick="openUserPopup({{$dorm->user_id}})">Posted by <strong> <a
+                                href="javascript: void(0)">{{ $dorm->user->name }}</a></strong></p>
+
                     <p><strong>Date Posted</strong> ·
                         @if ($dorm->created_at->diffInYears() < 1)
                             {{ $dorm->created_at->diffForHumans() }}
@@ -557,7 +563,12 @@
                             {{ $dorm->created_at->format('Y F') }}
                         @endif
                     </p>
-
+                    @if (Auth::id() != $dorm->user_id)
+                        <div style="float:left;">
+                            <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
+                                class="bts">Report Property <i class="fa-solid fa-flag"></i></button>
+                        </div>
+                    @endif
                 </div>
 
             </div>
@@ -591,7 +602,12 @@
                             </select>
                         </div>
 
-                        <button type="submit" id="Book" class="btn-reserve">Book now</button>
+                        @if (!$hasPendingOrActiveRentForm)
+                            <button type="submit" id="Book" class="btn-reserve">Book now</button>
+                        @else
+                            <p class="text-danger">You already have Booked a Property. You cannot book at this moment.</p>
+                        @endif
+
                     </form>
 
                     <!-- Pricing Details -->
@@ -619,7 +635,7 @@
             <p>No reviews yet.</p>
         @else
             @foreach($propertyReview->reviews as $review)
-                <div class="review-item" style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                <div class="review-item" style="border-bottom: 1px solid #ddd; padding: 10px 0 0px 10px;">
                     <div class="userComment">
                         <img src="{{ $review->user->profile_picture ? asset('https://storage.googleapis.com/homeseek-profile-image/' . $review->user->profile_picture) : 'https://via.placeholder.com/80x80' }}"
                             alt="" width="35px" height="35px">
@@ -651,21 +667,7 @@
     <!-- Manage Rooms Button -->
 
     <!-- Room Management Section -->
-    <div id="room-management" class="room-management" style="display: none;">
-        <button id="close-room-management" class="close-btn">✖</button> <!-- Close Button -->
-        <h4>Manage Rooms</h4>
 
-        <!-- Room Count Controls -->
-        <div class="room-controls" style="display: flex; align-items: center; gap: 10px;">
-            <button id="decrement" class="btn btn-danger" style="font-size: 20px; width: 40px; height: 40px;">-</button>
-            <span id="room-count" style="margin: 0 15px; font-size: 20px;">{{ $rooms }}</span>
-            <button id="increment" class="btn btn-success"
-                style="font-size: 20px; width: 40px; height: 40px;">+</button>
-        </div>
-
-        <!-- Add a button to save room changes -->
-        <button id="add-rooms" class="btn btn-primary mt-3">Save Room Changes</button>
-    </div>
 
     <div id="imageModal" class="image-modal" style="display: none;">
         <span class="closemodal">&times;</span>
@@ -673,22 +675,7 @@
         <!-- <div id="image-caption"></div> -->
     </div>
 
-    <!-- Modal/Div for Selecting Rooms to Delete -->
-    <div id="room-delete-modal" class="room-delete-modal" style="display:none;">
-        <h5>Select Room(s) to Delete:</h5>
-        <div id="room-list">
-            @foreach($dorm->rooms as $room)
-                <div class="room-item">
-                    <label>
-                        <input type="checkbox" name="rooms_to_delete[]" value="{{ $room->id }}">
-                        Room Number: {{ $room->number }} (Price: {{ $room->price }})
-                    </label>
-                </div>
-            @endforeach
-        </div>
-        <button id="confirm-delete" class="btn btn-danger">Confirm Delete</button>
-        <button id="cancel-delete" class="btn btn-secondary">Cancel</button>
-    </div>
+
 
     <!-- Separate Overlays for Room Management and Delete Modal -->
     <div id="room-management-overlay" class="modal-overlay" style="display: none;"></div>
@@ -755,112 +742,14 @@
         $('#carouselExampleControls').carousel(index);
     }
     // Room count variable to track the current number of rooms
-    let roomCount = parseInt(document.getElementById('room-count').innerText);
-    let deleteClickCount = 0;
-    let roomIndex = {{ $dorm->rooms->count() }}; // Set initial index based on existing rooms
 
-    // Show Room Management section and its overlay when "Manage Rooms" button is clicked
-    document.getElementById('manage-rooms-btn').addEventListener('click', function () {
-        document.getElementById('room-management').style.display = 'block';
-        document.getElementById('room-management-overlay').style.display = 'block'; // Show overlay for room management
-    });
 
     // Close button for room management modal
-    document.getElementById('close-room-management').addEventListener('click', function () {
-        hideRoomManagementModal();
-    });
 
-    document.getElementById('decrement').addEventListener('click', function () {
-        if (roomCount > 0) {
-            deleteClickCount++;
-            showDeleteModal(deleteClickCount); // Show modal for selecting rooms to delete
-        }
-    });
 
     // Function to show the room delete modal with its own overlay
-    function showDeleteModal(timesClicked) {
-        document.getElementById('room-delete-modal').style.display = 'block';
-        document.getElementById('room-delete-overlay').style.display = 'block'; // Show separate overlay for delete modal
 
-        // Clear and repopulate the room list in the delete modal
-        const roomListDelete = document.getElementById('room-list-delete');
-        roomListDelete.innerHTML = ''; // Clear previous entries
-        document.querySelectorAll('.room-item').forEach(function (roomItem) {
-            const clonedRoomItem = roomItem.cloneNode(true);
-            roomListDelete.appendChild(clonedRoomItem);
-        });
-    }
 
-    document.getElementById('increment').addEventListener('click', function () {
-        // Use SweetAlert to ask how many rooms to add
-        Swal.fire({
-            title: 'How many rooms do you want to add?',
-            input: 'number',
-            inputAttributes: {
-                min: 1
-            },
-            inputValue: 1, // Default value
-            showCancelButton: true,
-            confirmButtonText: 'Add',
-            cancelButtonText: 'Cancel',
-            inputValidator: (value) => {
-                if (!value || value <= 0) {
-                    return 'Please enter a valid number of rooms.';
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const roomsToAdd = result.value;
-                let timerInterval;
-                // Make an AJAX request to add rooms
-                fetch('{{ route('dorm.addRooms', $dorm->id) }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ rooms_available: roomsToAdd })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Success alert using SweetAlert
-                        Swal.fire({
-                            title: "Success!",
-                            html: `${roomsToAdd} room(s) added successfully.`,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            didOpen: () => {
-                                Swal.showLoading();
-                                const timer = Swal.getPopup().querySelector("b");
-                                timerInterval = setInterval(() => {
-                                    timer.textContent = `${Swal.getTimerLeft()}`;
-                                }, 100);
-                            },
-                            willClose: () => {
-                                clearInterval(timerInterval);
-                            }
-                        }).then((result) => {
-                            /* Read more about handling dismissals below */
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                roomCount += parseInt(roomsToAdd);
-                                document.getElementById('room-count').innerText = roomCount;
-                                location.reload();
-                            }
-                        });
-
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        // Error alert using SweetAlert
-                        Swal.fire(
-                            'Error!',
-                            'Failed to add rooms. Please try again later.',
-                            'error'
-                        );
-                    });
-            }
-        });
-    });
 
 
     // Confirm Delete Button: Send selected room(s) for deletion

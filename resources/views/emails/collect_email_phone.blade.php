@@ -23,7 +23,7 @@
 
     .containers {
         width: 100%;
-        max-width: 400px;
+        max-width: 500px;
         background-color: #fff;
         padding: 40px;
         border-radius: 10px;
@@ -67,6 +67,8 @@
     .form-group {
         margin-bottom: 20px;
         text-align: left;
+        display: flex;
+        flex-direction: column;
     }
 
     label {
@@ -86,6 +88,7 @@
         outline: none;
         background: transparent;
         transition: border-color 0.3s ease-in-out;
+        height: auto
     }
 
     .form-control:focus {
@@ -114,11 +117,12 @@
     /* Custom file input */
     .profile-picture-label {
         display: inline-block;
-        margin-top: 10px;
+        margin: 10px auto;
         padding: 10px 30px;
         background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
         color: white;
         border-radius: 30px;
+        width: 215px;
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
     }
@@ -130,12 +134,107 @@
     #profile_picture {
         display: none;
     }
+
+    .wrapper-radio {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .wrapper-radio .option {
+        background: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 2px solid lightgrey;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .wrapper-radio .option .dot {
+        height: 20px;
+        width: 20px;
+        background: #d9d9d9;
+        border-radius: 50%;
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .wrapper-radio .option .dot::before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 12px;
+        height: 12px;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+        border-radius: 50%;
+        opacity: 0;
+        transform: scale(1.5);
+        transition: all 0.3s ease;
+    }
+
+    #option-1:checked~.option-1,
+    #option-2:checked~.option-2 {
+        border-color: white;
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+    }
+
+    #option-1:checked~.option-1 .dot,
+    #option-2:checked~.option-2 .dot {
+        background: #fff;
+    }
+
+    #option-1:checked~.option-1 .dot::before,
+    #option-2:checked~.option-2 .dot::before {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .wrapper-radio .option span {
+        font-size: 16px;
+        color: #808080;
+    }
+
+    #option-1:checked~.option-1 span,
+    #option-2:checked~.option-2 span {
+        color: #fff;
+    }
+
+    .info-icon {
+        display: inline-block;
+        margin-left: 5px;
+        color: #007bff;
+        /* Change color as needed */
+        cursor: pointer;
+        position: relative;
+    }
+
+    .info-icon:hover::after {
+        content: attr(title);
+        position: absolute;
+        left: 0;
+        bottom: 20px;
+        /* Adjust as needed */
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        font-size: 12px;
+        /* Adjust font size as needed */
+    }
 </style>
 
 <div class="gradient-background">
     <div class="containers">
         <h2>Complete Your Registration</h2>
-        <p>Please enter your email and phone number to complete your registration.</p>
+        <p>Please enter Additional information to complete your registration.</p>
 
         <!-- Profile picture preview -->
         <div class="profile-picture-container">
@@ -155,16 +254,51 @@
                     onchange="previewImage(event)">
             </div>
 
-            <!-- Email Input -->
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" class="form-control" required>
+            @if ($user->fb_id)
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+            @endif
+            <div class="input-b">
+                <label for="wrapper">Sign up as:</label>
+                <span class="info-icon"
+                    title="Choose 'Tenant' if you are renting a property, or 'Owner' if you own a property.">?</span>
+                <div class="wrapper-radio" id="wrapper">
+                    <input type="radio" hidden name="role" id="option-1" value="tenant" onclick="toggleOwnerInputs()">
+                    <input type="radio" hidden name="role" id="option-2" value="owner" onclick="toggleOwnerInputs()">
+                    <label for="option-1" class="option option-1">
+                        <div class="dot"></div>
+                        <span>Tenant</span>
+                    </label>
+                    <label for="option-2" class="option option-2">
+                        <div class="dot"></div>
+                        <span>Owner</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="owner-inputs" style="display: none;">
+                <div class="form-group">
+                    <label for="valid-id">Upload Valid ID:</label>
+                    <input type="file" id="valid-id" name="valid_id" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="business-permit">Upload Business Permit:</label>
+                    <input type="file" id="business-permit" name="business_permit" class="form-control"
+                        accept="image/*">
+                </div>
+                <br>
             </div>
 
             <!-- Phone Number Input -->
             <div class="form-group">
                 <label for="phone_number">Phone Number</label>
                 <input type="text" name="phone_number" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Address</label>
+                <input type="text" name="address" class="form-control" required>
             </div>
 
             <!-- Continue Button -->
@@ -182,6 +316,13 @@
             output.src = reader.result;
         };
         reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+<script>
+    function toggleOwnerInputs() {
+        const isOwner = document.getElementById('option-2').checked;
+        const ownerInputs = document.getElementById('owner-inputs');
+        ownerInputs.style.display = isOwner ? 'block' : 'none';
     }
 </script>
 

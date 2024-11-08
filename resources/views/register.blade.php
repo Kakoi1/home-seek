@@ -368,8 +368,8 @@
 </div>
 <script>
     window.routes = {
-        emailUrl: "{{ route('send.email', ':user') }}"
-    }
+        emailUrl: '{{ route('send.email', ['user' => ':user', 'action' => ':verify']) }}'
+    };
 </script>
 <script>
     // Image preview function
@@ -409,7 +409,7 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = emailRedirect.replace(':user', response.data.id);;
+                            window.location.href = emailRedirect.replace(':user', response.data.id).replace(':verify', 'verify');
                         }
                     });
                 },

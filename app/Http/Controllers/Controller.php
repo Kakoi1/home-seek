@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurseWords;
 use App\Models\Reviews;
 use DB;
 use Carbon\Carbon;
@@ -31,12 +32,16 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 use Str;
+use Validator;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
-
-    public function callbackFromFacebook()
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+    public function handleFacebookCallback()
     {
         try {
             // Fetch the Facebook user data
@@ -52,7 +57,7 @@ class Controller extends BaseController
                     'fb_id' => $facebookUser->getId(),
                     'profile_picture' => $facebookUser->getAvatar(),
                 ]);
-                return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide gmail and Phone no. to login');
+                return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide additional information. to login');
             } else {
                 // If the user exists, simply log them in and redirect to home
                 if (!$user->email) {
@@ -61,7 +66,11 @@ class Controller extends BaseController
                     return redirect()->route('send.email', $user)->withErrors(['logname' => 'Please verify your email to continue.']);
                 } else {
                     Auth::login($user);
-                    return redirect('/home');
+                    if ($user->role == 'owner') {
+                        return redirect()->route('owner.Dashboard');
+                    } else {
+                        return redirect('/home');
+                    }
                 }
             }
 
@@ -74,15 +83,18 @@ class Controller extends BaseController
 
     public function collectEmailPhone(Request $request)
     {
+        $user = User::findOrFail($request->user_id);
+
         $request->validate([
-            'email' => 'required|email',
-            'phone_number' => 'required',
+            'email' => $user->email ? 'nullable|email' : ['required|email', Rule::unique('users', 'email')],
+            'role' => 'required',
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'address' => 'required|string|max:255',
+            'phone_number' => ['required', 'regex:/^\+?[0-9]{7,15}$/'],  // Example: Simple international phone number regex
         ]);
 
-        // Find the user by ID
-        $user = User::find($request->user_id);
 
-        if ($user) {
+        if ($user->fb_id) {
             // Update the user with the email and phone number
             if ($user->email) {
                 $verificationCode = rand(100000, 999999); // Random 6-digit code
@@ -91,17 +103,19 @@ class Controller extends BaseController
             } else {
                 $user->email = $request->email;
                 $user->phone = $request->phone_number;
+                $user->role = $request->role;
+                $user->address = $request->address;
 
                 if ($request->hasFile('profile_picture')) {
                     $file = $request->file('profile_picture');
-                    $filename = time() . '.' . $file->getClientOriginalExtension();
-                    $pic = $filename; // Save the business permit
+                    $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('profile_picture', $filename, 'gcs');
                 }
 
                 // Generate a verification code
                 $verificationCode = rand(100000, 999999);
                 $user->email_verification_code = $verificationCode;
-                $user->profile_picture = $pic;
+                $user->profile_picture = $path;
                 $user->save();
             }
             // Send the verification code via email
@@ -110,6 +124,50 @@ class Controller extends BaseController
             // Redirect the user to a verification page
             return view('emails.email_verfy', ['user' => $user])->with('success', 'a Verification code was sent to your gmail');
 
+        } else if ($user->google_id) {
+
+            $user->phone = $request->phone_number;
+            $user->role = $request->role;
+            $user->address = $request->address;
+
+            if ($request->hasFile('profile_picture')) {
+                $file = $request->file('profile_picture');
+                $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('profile_picture', $filename, 'gcs');
+            }
+
+            $user->profile_picture = $path;
+            $user->save();
+
+            if ($request->role == 'owner') {
+
+                $verify = new Verifications();
+                $verify->user_id = $user->id;
+
+                // Upload valid_id if provided
+                if ($request->hasFile('valid_id')) {
+                    $validIdFile = $request->file('valid_id');
+                    $validIdFilename = Str::random(25) . '.' . $validIdFile->getClientOriginalExtension();
+                    $validIdPath = $validIdFile->storeAs('owner_documents/valid_id', $validIdFilename, 'gcs');
+                    $verify->id_document = $validIdPath;
+                }
+
+                // Upload business_permit if provided
+                if ($request->hasFile('business_permit')) {
+                    $businessPermitFile = $request->file('business_permit');
+                    $businessPermitFilename = Str::random(25) . '.' . $businessPermitFile->getClientOriginalExtension();
+                    $businessPermitPath = $businessPermitFile->storeAs('owner_documents/business_permit', $businessPermitFilename, 'gcs');
+                    $verify->business_permit = $businessPermitPath;
+                }
+
+                $verify->save();
+
+                Auth::login($user);
+                return redirect('/home');
+
+            }
+            Auth::login($user);
+            return redirect('/home')->with('success', 'Your all set.');
         } else {
             return redirect('/login')->withErrors('User not found.');
         }
@@ -117,15 +175,25 @@ class Controller extends BaseController
     public function verifyEmail(Request $request)
     {
         $user = User::find($request->user_id);
-
+        // dd($user);
         if ($user) {
             if ($user->email_verification_code == $request->verification_code) {
-                $user->email_verified_at = now();
-                $user->email_verification_code = null;
-                $user->save();
-                Auth::login($user);
+                if ($request->action == 'verify') {
+                    $user->email_verified_at = now();
+                    $user->email_verification_code = null;
+                    $user->save();
+                    Auth::login($user);
 
-                return redirect('/home')->with('success', 'Email verified successfully!');
+                    return redirect('/home')->with('success', 'Email verified successfully!');
+                } elseif ($request->action == 'forgot') {
+                    $user->email_verified_at = now();
+                    $user->email_verification_code = null;
+                    $user->save();
+                    return redirect()->route('reset.pass', $user->id)->with('success', 'Code Verified.');
+                } else {
+                    return redirect()->back()->withErrors('Invalid Action');
+                }
+
             } else {
                 return redirect()->back()->withErrors('Invalid verification code.');
             }
@@ -133,8 +201,56 @@ class Controller extends BaseController
             return redirect()->back()->withErrors('User not found.');
         }
     }
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed',  // password confirmation handled
+        ]);
 
-    public function redirectEmail($data)
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Assuming user ID or email is passed to identify the user
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return redirect()->back()->withErrors(['error' => 'User not found.']);
+        }
+
+        // Update the password
+        $user->password = Hash::make($request->password);
+        $user->save();
+        Auth::login($user);
+        if (Auth::user()->role == 'owner') {
+
+            return redirect()->route('owner.Dashboard')->with('success', 'Your password has been reset successfully.');
+
+        } else {
+            return redirect()->route('home')->with('success', 'Your password has been reset successfully.');
+        }
+    }
+
+    public function forgotPass(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        // dd($user);
+        if (!$user) {
+            return redirect()->back()->withErrors(['logname' => 'No email Found for ' . $request->email]);
+        }
+        // Attach the reset_password value
+
+        return redirect()->route('send.email', [$user->id, 'forgot'])->withErrors(['logname' => 'A reset Code has sent to your email']);
+    }
+    public function resetPass($id)
+    {
+        $user = User::findOrFail($id);
+
+
+        return view('reset-pass', compact('user'));
+    }
+
+    public function redirectEmail($data, $action)
     {
         $user = User::find($data);
 
@@ -144,9 +260,9 @@ class Controller extends BaseController
             $user->save();
             Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
         }
-
+        $user->action = $action;
+        // dd($user);
         return view('emails.email_verfy', ['user' => $user]);
-
 
     }
     public function reSend($userId)
@@ -254,12 +370,18 @@ class Controller extends BaseController
             'logpassword' => 'required|string',
         ]);
 
-        if (auth()->attempt(['email' => $fields['logname'], 'password' => $fields['logpassword']])) {
+        // Check if the input is an email or a username
+        $loginType = filter_var($fields['logname'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        // Attempt login with the determined field (either 'email' or 'username')
+        if (auth()->attempt([$loginType => $fields['logname'], 'password' => $fields['logpassword']])) {
 
             $request->session()->regenerate();
 
             if (auth()->user()->email_verified_at == null) {
-                return redirect()->route('send.email', auth()->user())->withErrors(['logname' => 'Please verify your email to continue.']);
+                return redirect()->route('send.email', ['user' => auth()->user(), 'action' => 'verify'])
+                    ->withErrors(['logname' => 'Please verify your email to continue.']);
+
             } else {
                 if (auth()->user()->role === 'admin') {
                     // Redirect to the admin dashboard if the user is an admin
@@ -273,6 +395,52 @@ class Controller extends BaseController
             }
         }
         return redirect()->back()->withErrors(['logname' => 'Invalid credentials'])->withInput();
+    }
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        // Validate the incoming request data
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'name')->ignore(auth()->user()->id),
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'username')->ignore(auth()->user()->id),
+            ],
+            'mobile_phone' => 'nullable|string|max:15',
+            'address' => 'nullable|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Update the user's details
+        $user->name = $request->input('name');
+        $user->username = $request->input('username');
+        $user->phone = $request->input('mobile_phone');
+        $user->address = $request->input('address');
+
+        // Check if a new profile picture is uploaded
+        if ($request->hasFile('profile_picture')) {
+            // Delete the old profile picture if it exists
+            if ($user->profile_picture) {
+                Storage::disk('gcs')->delete($user->profile_picture);
+            }
+
+            // Store the new profile picture
+            $path = $request->file('profile_picture')->store('profile-pictures', 'gcs');
+            $user->profile_picture = $path;
+        }
+
+        // Save the updated user data
+        $user->save();
+
+        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
     }
 
     public function getCoor(Request $request)
@@ -325,45 +493,25 @@ class Controller extends BaseController
     {
         $user = Auth::user();
 
-        $properties = [];
-        $inquiriesCount = [];
-        $statistics = [];
-        $currentDorm = null;
-        $favorites = [];
-
-        if ($user->role == 'owner') {
-            // Fetch owner's properties
-            $properties = Dorm::where('user_id', $user->id)
-                ->where('archive', 0)
-                ->take(13) // Limit to 3 properties
-                ->get();
-
-            // Count inquiries for each property
-            foreach ($properties as $property) {
-                $inquiriesCount[$property->id] = Chatroom::where('dorm_id', $property->id)->count();
-            }
-
-            // Calculate statistics
-            $statistics = [
-                'total_properties' => $properties->count(),
-                'total_inquiries' => array_sum($inquiriesCount),
-            ];
+        if (auth()->user()->role == 'owner') {
+            Breadcrumbs::for('profile.edit', function (BreadcrumbTrail $trail) {
+                $trail->parent('owner.Dashboard');
+                $trail->push('Edit Profile', route('admin.manageuser'));
+            });
+            ;
+        } elseif (auth()->user()->role == 'tenant') {
+            Breadcrumbs::for('profile.edit', function (BreadcrumbTrail $trail) {
+                $trail->parent('home');
+                $trail->push('Edit Profile', route('admin.manageuser'));
+            });
+        } elseif (auth()->user()->role == 'admin') {
+            Breadcrumbs::for('profile.edit', function (BreadcrumbTrail $trail) {
+                $trail->parent('admin.dashboard');
+                $trail->push('Edit Profile', route('admin.manageuser'));
+            });
         }
 
-        if ($user->role == 'tenant') {
-            // Retrieve the user's current rented dorm
-            $currentRent = RentForm::where('user_id', $user->id)
-                ->where('status', 'approved') // Assuming 'approved' status indicates an active rent
-                ->with('dorm')
-                ->with('room') // Eager load the dorm associated with the rent
-                ->first();
-
-            if ($currentRent) {
-                $currentDorm = $currentRent;
-            }
-        }
-
-        return view('profile', compact('user', 'properties', 'inquiriesCount', 'statistics', 'currentDorm', 'favorites'));
+        return view('profile', compact('user'));
     }
 
     public function edit($id)
@@ -509,8 +657,8 @@ class Controller extends BaseController
             })
             ->first();
         if ($currentRent) {
-            $pendingBills = Billing::where('rent_form_id', $currentRent->id)->where('status', 'pending')->first();
-            $pendingPayments = Billing::where('rent_form_id', $currentRent->id)->where('status', 'pending')->whereMonth('billing_date', now()->month)->get();
+            $pendingBills = Billing::where('user_id', Auth::id())->where('status', 'pending')->get();
+            $pendingPayments = Billing::where('user_id', Auth::id())->where('status', 'pending')->get();
 
             $billingCount = Billing::where('status', 'pending')
                 ->where('user_id', Auth::id())
@@ -718,6 +866,7 @@ class Controller extends BaseController
                 rf.id as rent_form_id,
                 rf.start_date,
                 rf.created_at,
+                 rf.user_id,
                 d.name AS dorm_name,
                 d.address AS dorm_location,
                  d.id as dorm_id,
@@ -736,6 +885,7 @@ class Controller extends BaseController
             rf.start_date,
             rf.created_at,
             rf.updated_at,
+            rf.user_id,
             d.name AS dorm_name,
               rf.status as rent_status,
             d.address AS dorm_location,
@@ -747,7 +897,7 @@ class Controller extends BaseController
         INNER JOIN dorms d ON rf.dorm_id = d.id
         INNER JOIN users u ON rf.user_id = u.id
         WHERE d.user_id = ?
-        AND rf.note != '' AND rf.status != 'pending' AND rf.status != 'cancelled'
+        AND rf.note != '' AND rf.status != 'pending' AND rf.status != 'cancelled' AND rf.status != 'rejected'
     ", [$ownerId]);
 
 
@@ -810,8 +960,12 @@ class Controller extends BaseController
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+            $dorm = Dorm::find($rentForm->dorm_id);
+            $dorm->availability = false;
+            $dorm->save();
 
         } else if ($request->input('status') == 'rejected') {
+
             $rentForm->note = null;
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
@@ -822,6 +976,7 @@ class Controller extends BaseController
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+
         }
 
         event(new NotificationEvent([
@@ -840,16 +995,38 @@ class Controller extends BaseController
     {
         // Retrieve the payment by ID
         $payment = Billing::findOrFail($paymentId);
+        $rent = RentForm::with('dorm')->find($payment->rent_form_id);
 
         // Logic to handle the payment (e.g., mark as paid)
         $payment->status = 'paid';
         $payment->paid_at = now();
         $payment->save();
 
+        $reporterNotification = Notification::create([
+            'user_id' => $rent->dorm->user_id,  // Reporter
+            'type' => 'warning',
+            'data' => '<p>' . Auth::user()->name . ' paid you ' . number_format($payment->amount, 2) . '</p>',
+            'read' => false,
+            'route' => null,
+            'dorm_id' => null,
+            'sender_id' => Auth::id(),
+        ]);
+
+        // Trigger notification event for the reporter
+        event(new NotificationEvent([
+            'reciever' => $reporterNotification->user_id,
+            'message' => $reporterNotification->data,
+            'sender' => Auth::id(),
+            'rooms' => $reporterNotification->id,
+            'roomid' => $reporterNotification->room_id,
+            'action' => 'Report',
+            'route' => null
+        ]));
+
         // Return the updated list of pending payments (or success message)
         $pendingPayments = Billing::where('status', 'pending')->get();
 
-        return response()->json(['message' => 'Payment successful!', 'pendingPayments' => $pendingPayments]);
+        return redirect()->back()->with('success', 'Payment success.');
     }
 
     public function review($id)
@@ -871,20 +1048,86 @@ class Controller extends BaseController
 
     public function submitReview(Request $request, $id)
     {
+        // Find the review by ID
         $review = Reviews::findOrFail($id);
+
+        // Find the user who made the review
+        $user = User::findOrFail($review->user_id);
+        $warnReason = 'Your review contains inappropriate words.';
+
+        // Validate input
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comments' => 'nullable|string|max:1000',
         ]);
 
-        // Update the review
+        // Get the list of curse words from the database
+        $curseWords = CurseWords::pluck('word')->map(function ($word) {
+            return strtolower(trim($word));  // Normalize the curse words to lowercase
+        })->toArray();
+
+        // Normalize the user's comment (lowercase for case-insensitive comparison)
+        $comments = strtolower($request->comments);
+
+        // Check if any curse word is found in the comment
+        foreach ($curseWords as $curseWord) {
+            if (strpos($comments, $curseWord) !== false) {
+                // Decrement user's strike count if a curse word is detected
+                if ($user->strike > 0) {
+                    $user->strike -= 1;
+                }
+
+                // Check if user should be deactivated (i.e., strikes are exhausted)
+                if ($user->strike <= 0) {
+                    $user->active_status = false;  // Deactivate the user
+                    $user->note = $warnReason;  // Set the warning reason
+                }
+
+                // Save the updated user
+                $user->save();
+
+                // Create a notification about the warning
+                $notification = Notification::create([
+                    'user_id' => $user->id,
+                    'type' => 'warning',
+                    'data' => "<strong>Warning issued:</strong> <br> <p>" . $warnReason . "</p> <br>" .
+                        "<strong>You have " . $user->strike . " remaining Strike(s)</strong>",
+                    'read' => false,
+                    'route' => null,
+                    'dorm_id' => null,
+                    'sender_id' => Auth::id(),  // Sender is the logged-in user (admin or moderator)
+                ]);
+
+                // Trigger the notification event for broadcasting
+                event(new NotificationEvent([
+                    'reciever' => $notification->user_id,
+                    'message' => $notification->data,
+                    'sender' => Auth::id(),
+                    'rooms' => $notification->id,
+                    'roomid' => null,
+                    'action' => 'warning',
+                    'route' => null
+                ]));
+
+                // Redirect with an error if a curse word was found
+                return redirect()->back()->withErrors([
+                    'comments' => 'Your review contains inappropriate words. Please edit and try again.'
+                ])->withInput();
+            }
+        }
+
+        // If no curse words were found, update the review as normal
         $review->update([
             'rating' => $request->rating,
             'comments' => $request->comments,
         ]);
 
+        // Redirect to home with a success message
         return redirect()->route('home')->with('success', 'Review submitted successfully!');
     }
+
+
+
 
     public function userReviews()
     {
@@ -937,8 +1180,38 @@ class Controller extends BaseController
             ->whereMonth('paid_at', now()->month)
             ->sum('amount');
 
-        return view('owner-home', compact('totalProperties', 'totalTenants', 'pendingRequests', 'monthlyEarnings'));
+        // Booking rate for each dorm (property)
+        $bookingRates = [];
+
+        foreach ($ownerDorms as $dorm) {
+            // Total capacity of the dorm (number of beds)
+            $totalBeds = $dorm->capacity;
+
+            // Count the number of active/approved RentForms for the dorm (this gives us the "booked" status)
+            $bookedTenants = RentForm::where('dorm_id', $dorm->id)
+
+                ->count(); // This gives the number of bookings (tenants)
+
+            // Calculate booking rate as a percentage
+            $bookingRate = $totalBeds > 0 ? ($bookedTenants / $totalBeds) * 100 : 0;
+
+            $bookingRates[] = [
+                'dorm' => $dorm->name,
+                'bookingRate' => round($bookingRate, 2),
+                'bookingCount' => $bookedTenants, // Add the booking count
+            ];
+        }
+
+        return view('owner-home', compact(
+            'totalProperties',
+            'totalTenants',
+            'pendingRequests',
+            'monthlyEarnings',
+            'bookingRates'
+        ));
     }
+
+
 
 
 

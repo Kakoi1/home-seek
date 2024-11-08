@@ -1,15 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Billing;
 use App\Models\Dorm;
+use App\Models\RentForm;
+use App\Models\Reports;
+use App\Models\Reviews;
 use App\Models\Room;
 use App\Models\Favorite;
 use App\Models\PropertyView;
+use DateTime;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
-use User;
+use App\Models\User;
 
 class DormController extends Controller
 {
@@ -131,10 +137,15 @@ class DormController extends Controller
     }
     public function show($id)
     {
-
+        $user = auth()->user();
         $dorm = Dorm::with('user')->findOrFail($id);
         $rooms = Room::where('dorm_id', $dorm->id)->count();
-
+        $hasPendingOrActiveRentForm = RentForm::where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'active', 'approved'])
+            ->exists();
+        if ($dorm->availability) {
+            return back()->withErrors('Property not Available');
+        }
         $propertyReview = Dorm::with('reviews')->findOrFail($id);
 
         if (auth()->user()->role == 'owner') {
@@ -147,10 +158,13 @@ class DormController extends Controller
                 $trail->parent('home');
                 $trail->push($dorm->name, route('dorms.posted', $dorm->id));
             });
-        } else {
-
+        } elseif (auth()->user()->role == 'admin') {
+            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                $trail->parent('admin.manageProp');
+                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+            });
         }
-        return view('dorms.posted', compact('dorm', 'rooms', 'propertyReview'));
+        return view('dorms.posted', compact('dorm', 'rooms', 'propertyReview', 'hasPendingOrActiveRentForm'));
     }
 
     public function archive($id)
@@ -237,10 +251,200 @@ class DormController extends Controller
 
         return view('manage-listing', compact('properties'));
     }
-    public function featuredList()
+
+    public function getUserData($id)
     {
+        $user = User::findOrFail($id);
+        $reviews = Reviews::where('user_id', $id)->get(); // Fetch all reviews
+        if ($user->role == 'owner') {
+            // Retrieve all dorms to calculate the average rating for all properties by the owner
+            $allDorms = Dorm::where('dorms.user_id', $user->id)
+                ->where('flag', 0)
+                ->where('archive', 0)
+                ->leftJoin('reviews', 'dorms.id', '=', 'reviews.dorm_id')
+                ->select('dorms.id', DB::raw('AVG(reviews.rating) as average_rating'))
+                ->groupBy('dorms.id')
+                ->get();
+
+            // Calculate average rating for all properties (unpaginated)
+            $totalRating = $allDorms->sum(fn($property) => $property->average_rating * $property->reviews->count());
+            $totalReviews = $allDorms->sum(fn($property) => $property->reviews->count());
+            $averageOwnerRating = $totalReviews > 0 ? round($totalRating / $totalReviews, 1) : '0';
+
+            // Now paginate dorms for display
+            $dorms = Dorm::select('dorms.id', 'dorms.name', 'dorms.address', 'dorms.image', 'dorms.description', 'dorms.user_id', DB::raw('AVG(reviews.rating) as average_rating'))
+                ->where('dorms.user_id', $user->id)
+                ->where('dorms.flag', 0)
+                ->where('archive', 0)
+                ->leftJoin('reviews', 'dorms.id', '=', 'reviews.dorm_id')
+                ->groupBy('dorms.id', 'dorms.name', 'dorms.description', 'dorms.address', 'dorms.image', 'dorms.user_id')
+                ->orderBy('average_rating', 'desc')
+                ->paginate(5);
+
+            // Prepare content with property details
+            $content = "<div class='property-list'>";
+            $content .= "<h4>Active Properties:</h4>";
+            $content .= "<p class='owner-rating'><strong>Owner Rating:</strong> {$averageOwnerRating} / 5 ({$totalReviews} reviews)</p>";
+            $content .= "<ul>";
+
+            foreach ($dorms as $property) {
+                $fullAddress = $property->address;
+
+                // Shorten the address for display
+                $addressParts = explode(',', $fullAddress);
+                $shortAddress = implode(', ', array_slice($addressParts, 0, 3));
+                $propertyRating = $property->reviews->count() > 0 ? round($property->reviews->avg('rating'), 1) : '0';
+                $reviewCount = $property->reviews->count();
+                $images = json_decode($property->image, true);
+                $firstImage = isset($images[0]) ? 'https://storage.googleapis.com/homeseek-profile-image/' . $images[0] : 'https://via.placeholder.com/80x80';
+
+                $content .= "<li>";
+                $content .= "<img src='" . asset($firstImage) . "' alt='Property Image' width='80'>";
+                $content .= "<div class='property-details' style='cursor: pointer;' onclick='location.href=\"" . route('dorms.posted', $property->id) . "\"'>";
+                $content .= "<h5>{$property->name}</h5>";
+                $content .= "<p><strong>Location:</strong> {$shortAddress}</p>";
+                $content .= "<p class='rating'><strong>Rating:</strong> {$propertyRating} / 5 ({$reviewCount} reviews)</p>";
+                $content .= "</div>";
+                $content .= "</li>";
+            }
+
+            $content .= '</ul>';
+            $content .= '</div>';
+
+            // Add pagination data to the response
+            return response()->json([
+                'name' => $user->name,
+                'role' => ucfirst($user->role),
+                'content' => $content,
+                'profile_picture' => $user->profile_picture,
+                'pagination' => [
+                    'total' => $dorms->total(),
+                    'per_page' => $dorms->perPage(),
+                    'current_page' => $dorms->currentPage(),
+                    'last_page' => $dorms->lastPage(),
+                ]
+            ]);
+        } elseif ($user->role == 'tenant') {
+            $content = '';
+            if (Auth::user()->role == 'admin') {
+                // Retrieve the rented property details first
+                $rentedProperty = RentForm::where('user_id', $user->id)
+                    ->where('status', 'active')
+                    ->with('dorm')
+                    ->first();
+
+                if ($rentedProperty) {
+                    $content .= '<div class="rented-property">';
+                    $content .= '<h4>Current Rented Property:</h4>';
+                    $content .= '<p><strong>Name:</strong> ' . htmlspecialchars($rentedProperty->dorm->name) . '</p>';
+                    $content .= '<p><strong>Address:</strong> ' . htmlspecialchars($rentedProperty->dorm->address) . '</p>';
+                    $content .= '</div>';
+
+                    // Retrieve the upcoming bill, assuming it's part of the rented property details
+                    $upcomingBill = Billing::where('rent_form_id', $rentedProperty->id)
+                        ->where('status', 'pending') // Adjust status as needed
+                        ->orderBy('billing_date', 'asc')
+                        ->first();
+
+                    if ($upcomingBill) {
+                        // Create a DateTime object for the billing date
+                        $date = new DateTime($upcomingBill->billing_date);
+                        $billingDate = $date->format("M d, Y");
+
+                        // Check if the billing date is in the past
+                        $currentDate = new DateTime();
+                        $isOverdue = $date < $currentDate; // true if the billing date is in the past
+
+                        // Start the content for the upcoming bill
+                        $content .= '<div class="upcoming-bill">';
+
+                        // Display the bill amount
+                        $content .= '<h5>Upcoming Bill:</h5>';
+                        $content .= '<p><strong>Amount Due:</strong> ₱' . number_format($upcomingBill->amount, 2) . '</p>';
+
+                        // Apply red color for overdue bills
+                        $dueDateStyle = $isOverdue ? 'style="color: red;"' : '';  // Apply red text for overdue bills
+
+                        // Display the due date with conditional styling
+                        $content .= '<p><strong>Due Date:</strong> <span ' . $dueDateStyle . '>' . $billingDate . '</span></p>';
+
+                        $content .= '</div>';
+                    } else {
+                        // No upcoming bills for the tenant
+                        $content .= '<p>No upcoming bills for this tenant.</p>';
+                    }
+
+                } else {
+                    $content .= '<p>No rented property found for this tenant.</p>';
+                }
+            }
+            // Now, add the Past Reviews section after rented property
+            $content .= '<h4>Past Reviews:</h4><ul>';
+            if ($reviews->isEmpty()) {
+                $content .= '<li>No reviews available.</li>';
+            } else {
+                foreach ($reviews as $review) {
+                    // Building each review item HTML
+                    $content .= '<div class="review-item">';
+                    $content .= "<h5 onclick='location.href=\"" . route('dorms.posted', $review->dorm_id) . "\"'>
+                                    <strong> <a href='javascript: void(0)'>" . htmlspecialchars($review->dorm->name) . '</a></strong></h5>';
+                    $content .= '<p>Located at: ' . htmlspecialchars($review->dorm->address) . '</p>';
+                    $content .= '<div class="rating">Rating: ';
+
+                    // Star rating display logic
+                    for ($i = 1; $i <= 5; $i++) {
+                        $content .= '<span class="star' . ($i <= $review->rating ? ' filled' : '') . '">★</span>';
+                    }
+                    $content .= '</div>'; // Closing rating div
+
+                    // Additional review details
+                    $content .= '<p><strong>Comments:</strong> ' . htmlspecialchars($review->comments) . '</p>';
+                    $content .= '<p><small>Reviewed on: ' . htmlspecialchars($review->updated_at->format('Y-m-d H:i')) . '</small></p>';
+                    $content .= '</div>'; // Closing review-item div
+                }
+            }
+            $content .= '</ul>';
+
+            return response()->json([
+                'name' => $user->name,
+                'role' => ucfirst($user->role),
+                'content' => $content,
+                'profile_picture' => $user->profile_picture
+            ]);
+        } else {
+            $content = '<div class="review-item">';
+            $content .= '<p>No additional data available.</p>';
+            $content .= '</div>';
+            return response()->json([
+                'name' => $user->name,
+                'role' => ucfirst($user->role),
+                'content' => $content,
+                'profile_picture' => $user->profile_picture
+            ]);
+        }
+
 
     }
+    public function storeReport(Request $request)
+    {
+        $request->validate([
+            'reported_id' => 'required|exists:users,id',
+            'type' => 'required|string',
+            'Repreason' => 'required|string|max:255',
+        ]);
+
+        $report = Reports::create([
+            'user_id' => Auth::id(),           // ID of the reporting user
+            'reported_id' => $request->reported_id, // ID of the reported user
+            'dorm_id' => $request->dorm_id,
+            'reported_type' => $request->type,    // ID of the reported property (optional)
+            'reason' => $request->Repreason == 'Other' ? $request->otherReason : $request->Repreason,
+
+        ]);
+
+        return response()->json(['message' => 'Report submitted successfully']);
+    }
+
 
 }
 

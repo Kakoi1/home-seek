@@ -194,6 +194,7 @@
         box-sizing: border-box;
     }
 </style>
+
 <div>
     <h1>{{ $dorm ? 'Edit Property' : 'List Property' }}</h1>
 
@@ -292,8 +293,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                                                                                                                                                                                            {!! json_encode($dorm) !!}
-                                                                                                                                                                                                        </script>
+                                   {!! json_encode($dorm) !!}
+                                    </script>
                 @endif
 
             </div>

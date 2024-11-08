@@ -51,7 +51,7 @@
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
                 <option value="completed">Completed</option>
-                <option value="canceled">Canceled</option>
+                <option value="cancelled">Canceled</option>
             </select>
 
             <table class="custom-table" id="bookingsTable">

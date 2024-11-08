@@ -10,6 +10,5 @@ Artisan::command('inspire', function () {
 
 Schedule::command('billing:process')->everyFiveSeconds();
 Schedule::command('rentform:complete-and-create-reviews')->everyFiveSeconds();
-Schedule::command('app:notify-check-in')->everyFiveSeconds();
 
 // Schedule::command('app:test-job')->everySecond();

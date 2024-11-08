@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\Notification;
+use App\Models\RentForm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class NotifyController extends Controller
@@ -32,5 +35,39 @@ class NotifyController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function sendUpcomingStayNotification($tenantId)
+    {
+        // Fetch the tenant's approved RentForm
+        $rentForm = RentForm::where('user_id', $tenantId)
+            ->where('status', 'approved')
+            ->first();
 
+        if (!$rentForm) {
+            return response()->json(['success' => false, 'message' => 'No approved rent form found for this tenant.']);
+        }
+        $today = Carbon::today();
+        $startDate = Carbon::parse($rentForm->start_date);
+        $daysUntilStay = $today->diffInDays($startDate);
+        // Send the notification
+        $Notification = Notification::create([
+            'user_id' => $tenantId,
+            'type' => 'upcoming_stay',
+            'data' => "<p>Your stay at {$rentForm->dorm->name} starts in {$daysUntilStay} days! Please be prepared for your check-in.</p>",
+            'read' => false,
+            'route' => null, // Adjust this route as needed
+            'dorm_id' => $rentForm->dorm_id,
+            'sender_id' => auth()->user()->id // Assuming the owner is logged in
+        ]);
+        event(new NotificationEvent([
+            'reciever' => $Notification->user_id,
+            'message' => $Notification->data,
+            'sender' => Auth::id(),
+            'rooms' => $Notification->id,
+            'roomid' => $Notification->room_id,
+            'action' => 'Check-in',
+            'route' => null
+        ]));
+
+        return response()->json(['success' => true, 'message' => 'Notification sent successfully.']);
+    }
 }

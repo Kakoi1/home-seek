@@ -97,6 +97,7 @@
         <form method="POST" action="{{ route('verify.email') }}">
             @csrf
             <input type="hidden" name="user_id" value="{{ $user->id }}">
+            <input type="hidden" name="action" value="{{ $user->action }}">
 
             <div class="input-group">
                 <label for="verification_code">Verification Code</label>

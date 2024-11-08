@@ -204,7 +204,7 @@
                 <i class='bx bx-chevron-down'></i>
                 <div class="dropdownMenu">
                     <ul>
-                        <li><a href="{{route('profile')}}">Profile</a></li>
+                        <li><a style="color: #333333;" onclick="openUserPopup({{Auth::id()}})">Profile</a></li>
                         <li><a href="#">Settings</a></li>
                         <li><a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>

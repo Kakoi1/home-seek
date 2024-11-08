@@ -137,6 +137,11 @@
             @foreach ($topRatedDorms as $dorm)
                         @php
                             $images = json_decode($dorm->image, true);
+                            $fullAddress = $dorm->address;
+
+                            // Split the string by commas
+                            $addressParts = explode(',', $fullAddress);
+                            $shortAddress = implode(', ', array_slice($addressParts, 0, 3));
                         @endphp
                         <li class="card">
                             <div id="carousel-{{ $dorm->id }}" class="carousel slide" data-ride="carousel" data-interval="3000">
@@ -170,7 +175,7 @@
                             <div class="overlay">
                                 <div class="text">
                                     <h4>{{ $dorm->name }}</h4>
-                                    <p>{{ $dorm->address }}</p>
+                                    <p>{{ $shortAddress }}</p>
                                     <p>Rating: {{ number_format($dorm->reviews_avg_rating, 1) }} / 5</p>
                                 </div>
                             </div>

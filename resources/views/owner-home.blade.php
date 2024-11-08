@@ -7,7 +7,6 @@
     h1 {
         font-size: 2.5em;
         margin-bottom: 20px;
-        /* color: #2c3e50; */
     }
 
     .dashboard {
@@ -71,6 +70,26 @@
         font-size: 1.2em;
         color: #ecf0f1;
     }
+
+    /* Styling for stat-box1 */
+    .stat-box1 {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 80%;
+        max-width: 1000px;
+        margin: 0 auto;
+        height: 100%;
+    }
+
+    /* Ensure canvas fills stat-box1 */
+    .stat-box1 canvas {
+        width: 100%;
+        height: 100%;
+    }
 </style>
 
 <br>
@@ -91,7 +110,7 @@
             <p>Active Tenants</p>
         </div>
         <div class="stat-box">
-            <h2>{{ $pendingRequests = null ? $pendingRequests : 0 }}</h2>
+            <h2>{{ $pendingRequests->count() ?? 0 }}</h2>
             <p>Pending Rent Requests</p>
         </div>
         <div class="stat-box">
@@ -99,5 +118,72 @@
             <p>Monthly Earnings</p>
         </div>
     </div>
+
+    <!-- Booking Rate Graph -->
+    <div class="stat-box1">
+        <h2>Booking Rate of Each Property</h2>
+        <canvas id="bookingRateChart"></canvas>
+    </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const bookingRates = @json($bookingRates); // Pass the booking rates and counts from PHP to JS
+
+    const ctx = document.getElementById('bookingRateChart').getContext('2d');
+    const bookingRateChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: bookingRates.map(rate => rate.dorm), // X-axis labels (Property Names)
+            datasets: [{
+                label: 'Booking Rate (%)',
+                data: bookingRates.map(rate => rate.bookingRate), // Y-axis data (Booking Rate)
+                backgroundColor: 'rgba(52, 152, 219, 0.5)', // Bar color
+                borderColor: 'rgba(52, 152, 219, 1)', // Bar border color
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false // Hide the legend
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            const dataIndex = tooltipItem.dataIndex;
+                            const bookingCount = bookingRates[dataIndex].bookingCount; // Get the booking count
+                            const bookingRate = tooltipItem.raw.toFixed(2); // Get the booking rate
+                            return `${bookingRate}% (Bookings: ${bookingCount})`; // Display booking rate and count
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Property Name'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Booking Rate (%)'
+                    },
+                    ticks: {
+                        stepSize: 10,
+                        max: 100,
+                    }
+                }
+            }
+        }
+    });
+</script>
 @endsection

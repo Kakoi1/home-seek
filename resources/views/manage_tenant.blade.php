@@ -238,10 +238,10 @@
                                 @else
                                         @foreach($room['tenants'] as $tenant)
                                                 <div class="tenant-card">
-                                                    <h5>{{ $tenant['name'] }}
-                                                        <span class="expand-btn"
-                                                            onclick="toggleDetails({{ $tenant['user_id'] }})">Details</span>
+                                                    <h5 onclick="openUserPopup({{$tenant['user_id']}})"> <strong><a
+                                                                href="javascript: void(0)">{{ $tenant['name'] }}</a></strong>
                                                     </h5>
+                                                    <span class="expand-btn" onclick="toggleDetails({{ $tenant['user_id'] }})">Details</span>
                                                     <p>Email: <a href="mailto:{{ $tenant['email'] }}">{{ $tenant['email'] }}</a></p>
                                                     <p>Rent Status: <strong>{{$tenant['status']}}</strong></p>
 
@@ -254,6 +254,9 @@
                                                                         @endphp
                                                                         <p>Rent Start Date: <strong>{{$tenant['start_date']}}</strong></p>
                                                                         <p>Rent will start in: {{abs($remainingTime)}} days</p>
+                                                                        <br>
+                                                                        <button onclick="sendNotification({{ $tenant['user_id'] }})">Send Upcoming Stay
+                                                                            Notification</button>
                                                         @elseif($tenant['status'] == 'active')
                                                                         @php
                                                                             $today = \Carbon\Carbon::now();
@@ -320,7 +323,9 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">{{ $rentForm->dorm_name }}</h5>
-                            <p>Tenant: {{ $rentForm->tenant_name }}</p>
+                            <p onclick="openUserPopup({{$rentForm->user_id}})">Tenant:
+                                <Strong><a href="javascript: void(0)">{{ $rentForm->tenant_name }}</a></Strong>
+                            </p>
                             <p>Submitted on: {{ \Carbon\Carbon::parse($rentForm->created_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
                                 <!-- Approve Button -->
@@ -381,7 +386,9 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title">{{ $cancellation->dorm_name }}</h5>
-                            <p>Tenant: {{ $cancellation->tenant_name }}</p>
+                            <p onclick="openUserPopup({{$cancellation->user_id}})">Tenant:
+                                <strong><a href="javascript: void(0)">{{ $cancellation->tenant_name }}</a></strong>
+                            </p>
                             <p>Cancellation Reason: {{ $cancellation->cancel_reason }}</p>
                             <p>Requested on: {{ \Carbon\Carbon::parse($cancellation->updated_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
@@ -432,7 +439,27 @@
             paidContent.classList.remove('hidden');
         }
     }
-
+    function sendNotification(tenantId) {
+        fetch(`/notify-tenant/${tenantId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Notification sent successfully!');
+                } else {
+                    alert('Failed to send notification.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending notification.');
+            });
+    }
 </script>
 
 @endsection

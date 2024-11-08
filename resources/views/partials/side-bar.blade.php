@@ -34,12 +34,7 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="{{ route('myReviews') }}" class="{{ request()->routeIs('myReviews') ? 'active' : '' }}">
-                        <i class="fa-solid fa-comments"></i>
-                        <span class="links_name">My Reviews</span>
-                    </a>
-                </li>
+
 
             @elseif(auth()->user()->role == 'admin')
                 <!-- admin------------------------ -->
@@ -51,7 +46,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="link-item">
+                    <a href="{{route('admin.manageProp')}}"
+                        class="{{ request()->routeIs('admin.manageProp') ? 'active' : '' }}">
                         <i class='bx bx-home-smile'></i>
                         <span class="links_name">Manage Listings</span>
 
@@ -65,9 +61,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="link-item">
-                        <i class='bx bx-pie-chart-alt-2'></i>
-                        <span class="links_name">Analytics</span>
+                    <a href="{{route('reports.view')}}" class="link-item"
+                        class="{{ request()->routeIs('reports.view') ? 'active' : '' }}">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span class="links_name">User Complaints</span>
                     </a>
                 </li>
 

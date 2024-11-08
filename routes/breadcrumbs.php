@@ -17,6 +17,14 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('admin.dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Home', route('admin.dashboard'));
 });
+Breadcrumbs::for('admin.manageProp', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Manage Listed Property', route('admin.manageProp'));
+});
+Breadcrumbs::for('reports.view', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Manage User Complaints', route('reports.view'));
+});
 
 Breadcrumbs::for('admin.manageuser', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.dashboard');
@@ -51,6 +59,10 @@ Breadcrumbs::for('favourites', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('user.rentForms', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Bookings', route('user.rentForms'));
+});
+Breadcrumbs::for('rentForm.edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.rentForms');
+    $trail->push('Edit Booking', route('rentForm.edit'));
 });
 
 // Home > Properties > [Property Name]

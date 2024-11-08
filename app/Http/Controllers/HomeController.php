@@ -26,10 +26,14 @@ class HomeController extends Controller
         $ownerDorms = Dorm::where('user_id', $ownerId)->pluck('id')->toArray();
 
         // Fetch tenants who have completed their rental at the owner's properties
-        $pastTenants = RentForm::whereIn('dorm_id', $ownerDorms)->where('status', 'approved')->with('dorm', 'user')->get();
+        $pastTenants = RentForm::whereIn('dorm_id', $ownerDorms)->where('status', 'completed')->with('dorm', 'user')->get();
 
         // Fetch bookings that are still pending for the owner's properties
-        $bookings = RentForm::whereIn('dorm_id', $ownerDorms)->where('status', 'approved')->with('dorm', 'user')->get();
+        $bookings = RentForm::whereIn('dorm_id', $ownerDorms)
+            ->where('status', '!=', 'pending')
+            ->with('dorm', 'user')
+            ->get();
+
 
         // Fetch payment history related to the owner’s properties
         $payments = Billing::whereHas('rentForm', function ($query) use ($ownerDorms) {

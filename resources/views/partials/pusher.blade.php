@@ -44,30 +44,26 @@
                     }
                     let linker = '';
                     let notificationContent = '';
-
-                    if (data.action === 'rent') {
-                        console.log(data.rooms, data.room_id);
-
-                        linker = markNotificationUrlTemplate.replace(':id', data.rooms);
+                    if (data.route === null) {
                         fetchNotifications();
+                        linker = markNotificationUrlTemplate.replace(':id', data.rooms);
                         notificationContent = `
-               
-              <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="notify">
-                <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-            </div>
-               
-            `;
+        <div onclick='openPopup("${data.message}"); markNotificationAsRead("${linker}", null);' class="notification-content" id="notify">
+            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
+            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
+        </div>
+    `;
                     }
+
                     else {
                         fetchNotifications();
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
                         notificationContent = `
                
-              <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="">
-                <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-            </div>
+                        <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="">
+                            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
+                            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
+                        </div>
                
             `;
                     }

@@ -271,29 +271,29 @@ class RoomController extends Controller
     //     return response()->json(['status' => 'Link sent successfully']);
     // }
 
-    public function createBook($roomId, $id = null)
+    public function createBook(Request $request)
     {
-        // Fetch the room by ID, and ensure it exists
-        $rooms = Room::where('id', $roomId)->get();
+        $id = $request->rent_id;
 
-        // If an ID is provided, we're in edit mode
         if ($id) {
-            // Find the rent form for the user and room
+            // Attempt to find the rent form with the provided id for the authenticated user
             $rent = RentForm::where('id', $id)
                 ->where('user_id', auth()->id()) // Ensure only the user can edit their own forms
                 ->firstOrFail();
+            $property = Dorm::where('id', $rent->dorm_id) // Ensure only the user can edit their own forms
+                ->firstOrFail();
 
-            // Convert dates to Carbon instances for formatting in the view
-            $rent->start_date = Carbon::parse($rent->start_date);
-            $rent->end_date = Carbon::parse($rent->end_date);
-
-            // Pass the rent form and room data to the view
-            return view('room.rentForm', compact('rent', 'rooms'));
+            // Pass the rent form to the view
+            return view('room.rentForm', compact('rent', 'property'));
         }
 
-        // If there's no rent form to edit, just return the room for booking
-        return view('room.rentForm', compact('rooms'));
+        // Optional fallback if there's no rent form to edit (if you want to return room data here)
+        // $rooms = Room::all(); // Retrieve available rooms
+        // return view('room.rentForm', compact('rooms'));
+
+        abort(404); // Send a 404 error if no ID was provided or form not found
     }
+
 
 
 
@@ -324,7 +324,7 @@ class RoomController extends Controller
         $notification = Notification::create([
             'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
-            'data' => 'Someone Booked your Property',
+            'data' => '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: ' . now() . '</p>',
             'read' => false,
             'route' => route('managetenant'),
             'dorm_id' => $request->dorm_id,
@@ -341,63 +341,37 @@ class RoomController extends Controller
             'action' => 'rent',
             'route' => route('managetenant')
         ]));
-
-        return redirect()->route('dorms.posted', $dorm->id);
+        $dorm->availability = true;
+        $dorm->save();
+        return redirect()->route('user.rentForms')->with('success', 'Booking Created!');
     }
 
     public function updateBook(Request $request, $id)
     {
         // Fetch the rent form by ID and ensure it belongs to the authenticated user
-        $dorm = Dorm::findOrFail($request->dorm_id);
+        {
+            // Retrieve the rent form record and the associated property
+            $rent = RentForm::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+            $property = Dorm::findOrFail($rent->dorm_id);
 
-        $rentForm = RentForm::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+            // Validate the form data, including guests within limits
+            $request->validate([
+                'start_date' => 'required|date|after_or_equal:today',
+                'end_date' => 'required|date|after:start_date',
+                'guest' => "required|integer|min:1|max:{$property->capacity}",
+                'total_price' => 'required|numeric|min:0',
+            ]);
 
-        // Validate the incoming request data
-        $request->validate([
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'duration' => 'nullable|integer|min:1', // Only required for long-term rentals
-            'term' => 'required|in:short_term,long_term',
-            'total_price' => 'required',// Validate the rental type
-        ]);
-
-        // Check if it's a short-term rental
-        if ($request->input('term') == 'short_term') {
-            $startDate = Carbon::parse($request->input('start_date'));
-            $endDate = Carbon::parse($request->input('end_date'));
-
-            // Ensure the end date is within 30 days of the start date
-            if ($endDate->diffInDays($startDate) > 30) {
-                return back()->withErrors(['end_date' => 'End date cannot be more than 30 days after the start date.']);
-            }
-
-            // Update rent form for short-term
-            $rentForm->update([
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'duration' => null, // No duration for short-term rentals
-                'term' => 'short_term',
+            // Update the rent form with validated data
+            $rent->update([
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'guest' => $request->guest,
                 'total_price' => $request->total_price,
             ]);
 
-        } elseif ($request->input('term') == 'long_term') {
-            // For long-term rentals, we don't need an end date, only the duration
-            $duration = $request->input('duration');
-
-            // Update rent form for long-term
-            $rentForm->update([
-                'start_date' => Carbon::parse($request->input('start_date')),
-                'end_date' => $request->durdate, // No end date for long-term rentals
-                'duration' => $duration,
-                'term' => 'long_term',
-                'total_price' => $request->total_price,
-            ]);
+            return redirect()->route('user.rentForms')->with('success', 'Booking updated successfully!');
         }
-
-        // Redirect back with success message
-        return redirect()->route('dorms.posted', $dorm->id);
     }
     public function cancel(Request $request, $id)
     {
@@ -420,11 +394,13 @@ class RoomController extends Controller
             $message = 'Cancellation Request has Sent';
             $data = 'Booking Cancellation request';
         } else {
-
+            $dorm = Dorm::find($rentForm->dorm_id);
             $rentForm->status = 'cancelled';
             $rentForm->note = $request->cancelReason;
             $message = 'Booking form cancelled successfully';
             $data = 'Booking Cancelled';
+            $dorm->availability = false;
+            $dorm->save();
         }
         // Redirect back with success message
 
@@ -511,6 +487,9 @@ class RoomController extends Controller
                 'sender_id' => $userId
             ]);
             $rentForm->note = $request->rejection_reason;
+            $dorm = Dorm::find($rentForm->dorm_id);
+            $dorm->availability = false;
+            $dorm->save();
         }
 
         event(new NotificationEvent([

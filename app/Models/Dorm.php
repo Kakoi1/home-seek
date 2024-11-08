@@ -15,10 +15,7 @@ class Dorm extends Model
     protected $casts = [
         'image' => 'array',
     ];
-    public function rooms()
-    {
-        return $this->hasMany(Room::class);
-    }
+
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();

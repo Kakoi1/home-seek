@@ -11,18 +11,34 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        /* background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); */
         font-family: 'Poppins', sans-serif;
+        background-color: #f4f6f9;
+    }
+
+    /* Flex container for image and login form */
+    .flex-container {
+        display: flex;
+        max-width: 1000px;
+        width: 100%;
+        height: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+        background-color: #ffffff;
+    }
+
+    /* Image container styling */
+    .image-container {
+        width: 50%;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 1s ease-in-out;
     }
 
     /* Form box styling */
     .logreg-box {
-        background-color: #ffffff;
+        width: 50%;
         padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
     }
 
     .forms-box h2 {
@@ -99,21 +115,45 @@
         background-color: #1c63da;
     }
 
-    /* Facebook button styling */
-    .btn.facebook {
-        background-color: #4267b2;
+    /* Facebook and Google buttons styling */
+    .social-buttons {
         margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .loginBtn {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 10px;
+        color: #FFF;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 48%;
     }
 
-    .btn.facebook i {
-        margin-right: 10px;
+    .loginBtn--facebook {
+        background-color: #4267b2;
+        font-size: 34px;
+        width: 60px;
     }
 
-    .btn.facebook:hover {
+    .loginBtn--google {
+        background-color: #DD4B39;
+        font-size: 34px;
+        width: 60px;
+    }
+
+    .loginBtn--facebook:hover {
         background-color: #365899;
+    }
+
+    .loginBtn--google:hover {
+        background-color: #E74B37;
     }
 
     /* Register link styling */
@@ -138,42 +178,103 @@
     }
 
     /* Responsive design */
-    @media (max-width: 500px) {
-        .logreg-box {
-            padding: 20px;
+    @media (max-width: 768px) {
+        .flex-container {
+            flex-direction: column;
         }
+
+        .image-container {
+            width: 100%;
+            height: 200px;
+        }
+
+        .logreg-box {
+            width: 100%;
+        }
+    }
+
+    .social-login-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .social-login-label {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 10px;
     }
 </style>
 
 <div class="containers login">
-    <div class="logreg-box">
-        <div class="forms-box login">
-            <form action="{{route('login')}}" id="loginForm" method="post" autocomplete="on"
-                enctype="multipart/form-data">
-                @csrf
-                <h2>Sign In</h2>
-                <div class="input-box">
-                    <span class="icon"><i class='bx bxs-envelope'></i></span>
-                    <input type="email" required name='logname' placeholder=" ">
-                    <label>Email</label>
+    <div class="flex-container">
+        <div class="image-container" id="imageContainer"></div>
+
+        <div class="logreg-box">
+            <div class="forms-box login">
+                <form action="{{route('login')}}" id="loginForm" method="post" autocomplete="on"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <h2>Sign In</h2>
+                    <div class="input-box">
+                        <span class="icon"><i class='bx bxs-envelope'></i></span>
+                        <input type="text" required name="logname" placeholder=" ">
+                        <label>Email or Username</label>
+                    </div>
+                    <div class="input-box">
+                        <span class="icon"><i class='bx bxs-lock'></i></span>
+                        <input type="password" required name="logpassword" placeholder=" ">
+                        <label>Password</label>
+                    </div>
+                    <a href="{{route('forgot')}}">Forgot password</a>
+                    <br><br>
+                    <button id="loginButton" name="login" class="btn">Sign In</button>
+                </form>
+                <div class="social-login-container">
+                    <p class="social-login-label">Log in with</p>
+                    <div class="social-buttons">
+                        <button class="loginBtn loginBtn--facebook"
+                            onclick="window.location='{{ route('auth.facebook') }}'">
+                            <i class="fa-brands fa-facebook"></i>
+                        </button>
+                        <button class="loginBtn loginBtn--google"
+                            onclick="window.location='{{ route('auth.google') }}'">
+                            <i class="fa-brands fa-google"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="input-box">
-                    <span class="icon"><i class='bx bxs-lock'></i></span>
-                    <input type="password" required name="logpassword" placeholder=" ">
-                    <label>Password</label>
-                </div>
-                <button id="loginButton" name="login" class="btn">Sign In</button>
-                <br><br>
-                <a href="{{ route('facebook.login') }}" class="btn facebook">
-                    <i class="fab fa-facebook-f fa-fw"></i>
-                    Login with Facebook
-                </a>
+
+
                 <div class="login-register">
                     <p>Don't have an account? <a href="{{route('register')}}" class="register-links">Sign up</a></p>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Array of image URLs for the rotating background
+    const images = [
+        "{{ asset('images/bg2.jpg') }}",
+        "{{ asset('images/bg3.jpg') }}",
+        "{{ asset('images/bg4.jpg') }}"
+    ];
+
+
+    let currentIndex = 0;
+    const imageContainer = document.getElementById('imageContainer');
+
+    // Function to change the background image every 5 seconds
+    function changeImage() {
+        imageContainer.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    // Initial call to set the first image
+    changeImage();
+
+    // Set interval to change image every 5 seconds
+    setInterval(changeImage, 5000);
+</script>
 
 @endsection

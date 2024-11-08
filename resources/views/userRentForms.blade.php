@@ -376,9 +376,19 @@
 
                     @if ($currentRent->status == 'pending')
                         <div class="btn-div">
-                            <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
-                            <a href="{{ route('rentForm.create', [$currentRent->dorm_id, $currentRent->id]) }}"
-                                class="btn edit-button">Edit</a>
+                            @if(isset($currentRent) && isset($currentRent->id))
+                                <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
+                                <form id="editRentForm" action="{{ route('rentForm.edit') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="rent_id" value="{{ $currentRent->id }}">
+                                </form>
+
+                                <a href="javascript:void(0);" class="btn edit-button"
+                                    onclick="document.getElementById('editRentForm').submit();">Edit</a>
+
+                            @else
+                                <p>No current rent information available.</p>
+                            @endif
                         </div>
                     @elseif($currentRent->status == 'approved')
                         @if ($remainingTime->format("%a") <= 2)
@@ -493,7 +503,7 @@
             <div class="tab-pane active" id="pending-payments">
                 <h4>Pending Payments</h4>
                 <div id="pendingPaymentsContent" class="payment-container">
-                    @if ($pendingPayments == [])
+                    @if (empty($pendingPayments))
                         <p>No pending payments for the selected month.</p>
                     @else
                         @foreach ($pendingPayments as $payment)
@@ -721,27 +731,27 @@
             $('#pendingPaymentsContent').html(content);
 
             // Intercept form submission for each payment form
-            $('.payment-form').on('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
+            // $('.payment-form').on('submit', function (e) {
+            //     e.preventDefault(); // Prevent the default form submission
 
-                var form = $(this);
-                var formData = form.serialize(); // Serialize form data, including the CSRF token
+            //     var form = $(this);
+            //     var formData = form.serialize(); // Serialize form data, including the CSRF token
 
-                $.ajax({
-                    url: form.attr('action'),  // Get the form action URL
-                    type: 'POST',
-                    data: formData,  // Send serialized form data
-                    success: function (response) {
-                        alert('Payment successful!');
-                        // Optionally, update the UI with the new data, like refreshing payment info
-                        updatePendingPayments(response.pendingPayments);
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Payment failed. Please try again.');
-                        console.log(xhr.responseText);
-                    }
-                });
-            });
+            //     $.ajax({
+            //         url: form.attr('action'),  // Get the form action URL
+            //         type: 'POST',
+            //         data: formData,  // Send serialized form data
+            //         success: function (response) {
+            //             alert('Payment successful!');
+            //             // Optionally, update the UI with the new data, like refreshing payment info
+            //             updatePendingPayments(response.pendingPayments);
+            //         },
+            //         error: function (xhr, status, error) {
+            //             alert('Payment failed. Please try again.');
+            //             console.log(xhr.responseText);
+            //         }
+            //     });
+            // });
         }
 
 
