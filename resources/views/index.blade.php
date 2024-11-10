@@ -44,7 +44,7 @@
 
 </section>
 
-<section class="services d-flex justify-content-center" id="services">
+<section class="services d-flex justify-content-center" id="services" style="margin-top: 5vh;">
     <h2>Our Services</h2>
     <p>Browse through a comprehensive listing of dormitories and apartments in Minglanilla, offering various
         amenities and
