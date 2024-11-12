@@ -96,14 +96,14 @@
 <div class="containers">
     <div class="welcome-banner">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
-        <p>Here's an overview of your property statistics.</p>
+        <p>Here's an overview of your Accommodation statistics.</p>
     </div>
 
     <!-- Dashboard Stats -->
     <div class="dashboard">
         <div class="stat-box">
             <h2>{{ $totalProperties }}</h2>
-            <p>Total Properties</p>
+            <p>Total Accommodations</p>
         </div>
         <div class="stat-box">
             <h2>{{ $totalTenants }}</h2>
@@ -121,7 +121,7 @@
 
     <!-- Booking Rate Graph -->
     <div class="stat-box1">
-        <h2>Booking Rate of Each Property</h2>
+        <h2>Booking Rate of Each Accommodation</h2>
         <canvas id="bookingRateChart"></canvas>
     </div>
 
@@ -168,7 +168,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Property Name'
+                        text: 'Accommodation Name'
                     }
                 },
                 y: {

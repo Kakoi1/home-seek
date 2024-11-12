@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>My Property Reviews</h2>
+    <h2>My Accommodation Reviews</h2>
 
     <!-- Custom Tabs for Pending and Past Reviews -->
     <div class="tabs">
@@ -15,7 +15,7 @@
         <div id="pending-reviews" class="tab-pane active">
             <h3>Pending Reviews</h3>
             @if($pendingReviews->isEmpty())
-                <p>No properties awaiting review.</p>
+                <p>No Accommodation awaiting review.</p>
             @else
                 <div class="review-list">
                     @foreach($pendingReviews as $review)
@@ -33,7 +33,7 @@
         <div id="past-reviews" class="tab-pane">
             <h3>My Past Reviews</h3>
             @if($pastReviews->isEmpty())
-                <p>You haven't reviewed any properties yet.</p>
+                <p>You haven't reviewed any Accommodations yet.</p>
             @else
                 <div class="review-list">
                     @foreach($pastReviews as $review)

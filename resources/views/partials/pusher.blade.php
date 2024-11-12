@@ -48,11 +48,11 @@
                         fetchNotifications();
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
                         notificationContent = `
-        <div onclick='openPopup("${data.message}"); markNotificationAsRead("${linker}", null);' class="notification-content" id="notify">
-            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-        </div>
-    `;
+                        <div onclick='openPopup("${data.message}"); markNotificationAsRead("${data.rooms}", null);' class="notification-content" id="notify">
+                            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
+                            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
+                        </div>
+                    `;
                     }
 
                     else {
@@ -60,7 +60,7 @@
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
                         notificationContent = `
                
-                        <div onclick='markNotificationAsRead("${linker}", "${data.route}");' class="notification-content" id="">
+                        <div onclick='openPopup(${data.message}, ${data.route});markNotificationAsRead("${data.rooms}", null);' class="notification-content" id="">
                             <i class="fas fa-user"></i> <span>${data.sender.name}</span>
                             <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
                         </div>

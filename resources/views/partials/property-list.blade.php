@@ -23,15 +23,22 @@
                                 </button>
                                 <div id="dropdown-menu-{{ $dorm->id }}" class="dropdown-menu"
                                     style="display: none; position: absolute; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px; border-radius: 4px; min-width: 100px;">
-                                    <a class="dropdown-item" href="{{ route('dorms.posted', $dorm->id) }}">Show</a>
-                                    <a class="dropdown-item" href="{{ route('dorms.adddorm', $dorm->id) }}">Edit</a>
-                                    <a class="dropdown-item text-danger" onclick="confirmArchive({{ $dorm->id }})">Delete</a>
+
+                                    @if($dorm->archive == 0)
+                                        <a class="dropdown-item" href="{{ route('dorms.posted', $dorm->id) }}">Show</a>
+                                        <a class="dropdown-item" href="{{ route('dorms.adddorm', $dorm->id) }}">Edit</a>
+                                        <a class="dropdown-item text-danger" onclick="confirmArchive({{ $dorm->id }})">Delete</a>
+                                    @else
+                                        <a class="dropdown-item" href="#" style="pointer-events: none; color: gray;">Show (Disabled)</a>
+                                        <a class="dropdown-item" href="#" style="pointer-events: none; color: gray;">Edit (Disabled)</a>
+                                        <a class="dropdown-item text-success" onclick="restoreDorm({{ $dorm->id }})">Restore</a>
+                                    @endif
                                     <form id="archive-form-{{ $dorm->id }}" action="{{ route('dorms.archive', $dorm->id) }}"
                                         method="POST" style="display:inline;">
                                         @csrf
-
                                     </form>
                                 </div>
+
                             </div>
                             <!-- Heart Icon for Favorites -->
                             <span class="favorite-icon" onclick="toggleFavorite({{ $dorm->id }})">

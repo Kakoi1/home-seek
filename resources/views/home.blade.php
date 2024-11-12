@@ -53,15 +53,15 @@
 <div class="home-container">
     <br>
     <div class="top-area-container">
-        <h2>Property Available</h2>
+        <h2>Accommodation Available</h2>
         <h5>Filter by:</h5>
 
         <!-- Search Form -->
         <form id="search-form" class="mb-4 search-form">
             <div class="form-row">
                 <div class="col-md-4 mb-3">
-                    <input type="text" name="search" class="form-control" placeholder="Enter property name or address"
-                        value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control"
+                        placeholder="Enter Accommodation name or address" value="{{ request('search') }}">
                 </div>
                 <div class="col-md-3 mb-3">
                     <input type="number" name="min_price" class="form-control" placeholder="Enter min price"

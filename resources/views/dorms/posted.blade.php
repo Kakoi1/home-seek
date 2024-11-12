@@ -566,7 +566,7 @@
                     @if (Auth::id() != $dorm->user_id)
                         <div style="float:left;">
                             <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
-                                class="bts">Report Property <i class="fa-solid fa-flag"></i></button>
+                                class="bts">Report Accommodation <i class="fa-solid fa-flag"></i></button>
                         </div>
                     @endif
                 </div>
@@ -605,7 +605,7 @@
                         @if (!$hasPendingOrActiveRentForm)
                             <button type="submit" id="Book" class="btn-reserve">Book now</button>
                         @else
-                            <p class="text-danger">You already have Booked a Property. You cannot book at this moment.</p>
+                            <p class="text-danger">You already have Booked a Accommodation. You cannot book at this moment.</p>
                         @endif
 
                     </form>

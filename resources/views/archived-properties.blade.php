@@ -1,10 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'My Lisitngs')
+@section('title', 'Archived Properties')
 
 @section('content')
-<h2>My Accomodations</h2>
-
 <style>
     .custom-button {
         display: inline-block;
@@ -65,40 +63,48 @@
         background-color: #ffe6e6;
     }
 </style>
-<br>
+<h2>Archived Properties</h2>
 <link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
 <div style="padding: 20px;">
-    <a href="{{'adddorm'}}" class="custom-button">+ List a Accomodation</a>
-    <a href="{{ route('owner.archived') }}" class="custom-button">View Archived Accomodation</a>
+    <a href="{{ route('owner.Property') }}" class="custom-button">Back to Active Properties</a>
 </div>
 
-
-<br>
-<div class="proper-cont" id="property-list">
+<div class="proper-cont" id="archived-property-list">
     @include('partials.property-list', ['properties' => $properties])
 </div>
-<div id="pagination-links" class="d-flex justify-content-center">
+
+<div id="archived-pagination-links" class="d-flex justify-content-center">
     {{ $properties->links() }}
 </div>
 
 <script src="{{asset('js/dorm.js')}}"></script>
-
 <script>
 
-    function confirmArchive(dormId) {
+    function restoreDorm(dormId) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
+            text: "This will restore the Accomodation!",
+            icon: 'info',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, restore it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('archive-form-' + dormId).submit();
+                // You can create a route that handles restoring the dorm
+                $.ajax({
+                    url: '/dorms/restore/' + dormId, // Use the appropriate route for restoring the dorm
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function (response) {
+                        Swal.fire('Restored!', 'The Accomodation has been restored.', 'success');
+                        location.reload();
+                    }
+                });
             }
-        })
+        });
     }
 
     function toggleDropdown(dormId) {
@@ -118,24 +124,25 @@
 
 
 </script>
-
 <script>
-    $(document).on('click', '.pagination a', function (e) {
+    $(document).on('click', '#archived-pagination-links a', function (e) {
         e.preventDefault();
-
         let page = $(this).attr('href').split('page=')[1];
-
-        fetchProperties(page);
+        fetchArchivedProperties(page);
     });
 
-    function fetchProperties(page) {
+    function fetchArchivedProperties(page) {
         $.ajax({
-            url: "/owner-properties?page=" + page, // Update with your actual route
+            url: "/owner-properties/archived?page=" + page,
             success: function (data) {
-                $('#property-list').html(data.dorms); // Update the dorm list
-                $('#pagination-links').html(data.pagination);
+                $('#archived-property-list').html(data.archived_dorms); // Update archived dorms
+                $('#archived-pagination-links').html(data.archived_pagination); // Update pagination
+            },
+            error: function () {
+                alert("An error occurred while fetching data.");
             }
         });
     }
+
 </script>
 @endsection

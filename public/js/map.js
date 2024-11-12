@@ -162,11 +162,15 @@ function getAddress(latitude, longitude) {
     xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            document.getElementById("address").value = xhr.responseText;
+            // Remove any quotes around the response text (if they exist)
+            let response = xhr.responseText;
+            response = response.replace(/^"|"$/g, ''); // This removes quotes at the start and end of the string
+            document.getElementById("address").value = response;
         }
     };
     xhr.send("latitude=" + latitude + "&longitude=" + longitude);
 }
+    
 
 
 function getUserLocation() {

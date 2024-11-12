@@ -35,6 +35,11 @@ Breadcrumbs::for('owner.Property', function (BreadcrumbTrail $trail) {
     $trail->parent('owner.Dashboard');
     $trail->push('Properties', route('owner.Property'));
 });
+Breadcrumbs::for('owner.archived', function (BreadcrumbTrail $trail) {
+    $trail->parent('owner.Property');
+    $trail->push('Archives', route('owner.archived'));
+});
+
 Breadcrumbs::for('owner.history', function (BreadcrumbTrail $trail) {
     $trail->parent('managetenant');
     $trail->push('History', route('owner.history'));

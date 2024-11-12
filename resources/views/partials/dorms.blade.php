@@ -18,6 +18,18 @@
         background-color: rgba(0, 0, 0, .4);
         color: white;
     }
+
+    .no-ratings-badge {
+        background-color: #ccc;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: bold;
+        display: inline-block;
+        float: right;
+        margin-top: 5px;
+    }
 </style>
 @if($dorms->isEmpty())
     <div style="text-align: center; margin: 20px;">
@@ -50,15 +62,20 @@
 
                             $totalRating = 0;
                             $rating = 0;
-                            foreach ($dorm->reviews as $review) {
+                            $totalRating = 0;
+                            $validReviews = $dorm->reviews->where('rating', '>', 0); // Filter reviews with rating > 0
 
-                                $totalRating += $review->rating;
+                            if ($validReviews->count()) {
+                                foreach ($validReviews as $review) {
+                                    $totalRating += $review->rating;
+                                }
+
+                                $rating = $totalRating / $validReviews->count(); // Calculate the average rating
+                                $numberAsString = number_format($rating, 2); // Format to two decimal places
+                            } else {
 
                             }
-                            if ($dorm->reviews->count()) {
-                                $rating = $totalRating / $dorm->reviews->count();
-                            }
-                            $numberAsString = number_format($rating, 2);
+
                         @endphp
 
                         @if (is_array($images) && !empty($images))
@@ -128,12 +145,21 @@
                         </div>
                     @endif
                     <div class="cardbody" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
-                        <div> <span class="rating-star">★ {{$numberAsString}}</span></div>
-                        <h5 class="card-title">{{ $dorm->name }}</h5>
-                        <p class="card-text"><i class="fas fa-map-marker-alt"></i>
-                            {{ $shortAddress }}</p>
-                        <p class="card-text"><span>₱</span>{{ $dorm->price }}</p>
-
+                        @if($validReviews->count())
+                            <div>
+                                <span class="rating-star">★ {{$numberAsString}}</span>
+                            </div>
+                        @else
+                            <div style="width: 100%; text-align: center;">
+                                <span class="no-ratings-badge" style="">No ratings</span>
+                            </div>
+                        @endif
+                        <div style="text-align: left;">
+                            <h5 class="card-title">{{ $dorm->name }}</h5>
+                            <p class="card-text"><i class="fas fa-map-marker-alt"></i>
+                                {{ $shortAddress }}</p>
+                            <p class="card-text"><span>₱</span>{{ $dorm->price }}</p>
+                        </div>
 
                     </div>
                 </div>

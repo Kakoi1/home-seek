@@ -196,7 +196,7 @@
 </style>
 
 <div>
-    <h1>{{ $dorm ? 'Edit Property' : 'List Property' }}</h1>
+    <h1>{{ $dorm ? 'Edit Accommodation' : 'List Accommodation' }}</h1>
 
     <form id="locationForm" method="post" action="{{ $dorm ? route('dorms.update', $dorm->id) : route('savedorm') }}"
         enctype="multipart/form-data">
@@ -206,7 +206,7 @@
         @endif
 
         <div class="form-group">
-            <label for="name">Property name</label>
+            <label for="name">Accommodation name</label>
             <input type="text" id="name" name="name" value="{{ $dorm->name ?? old('name') }}" required>
         </div>
 
@@ -293,8 +293,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                   {!! json_encode($dorm) !!}
-                                    </script>
+                                       {!! json_encode($dorm) !!}
+                                        </script>
                 @endif
 
             </div>

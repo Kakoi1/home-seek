@@ -238,12 +238,16 @@
                                 @else
                                         @foreach($room['tenants'] as $tenant)
                                                 <div class="tenant-card">
-                                                    <h5 onclick="openUserPopup({{$tenant['user_id']}})"> <strong><a
-                                                                href="javascript: void(0)">{{ $tenant['name'] }}</a></strong>
+                                                    <h5 onclick="openUserPopup({{ $tenant['user_id'] }})">
+                                                        <strong><a href="javascript: void(0)">{{ ucfirst($tenant['name']) }}</a></strong>
+                                                        @if (!$tenant['pending_bills']->isEmpty())
+                                                            <span class="badge badge-danger">Not Paid</span>
+                                                        @endif
+
                                                     </h5>
                                                     <span class="expand-btn" onclick="toggleDetails({{ $tenant['user_id'] }})">Details</span>
                                                     <p>Email: <a href="mailto:{{ $tenant['email'] }}">{{ $tenant['email'] }}</a></p>
-                                                    <p>Rent Status: <strong>{{$tenant['status']}}</strong></p>
+                                                    <p>Rent Status: <strong>{{ ucfirst($tenant['status']) }}</strong></p>
 
                                                     <div id="tenantDetails{{ $tenant['user_id'] }}" class="hidden">
                                                         @if ($tenant['status'] == 'approved')
@@ -252,8 +256,8 @@
                                                                             $startDate = \Carbon\Carbon::parse($tenant['start_date']);
                                                                             $remainingTime = (int) $startDate->diffInDays($today, false);
                                                                         @endphp
-                                                                        <p>Rent Start Date: <strong>{{$tenant['start_date']}}</strong></p>
-                                                                        <p>Rent will start in: {{abs($remainingTime)}} days</p>
+                                                                        <p>Rent Start Date: <strong>{{ $tenant['start_date'] }}</strong></p>
+                                                                        <p>Rent will start in: {{ abs($remainingTime) }} days</p>
                                                                         <br>
                                                                         <button onclick="sendNotification({{ $tenant['user_id'] }})">Send Upcoming Stay
                                                                             Notification</button>
@@ -263,49 +267,128 @@
                                                                             $endDate = \Carbon\Carbon::parse($tenant['end_date']);
                                                                             $remainingTime = (int) $endDate->diffInDays($today, false);
                                                                         @endphp
-                                                                        <p>Rent End Date: <strong>{{$tenant['end_date']}}</strong></p>
-                                                                        <p>Rent will end in: {{abs($remainingTime)}} days</p>
+                                                                        <p>Rent End Date: <strong>{{ $tenant['end_date'] }}</strong></p>
+                                                                        <p>Rent will end in: {{ abs($remainingTime) }} days</p>
                                                         @endif
 
                                                         <!-- Tabs for Pending and Paid Bills -->
-                                                        <div class="tab-header">
-                                                            <div id="pending-tab-{{ $tenant['user_id'] }}" class="button-tab active"
-                                                                onclick="switchTab({{ $tenant['user_id'] }}, 'pending')">Pending Bills</div>
-                                                            <div id="paid-tab-{{ $tenant['user_id'] }}"
-                                                                onclick="switchTab({{ $tenant['user_id'] }}, 'paid')" class="button-tab">Paid
-                                                                Bills</div>
-                                                        </div>
+                                                        @if ($tenant['status'] == 'active')
+                                                                <hr>
+                                                                @if (!$tenant['pending_bills']->isEmpty())
+                                                                        <div id="tab-content-pending-{{ $tenant['user_id'] }}" class="tab-content">
+                                                                            @foreach($tenant['pending_bills'] as $bill)
+                                                                                        @php
+                                                                                            // Convert the billing date to a Carbon instance
+                                                                                            $dueDate = \Carbon\Carbon::parse($bill['billing_date']);
+                                                                                            $currentDate = \Carbon\Carbon::now();
+                                                                                            // Calculate the difference in days
+                                                                                            $daysRemaining = $dueDate->diffInDays($currentDate, false); // false for absolute value
+                                                                                            // Round the number of days remaining to the nearest integer
+                                                                                            $roundedDaysRemaining = round($daysRemaining);
+                                                                                        @endphp
 
-                                                        <div id="tab-content-pending-{{ $tenant['user_id'] }}" class="tab-content">
-                                                            @if($tenant['pending_bills']->isEmpty())
-                                                                <p>No pending bills.</p>
-                                                            @else
-                                                                @foreach($tenant['pending_bills'] as $bill)
-                                                                    <p>Amount: ₱{{ $bill['amount'] }} | Due Date: {{ $bill['billing_date'] }}</p>
-                                                                    <form method="POST" action="{{ route('notifyTenant', $bill['rent_form_id']) }}">
-                                                                        @csrf
-                                                                        <button type="submit" class="btn btn-warning btn-sm">Notify Tenant</button>
-                                                                    </form>
-                                                                @endforeach
-                                                            @endif
-                                                        </div>
+                                                                                        <div style="padding: 5px;">
+                                                                                            <p class="d-flex justify-content-between align-items-center mb-3">
+                                                                                                <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
+                                                                                                <!-- Display the number of days remaining -->
+                                                                                                <span><strong>Due Date:</strong>
+                                                                                                    @if ($roundedDaysRemaining > 0)
+                                                                                                        {{ $roundedDaysRemaining }} days
+                                                                                                    @elseif ($roundedDaysRemaining == 0)
+                                                                                                        Today
+                                                                                                    @else
+                                                                                                        Overdue by {{ abs($roundedDaysRemaining) }} days
+                                                                                                    @endif
+                                                                                                </span>
+                                                                                            </p>
+                                                                                        </div>
+                                                                                        <br>
+                                                                                        <div style="display: flex; justify-content: flex-start; gap: 10px;">
+                                                                                            <form method="POST" action="{{ route('notifyTenant', $bill['rent_form_id']) }}">
+                                                                                                @csrf
+                                                                                                <button type="submit" class="btn btn-warning btn-sm">Notify Payment</button>
+                                                                                            </form>
 
-                                                        <div id="tab-content-paid-{{ $tenant['user_id'] }}" class="tab-content hidden">
-                                                            @if($tenant['paid_bills']->isEmpty())
-                                                                <p>No paid bills.</p>
-                                                            @else
-                                                                @foreach($tenant['paid_bills'] as $bill)
-                                                                    <p>Amount: ₱{{ $bill['amount'] }} | Paid on: {{ $bill['paid_at'] }}</p>
-                                                                @endforeach
-                                                            @endif
-                                                        </div>
+                                                                                            <!-- Over the Counter Pay Button -->
+                                                                                            <button type="button" class="btn btn-info btn-sm"
+                                                                                                onclick="togglePaymentForm('paymentForm{{ $bill['id'] }}')">Pay Over the
+                                                                                                Counter</button>
+                                                                                        </div>
+
+                                                                                        <!-- Hidden Form for Over the Counter Payment -->
+                                                                                        <div id="paymentForm{{ $bill['id'] }}"
+                                                                                            style="display:none; margin-top: 10px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;">
+                                                                                            <form method="POST" action="{{ route('processPayment', $bill['id']) }}">
+                                                                                                @csrf
+                                                                                                @method('PATCH')
+                                                                                                <div class="form-group">
+                                                                                                    <label for="mode_of_payment">Mode of Payment:</label>
+                                                                                                    <select id="mode_of_payment" name="mode_of_payment"
+                                                                                                        class="form-control">
+                                                                                                        <option value="cash">Cash</option>
+                                                                                                        <option value="e_wallet">E - Wallet</option>
+                                                                                                        <option value="credit_card">Credit Card</option>
+                                                                                                        <option value="bank_transfer">Bank Transfer</option>
+
+                                                                                                    </select>
+                                                                                                </div>
+
+                                                                                                <div class="form-group">
+                                                                                                    <label for="payment_reference">Payment Reference:</label>
+                                                                                                    <input type="text" id="payment_reference" name="payment_reference"
+                                                                                                        class="form-control" placeholder="Enter payment reference number">
+                                                                                                </div>
+
+                                                                                                <div class="form-group">
+                                                                                                    <label for="payment_date">Payment Date:</label>
+                                                                                                    <input type="date" id="payment_date" name="payment_date"
+                                                                                                        min="{{ now()->format('Y-m-d') }}" class="form-control" required>
+                                                                                                </div>
+
+                                                                                                <button type="submit" class="btn btn-success btn-sm">Submit Payment</button>
+                                                                                            </form>
+                                                                                        </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                @elseif (!$tenant['paid_bills']->isEmpty())
+                                                                    <div id="tab-content-paid-{{ $tenant['user_id'] }}" class="tab-content">
+                                                                        @foreach($tenant['paid_bills'] as $bill)
+                                                                            <div style="padding: 5px;">
+                                                                                <p class="d-flex justify-content-between align-items-center mb-3">
+                                                                                    <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
+                                                                                    <span><strong>Paid At:</strong>
+                                                                                        {{ \Carbon\Carbon::parse($bill['paid_at'])->format('M d, Y') }}</span>
+                                                                                </p>
+                                                                                <p class="d-flex justify-content-between align-items-center mb-3">
+                                                                                    <span><strong>Status:</strong> Paid</span>
+                                                                                    <span><strong>Mode of Payment:</strong>
+                                                                                        @if($bill['mode'] == 'credit_card')
+                                                                                            Credit Card
+                                                                                        @elseif($bill['mode'] == 'e_wallet')
+                                                                                            E-Wallet
+                                                                                        @elseif($bill['mode'] == 'bank_transfer')
+                                                                                            Bank Transfer
+                                                                                        @else
+                                                                                            {{ ucfirst($bill['mode']) }}
+                                                                                        @endif
+                                                                                    </span>
+                                                                                </p>
+
+                                                                            </div>
+                                                                            <br>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @else
+                                                                    <p>No pending or paid bills available.</p>
+                                                                @endif
+                                                        @endif
+
                                                     </div>
                                                 </div>
                                         @endforeach
                                 @endif
                             </div>
                         @endforeach
-
                     </div>
                 </div>
             @empty
@@ -313,7 +396,7 @@
             @endforelse
         </div>
 
-
+        <!-- Rent Requests Tab -->
         <div class="tab-pane fade" id="rentRequests" role="tabpanel" aria-labelledby="rent-requests-tab">
             <h2 class="mt-4">Pending Rent Requests</h2>
             @if (empty($pendingRentForms))
@@ -322,10 +405,9 @@
                 @foreach ($pendingRentForms as $rentForm)
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $rentForm->dorm_name }}</h5>
-                            <p onclick="openUserPopup({{$rentForm->user_id}})">Tenant:
-                                <Strong><a href="javascript: void(0)">{{ $rentForm->tenant_name }}</a></Strong>
-                            </p>
+                            <h5 class="card-title">{{ ucfirst($rentForm->dorm_name) }}</h5>
+                            <p onclick="openUserPopup({{ $rentForm->user_id }})">Tenant: <strong><a
+                                        href="javascript: void(0)">{{ ucfirst($rentForm->tenant_name) }}</a></strong></p>
                             <p>Submitted on: {{ \Carbon\Carbon::parse($rentForm->created_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
                                 <!-- Approve Button -->
@@ -338,7 +420,7 @@
 
                                 <button type="button"
                                     onclick="event.preventDefault(); document.getElementById('approveBook').submit();"
-                                    class="approve-btn btn-success" name="status">Approve</button>
+                                    class="approve-btn btn-success">Approve</button>
                                 <!-- Reject Button triggers modal -->
                                 <button class="reject-btn btn-danger" data-toggle="modal" data-target="#rejectModal"
                                     data-rent-id="{{ $rentForm->rent_form_id }}">Reject</button>
@@ -376,7 +458,7 @@
             @endif
         </div>
 
-
+        <!-- Cancellations Tab -->
         <div class="tab-pane fade" id="cancellations" role="tabpanel" aria-labelledby="cancel-requests-tab">
             <h2 class="mt-4">Cancellation Requests</h2>
             @if(empty($cancellations))
@@ -385,14 +467,13 @@
                 @foreach($cancellations as $cancellation)
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $cancellation->dorm_name }}</h5>
-                            <p onclick="openUserPopup({{$cancellation->user_id}})">Tenant:
-                                <strong><a href="javascript: void(0)">{{ $cancellation->tenant_name }}</a></strong>
-                            </p>
+                            <h5 class="card-title">{{ ucfirst($cancellation->dorm_name) }}</h5>
+                            <p onclick="openUserPopup({{ $cancellation->user_id }})">Tenant: <strong><a
+                                        href="javascript: void(0)">{{ ucfirst($cancellation->tenant_name) }}</a></strong></p>
                             <p>Cancellation Reason: {{ $cancellation->cancel_reason }}</p>
                             <p>Requested on: {{ \Carbon\Carbon::parse($cancellation->updated_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
-                                <form action="{{ route('cancellation.updateStatus', $cancellation->rent_form_id, ) }}"
+                                <form action="{{ route('cancellation.updateStatus', $cancellation->rent_form_id) }}"
                                     method="POST" style="display: inline;">
                                     @csrf
                                     @method('PATCH')
@@ -407,9 +488,8 @@
                 @endforeach
             @endif
         </div>
-
-
     </div>
+
 </div>
 <script>
     // Toggle visibility of tenant details
@@ -460,6 +540,19 @@
                 alert('Error sending notification.');
             });
     }
+
 </script>
+<script>
+    function togglePaymentForm(formId) {
+        var form = document.getElementById(formId);
+        // Toggle the display of the form
+        if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+    }
+</script>
+
 
 @endsection

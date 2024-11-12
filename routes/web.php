@@ -147,7 +147,7 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
         Route::patch('/extendupdate/{id}', [Controller::class, 'extendUpdate'])->name('extendUpdate');
         Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
         Route::patch('/book/{id}/cancelStatus', [Controller::class, 'updateRequest'])->name('cancellation.updateStatus');
-        Route::get('/billings', [Controller::class, 'filterBilling'])->name('billing.filter');
+        Route::get('/filter-billing', [Controller::class, 'filterBilling']);
         Route::post('/make-payment/{id}', [Controller::class, 'makePayment'])->name('makePayment');
         Route::get('/reviews/{id}', [Controller::class, 'review'])->name('reviews.store');
         Route::get('/my-reviews', [Controller::class, 'userReviews'])->name('myReviews');
@@ -156,9 +156,12 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
         Route::get('/myfavourites', [DormController::class, 'favourites'])->name('favourites');
         Route::get('/ownerhome', [DormController::class, 'ownerDashboard'])->name('owner.Dashboard');
         Route::get('/owner-properties', [DormController::class, 'ownerProperty'])->name('owner.Property');
+        Route::get('/owner-properties/archived', [DormController::class, 'archivedProperty'])->name('owner.archived');
         Route::get('/owner-history', [HomeController::class, 'history'])->name('owner.history');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
         Route::post('/notify-tenant/{tenantId}', [NotifyController::class, 'sendUpcomingStayNotification']);
+        Route::patch('/process-payment/{rent_form_id}', [HomeController::class, 'processPayment'])->name('processPayment');
+        Route::post('/dorms/restore/{id}', [DormController::class, 'restore'])->name('dorms.restore');
 
         Route::post('/pusher/auth', function () {
             return Broadcast::auth(request());

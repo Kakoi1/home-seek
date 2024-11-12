@@ -6,6 +6,7 @@ use App\Models\Dorm;
 use App\Models\Billing;
 use App\Models\RentForm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
@@ -55,6 +56,34 @@ class HomeController extends Controller
 
         return back()->with('success', 'File uploaded successfully to GCS! Path: ' . $path);
     }
+
+    public function processPayment(Request $request, $billId)
+    {
+        // Validate the incoming request
+        $validated = $request->validate([
+            'mode_of_payment' => 'required|in:cash,e_wallet,credit_card,bank_transfer,others',
+            'payment_reference' => $request->mode_of_payment !== 'cash' ? 'required|string|max:255' : 'nullable',
+            'payment_date' => 'required|date',
+        ]);
+
+        // Find the bill that corresponds to the rent form
+        $paymentDate = Carbon::parse($validated['payment_date'])->setTime(now()->hour, now()->minute, now()->second);
+        $bill = Billing::findOrFail($billId);
+
+        // Create a new payment record
+
+        $bill->mode = $validated['mode_of_payment'];
+        $bill->reference = $validated['payment_reference'];
+        $bill->paid_at = $paymentDate;
+        $bill->status = 'paid';
+
+        $bill->save();
+
+        // Send a success message or redirect to a success page
+        return redirect()->back()
+            ->with('success', 'Payment processed successfully!');
+    }
+
     public function showUploadForm()
     {
         // Get all files in the 'test-folder' directory on GCS

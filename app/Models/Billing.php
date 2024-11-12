@@ -12,6 +12,9 @@ class Billing extends Model
         'amount',
         'billing_date',
         'status',
+        'reference',
+        'mode',
+        'paid_at',
     ];
 
     public function user()

@@ -68,7 +68,7 @@ class DormController extends Controller
 
     public function showDorms()
     {
-        $dorms = Dorm::all();
+        $dorms = Dorm::where('archive', 0)->where('availability', 0)->where('flag', 0)->get();
         return view('dorms.map', compact('dorms'));
     }
     public function index(Request $request)
@@ -146,7 +146,14 @@ class DormController extends Controller
         if ($dorm->availability) {
             return back()->withErrors('Property not Available');
         }
-        $propertyReview = Dorm::with('reviews')->findOrFail($id);
+        if ($dorm->archive) {
+            return back()->withErrors('Property is Deleted');
+        }
+        $propertyReview = Dorm::with([
+            'reviews' => function ($query) {
+                $query->where('rating', '>', 0); // Only include reviews with a rating greater than 0
+            }
+        ])->findOrFail($id);
 
         if (auth()->user()->role == 'owner') {
             Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
@@ -236,12 +243,15 @@ class DormController extends Controller
     public function ownerProperty(Request $request)
     {
         $userid = auth()->id();
+
+        // Active Properties
         $properties = Dorm::where('user_id', $userid)
-            ->where('archive', 0)
+            ->where('archive', 0) // Active properties
             ->orderBy('created_at', 'desc')
             ->withCount('favoritedBy')
-            ->paginate(12); // Adjust the number as needed
+            ->paginate(12);
 
+        // If it's an AJAX request, return the appropriate data
         if ($request->ajax()) {
             return response()->json([
                 'dorms' => view('partials.property-list', compact('properties'))->render(),
@@ -251,6 +261,44 @@ class DormController extends Controller
 
         return view('manage-listing', compact('properties'));
     }
+    public function archivedProperty(Request $request)
+    {
+        try {
+            $userid = auth()->id();
+
+            // Fetch archived properties (archive = 1)
+            $properties = Dorm::where('user_id', $userid)
+                ->where('archive', 1) // Archived properties
+                ->orderBy('created_at', 'desc')
+                ->withCount('favoritedBy')
+                ->paginate(12);
+
+            // If it's an AJAX request, return the appropriate data
+            if ($request->ajax()) {
+                return response()->json([
+                    'archived_dorms' => view('partials.property-list', compact('properties'))->render(),
+                    'archived_pagination' => (string) $properties->links()
+                ]);
+            }
+
+            // Return the archived properties view
+            return view('archived-properties', compact('properties'));
+
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error($e->getMessage());
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
+    public function restore($id)
+    {
+        $dorm = Dorm::findOrFail($id);
+        $dorm->archive = 0;  // Set to 0 to indicate it's not archived
+        $dorm->save();
+
+        return response()->json(['success' => true]);
+    }
+
 
     public function getUserData($id)
     {

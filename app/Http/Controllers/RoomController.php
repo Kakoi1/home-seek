@@ -324,7 +324,7 @@ class RoomController extends Controller
         $notification = Notification::create([
             'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
-            'data' => '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: ' . now() . '</p>',
+            'data' => '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation ' . $dorm->name . '</p><br> <p>Date: ' . now() . '</p>',
             'read' => false,
             'route' => route('managetenant'),
             'dorm_id' => $request->dorm_id,
@@ -392,13 +392,18 @@ class RoomController extends Controller
         if ($rentForm->status === 'approved') {
             $rentForm->note = $request->cancelReason;
             $message = 'Cancellation Request has Sent';
-            $data = 'Booking Cancellation request';
+            $data = '<strong>Booking Cancellation request</strong><br>' .
+                '<p>Cancellation request: ' . htmlspecialchars($request->cancelReason) . ' on ' . htmlspecialchars($rentForm->dorm->name) . '</p><br>' .
+                '<p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>';
         } else {
             $dorm = Dorm::find($rentForm->dorm_id);
             $rentForm->status = 'cancelled';
             $rentForm->note = $request->cancelReason;
             $message = 'Booking form cancelled successfully';
-            $data = 'Booking Cancelled';
+            $data = '<strong>Booking Cancellation</strong><br>' .
+                '<p>Booking Cancelled due to: ' . htmlspecialchars($request->cancelReason) . ' on ' . htmlspecialchars($rentForm->dorm->name) . '</p><br>' .
+                '<p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>';
+
             $dorm->availability = false;
             $dorm->save();
         }
@@ -467,7 +472,11 @@ class RoomController extends Controller
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
-                'data' => 'Booking Form approved',
+                'data' => '<strong>Booking Approved</strong><br>' .
+                    '<p>Congratulations! Your booking at ' . htmlspecialchars($dorm->name) . ' has been successfully approved.</p>' .
+                    '<p>Please prepare for your stay and let us know if you have any questions.</p>' .
+                    '<p>Date Approved: ' . now()->format('Y-m-d H:i:s') . '</p>' .
+                    '<p>We look forward to hosting you!</p>',
                 'read' => false,
                 'route' => route('user.rentForms'),
                 'dorm_id' => $rentForm->dorm_id,
@@ -480,7 +489,10 @@ class RoomController extends Controller
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
-                'data' => 'Booking Form rejected',
+                'data' => '<strong>Booking rejected</strong><br>' .
+                    '<p>Booking rejected: ' . htmlspecialchars($request->rejection_reason) . ' on ' . htmlspecialchars($dorm->name) . '</p><br>' .
+                    '<p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>',
+
                 'read' => false,
                 'route' => route('user.rentForms'),
                 'dorm_id' => $rentForm->dorm_id,
@@ -596,7 +608,7 @@ class RoomController extends Controller
         $notification = Notification::create([
             'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
             'type' => 'Bills',
-            'data' => 'Owner is Notifying you for payment',
+            'data' => '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>',
             'read' => false,
             'route' => route('user.rentForms'),
             'dorm_id' => $rentForm->dorm_id,

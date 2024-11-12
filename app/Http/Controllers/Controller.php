@@ -592,7 +592,7 @@ class Controller extends BaseController
             'image' => json_encode($allImages),
         ]);
 
-        return redirect()->back()->with('success', 'Dorm updated successfully!');
+        return redirect()->back()->with('success', 'Accommodation updated successfully!');
     }
 
     public function requestVerify(Request $request)
@@ -630,7 +630,7 @@ class Controller extends BaseController
 
         event(new NotificationEvent([
 
-            'reciever' => 15,
+            'reciever' => 14,
             'message' => 'Verification Request was Sent',
             'sender' => Auth::id(),
             'rooms' => null,
@@ -672,7 +672,7 @@ class Controller extends BaseController
             $currentRent->end_date = Carbon::parse($currentRent->end_date);
         }
 
-        $rentHistory = RentForm::where('user_id', auth()->id())
+        $rentHistory = RentForm::where('user_id', auth()->id())->with('dorm')
             ->where(function ($query) {
                 $query->where('status', '!=', 'pending')
                     ->Where('status', '!=', 'approved')
@@ -692,29 +692,37 @@ class Controller extends BaseController
         $month = $request->get('month');
         $type = $request->get('type');
         $userId = auth()->id();
-
+        $search = $request->get('search', '');
+        $page = $request->get('page', 1); // Current page number
+        $perPage = 10; // Fixed number of items per page
 
         if ($type == 'pending') {
-            // Fetch pending payments based on month and user
-            $pendingPayments = Billing::where('user_id', $userId)
+            $query = Billing::where('user_id', $userId)
                 ->whereMonth('billing_date', '=', date('m', strtotime($month)))
                 ->where('status', 'pending')
-                ->with(['rentForm.dorm']) // Load relationships
-                ->get();
+                ->whereHas('rentForm.dorm', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->with(['rentForm.dorm']);
+
+            $pendingPayments = $query->paginate($perPage, ['*'], 'page', $page);
 
             return response()->json(['payments' => $pendingPayments]);
         } else {
-            // Fetch paid payments based on month and user
-            $paidPayments = Billing::where('user_id', $userId)
+            $query = Billing::where('user_id', $userId)
                 ->whereMonth('paid_at', '=', date('m', strtotime($month)))
                 ->where('status', 'paid')
-                ->with(['rentForm.dorm']) // Load relationships
-                ->get();
+                ->whereHas('rentForm.dorm', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->with(['rentForm.dorm']);
+
+            $paidPayments = $query->paginate($perPage, ['*'], 'page', $page);
 
             return response()->json(['payments' => $paidPayments]);
         }
-
     }
+
 
 
 
@@ -897,7 +905,7 @@ class Controller extends BaseController
         INNER JOIN dorms d ON rf.dorm_id = d.id
         INNER JOIN users u ON rf.user_id = u.id
         WHERE d.user_id = ?
-        AND rf.note != '' AND rf.status != 'pending' AND rf.status != 'cancelled' AND rf.status != 'rejected'
+        AND rf.note != '' AND rf.status = 'approved' 
     ", [$ownerId]);
 
 

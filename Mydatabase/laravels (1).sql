@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 10:21 AM
+-- Generation Time: Nov 12, 2024 at 08:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,6 +34,8 @@ CREATE TABLE `billings` (
   `amount` decimal(10,2) NOT NULL,
   `billing_date` date NOT NULL,
   `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `reference` varchar(50) DEFAULT NULL,
+  `mode` varchar(50) DEFAULT NULL,
   `paid_at` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -43,9 +45,17 @@ CREATE TABLE `billings` (
 -- Dumping data for table `billings`
 --
 
-INSERT INTO `billings` (`id`, `user_id`, `rent_form_id`, `amount`, `billing_date`, `status`, `paid_at`, `created_at`, `updated_at`) VALUES
-(13, 9, 31, 2700.00, '2024-11-15', 'paid', '2024-10-17 05:18:52', '2024-10-16 20:09:59', '2024-10-16 21:18:52'),
-(14, 9, 32, 900.00, '2024-10-22', 'pending', '2024-10-18 06:08:21', '2024-10-17 22:05:01', '2024-10-17 22:08:21');
+INSERT INTO `billings` (`id`, `user_id`, `rent_form_id`, `amount`, `billing_date`, `status`, `reference`, `mode`, `paid_at`, `created_at`, `updated_at`) VALUES
+(15, 9, 40, 33000.00, '2024-10-13', 'paid', NULL, NULL, '2024-11-08 04:08:52', '2024-10-20 21:21:06', '2024-11-07 20:08:52'),
+(16, 10, 41, 40000.00, '2024-11-07', 'paid', NULL, NULL, '2024-11-10 04:42:29', '2024-11-05 21:16:01', '2024-11-09 20:42:29'),
+(17, 14, 40, 1000.00, '2024-11-12', 'paid', NULL, NULL, '2024-11-10 12:41:03', '2024-11-10 04:41:03', '2024-11-10 04:41:03'),
+(18, 9, 45, 1000.00, '2024-11-19', 'paid', '213sd', 'credit_card', '2024-11-12 05:58:29', '2024-11-10 04:50:43', '2024-11-10 21:58:29'),
+(19, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
+(20, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
+(21, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
+(22, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
+(23, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
+(24, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15');
 
 -- --------------------------------------------------------
 
@@ -91,6 +101,58 @@ INSERT INTO `chatrooms` (`id`, `user_id`, `other_user_id`, `dorm_id`, `message_i
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `curse_words`
+--
+
+CREATE TABLE `curse_words` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `word` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `curse_words`
+--
+
+INSERT INTO `curse_words` (`id`, `word`, `created_at`, `updated_at`) VALUES
+(69, 'damn', NULL, NULL),
+(70, 'hell', NULL, NULL),
+(71, 'crap', NULL, NULL),
+(72, 'bastard', NULL, NULL),
+(73, 'bitch', NULL, NULL),
+(74, 'asshole', NULL, NULL),
+(75, 'fool', NULL, NULL),
+(76, 'idiot', NULL, NULL),
+(77, 'stupid', NULL, NULL),
+(78, 'dumb', NULL, NULL),
+(79, 'jerk', NULL, NULL),
+(80, 'loser', NULL, NULL),
+(81, 'gago', NULL, NULL),
+(82, 'tanga', NULL, NULL),
+(83, 'bobo', NULL, NULL),
+(84, 'ulol', NULL, NULL),
+(85, 'tarantado', NULL, NULL),
+(86, 'bwisit', NULL, NULL),
+(87, 'hinayupak', NULL, NULL),
+(88, 'lintik', NULL, NULL),
+(89, 'putangina', NULL, NULL),
+(90, 'peste', NULL, NULL),
+(91, 'leche', NULL, NULL),
+(92, 'yawa', NULL, NULL),
+(93, 'buang', NULL, NULL),
+(94, 'bakakon', NULL, NULL),
+(95, 'samok', NULL, NULL),
+(96, 'yawyaw', NULL, NULL),
+(97, 'bahak', NULL, NULL),
+(98, 'tan-awon', NULL, NULL),
+(99, 'yabag', NULL, NULL),
+(100, 'limbong', NULL, NULL),
+(101, 'lapok', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `dorms`
 --
 
@@ -102,12 +164,14 @@ CREATE TABLE `dorms` (
   `address` varchar(255) NOT NULL,
   `latitude` decimal(10,8) NOT NULL,
   `longitude` decimal(11,8) NOT NULL,
-  `rooms_available` int(11) DEFAULT NULL,
   `price` decimal(8,2) NOT NULL,
-  `price_day` decimal(10,2) NOT NULL,
+  `capacity` int(10) NOT NULL,
+  `beds` int(10) NOT NULL,
+  `bedroom` int(10) NOT NULL,
   `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `type` varchar(50) NOT NULL,
   `archive` tinyint(1) NOT NULL DEFAULT 0,
+  `availability` tinyint(1) NOT NULL DEFAULT 0,
+  `flag` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -116,22 +180,25 @@ CREATE TABLE `dorms` (
 -- Dumping data for table `dorms`
 --
 
-INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitude`, `longitude`, `rooms_available`, `price`, `price_day`, `image`, `type`, `archive`, `created_at`, `updated_at`) VALUES
-(27, 8, 'roland12', 'dadssa', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25732354, 123.79582294, 12, 10000.00, 0.00, '\"[\\\"1727333044_66f502b4b837e.jpg\\\",\\\"1727333044_66f502b4bafdc.jpg\\\",\\\"1727333044_66f502b4bb26b.jpg\\\"]\"', 'dorm', 0, '2024-08-04 20:50:17', '2024-09-25 22:44:04'),
-(28, 8, 'lando', 'dasdsa', '\"Tubod, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25918163, 123.79865443, 12, 1200.00, 0.00, '\"[\\\"1722833844_66b05bb489012.jpg\\\",\\\"1722833844_66b05bb48bfbb.jpg\\\",\\\"1722833844_66b05bb48c2bb.jpg\\\"]\"', 'dorm', 1, '2024-08-04 20:57:24', '2024-08-09 20:50:15'),
-(29, 8, 'oli house', 'new house', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25521206, 123.79410364, 2, 1200.00, 0.00, '\"[\\\"1727333130_66f5030a4a224.jpg\\\",\\\"1727333130_66f5030a4d44e.jpg\\\",\\\"1727333130_66f5030a4d6d5.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:08:17', '2024-09-25 22:45:30'),
-(30, 8, 'oli house1', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24372536, 123.79625195, 2, 1200.00, 0.00, '\"[\\\"1727333432_66f5043807eff.jfif\\\",\\\"1727333432_66f504380abca.jfif\\\",\\\"1727333432_66f504380ae0f.jfif\\\"]\"', 'dorm', 0, '2024-08-04 21:08:33', '2024-09-25 22:50:32'),
-(31, 8, 'oli house2', 'new house', '\"Escala at Corona Del Mar, Pooc, Cebu, Central Visayas, 6045, Pilipinas\"', 10.23831971, 123.82036251, 2, 1200.00, 0.00, '\"[\\\"1727333498_66f5047a8ad95.jpg\\\",\\\"1727333498_66f5047a8d8a0.jpg\\\",\\\"1727333498_66f5047a8e0c7.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:08:46', '2024-09-25 22:51:38'),
-(32, 8, 'oli house4', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24262734, 123.79153281, 2, 1200.00, 0.00, '\"[\\\"1727333523_66f50493c7a11.jpg\\\",\\\"1727333523_66f50493ca49f.jpg\\\",\\\"1727333523_66f50493ca958.jpg\\\",\\\"1727333523_66f50493caf96.jpg\\\",\\\"1727333523_66f50493cb47b.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:09:07', '2024-09-25 22:52:03'),
-(33, 8, 'oli house4', 'new house', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25518391, 123.80474642, 2, 1200.00, 0.00, '\"[\\\"1727333593_66f504d91a09c.jpg\\\",\\\"1727333593_66f504d91ceaa.jpg\\\",\\\"1727333593_66f504d91d34a.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:09:38', '2024-09-25 22:53:13'),
-(34, 8, 'oli house5', 'new house', '\"Vito Elementary School, Vito-Cadulawan Road, Teves, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25360732, 123.79316306, 2, 1200.00, 0.00, '\"[\\\"1727333623_66f504f7a62be.jpg\\\",\\\"1727333623_66f504f7a9496.jpg\\\",\\\"1727333623_66f504f7a9cc5.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:09:52', '2024-09-25 22:53:43'),
-(35, 8, 'oli house6', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24296519, 123.79530813, 2, 1200.00, 0.00, '\"[\\\"1727333645_66f5050d0adff.jpg\\\",\\\"1727333645_66f5050d0dc11.jpg\\\",\\\"1727333645_66f5050d0e2d6.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:10:11', '2024-09-25 22:54:05'),
-(36, 8, 'oli house7', 'new house', '\"Bacay Elementary School, A. Apostol Street, Tulay, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.23806632, 123.79307726, 2, 1200.00, 0.00, '\"[\\\"1727333672_66f5052849eab.jpg\\\",\\\"1727333672_66f505284ca51.jpg\\\",\\\"1727333672_66f505284d147.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:10:41', '2024-09-25 22:54:32'),
-(37, 8, 'oli house8', 'new house', '\"Lower Tiber, Poblacion Ward I, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.24307783, 123.79890595, 2, 1200.00, 0.00, '\"[\\\"1727333720_66f5055873ca0.jpg\\\",\\\"1727333720_66f5055876981.jpg\\\",\\\"1727333720_66f5055876f60.jpg\\\"]\"', 'dorm', 0, '2024-08-04 21:11:21', '2024-09-25 22:55:20'),
-(38, 8, 'roland44', 'ewqewqe', '\"Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25495868, 123.80433083, 1, 1200.00, 0.00, '\"[\\\"1727333744_66f505705a1fe.jpg\\\",\\\"1727333744_66f505705d21c.jpg\\\",\\\"1727333744_66f505705d7e7.jpg\\\"]\"', 'dorm', 0, '2024-08-08 01:35:26', '2024-09-25 22:55:44'),
-(42, 8, 'shane house', 'cool', '\"Hickory Street, Springwoods Country Homes Subdivision, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24093808, 123.79084639, 5, 10000.00, 0.00, '\"[\\\"1727333769_66f50589ebdb9.jpg\\\",\\\"1727333769_66f50589ef36f.jpg\\\",\\\"1727333769_66f50589f03dd.jpg\\\"]\"', 'dorm', 0, '2024-08-14 20:22:16', '2024-09-25 22:56:09'),
-(43, 8, 'house', 'dsadsa', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25690124, 123.80423160, 3, 10000.00, 0.00, '\"[\\\"1727333805_66f505ad9f207.jpg\\\",\\\"1727333805_66f505ada23b3.jpg\\\",\\\"1727333805_66f505ada27e9.jpg\\\"]\"', 'apartment', 0, '2024-09-04 01:52:50', '2024-09-25 22:56:45'),
-(44, 8, 'inday house', 'vbeebbe', '\"Poblacion Ward IV, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24614837, 123.79108429, NULL, 5000.00, 300.00, '\"[\\\"1728019575_66ff7c77140aa.jpg\\\",\\\"1728019575_66ff7c7716431.jpg\\\",\\\"1728019575_66ff7c771696b.jpg\\\"]\"', 'apartment', 0, '2024-10-03 21:26:15', '2024-10-03 21:26:15');
+INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitude`, `longitude`, `price`, `capacity`, `beds`, `bedroom`, `image`, `archive`, `availability`, `flag`, `created_at`, `updated_at`) VALUES
+(27, 8, 'roland12', 'dadssa', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25732354, 123.79582294, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:50:17', '2024-10-22 19:41:52'),
+(28, 8, 'lando', 'dasdsa', '\"Tubod, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25918163, 123.79865443, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:57:24', '2024-08-09 20:50:15'),
+(29, 8, 'oli house', 'new house', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25521206, 123.79410364, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:17', '2024-09-25 22:45:30'),
+(30, 8, 'oli house1', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24372536, 123.79625195, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:33', '2024-09-25 22:50:32'),
+(31, 8, 'oli house2', 'new house', '\"Escala at Corona Del Mar, Pooc, Cebu, Central Visayas, 6045, Pilipinas\"', 10.23831971, 123.82036251, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:46', '2024-09-25 22:51:38'),
+(32, 8, 'oli house4', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24262734, 123.79153281, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:07', '2024-09-25 22:52:03'),
+(33, 8, 'oli house4', 'new house', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25518391, 123.80474642, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 1, 0, 0, '2024-08-04 21:09:38', '2024-11-11 18:33:06'),
+(34, 8, 'oli house5', 'new house', '\"Vito Elementary School, Vito-Cadulawan Road, Teves, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25360732, 123.79316306, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:52', '2024-09-25 22:53:43'),
+(35, 8, 'oli house6', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24296519, 123.79530813, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:11', '2024-09-25 22:54:05'),
+(36, 8, 'oli house7', 'new house', '\"Bacay Elementary School, A. Apostol Street, Tulay, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.23806632, 123.79307726, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113706_671f70aa9a7dd.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70ab94107.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70abe48dc.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:41', '2024-10-31 22:51:57'),
+(37, 8, 'oli house8', 'new house', '\"Lower Tiber, Poblacion Ward I, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.24307783, 123.79890595, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113679_671f708f975b2.jpg\\\",\\\"dorm_pictures\\\\\\/1730113680_671f7090c4483.jpg\\\",\\\"dorm_pictures\\\\\\/1730113681_671f7091262fb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:11:21', '2024-10-31 23:01:39'),
+(38, 8, 'roland44', 'ewqewqe', '\"Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25495868, 123.80433083, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113634_671f7062789a5.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f706421aca.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f70646f810.jpg\\\"]\"', 0, 0, 0, '2024-08-08 01:35:26', '2024-10-28 03:07:17'),
+(42, 8, 'shane house', 'cool', '\"Hickory Street, Springwoods Country Homes Subdivision, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24093808, 123.79084639, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113609_671f704929945.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a3fac4.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a98cc3.jpg\\\"]\"', 0, 1, 0, '2024-08-14 20:22:16', '2024-11-09 20:36:58'),
+(43, 8, 'house', 'dsadsa', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25690124, 123.80423160, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113501_671f6fdde8aba.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf142d3.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf62b6a.jpg\\\"]\"', 0, 0, 0, '2024-09-04 01:52:50', '2024-11-07 21:33:15'),
+(44, 8, 'inday house', 'vbeebbe', '\"Poblacion Ward IV, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24614837, 123.79108429, 5000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-07-31 21:26:15', '2024-11-11 18:31:17'),
+(45, 8, 'sigma house', 'dsadfsadwdfgwef', '\"Pakigne-Tubod Road, Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25138321, 123.80551338, 10000.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1730165435_67203abb8e6be.jpg\\\",\\\"dorm_pictures\\\\\\/1730165457_67203ad1a29db.jpg\\\",\\\"dorm_pictures\\\\\\/1730167717_672043a504546.jpg\\\",\\\"dorm_pictures\\\\\\/1730176504_672065f84f853.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_6720660230af8.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_67206602e6f49.jpg\\\"]\"', 0, 0, 1, '2024-10-19 22:46:29', '2024-11-11 18:34:02'),
+(46, 43, 'rolando house', 'dsadasdasdi;ohefgjirfgbjkl', '\"Poblacion Ward III, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25118869, 123.80209143, 400.00, 3, 12, 12, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-10-28 02:34:16', '2024-11-09 20:35:21'),
+(47, 8, 'tqtqtqt', 'rtioijfgjklgfgfkl', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25221373, 123.80712032, 12222.00, 12, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1731382231_6732cbd730855.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc30bdc.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc96a1e.jpg\\\"]\"', 0, 1, 0, '2024-11-11 19:30:36', '2024-11-11 23:08:38');
 
 -- --------------------------------------------------------
 
@@ -150,13 +217,6 @@ CREATE TABLE `extend_requests` (
   `t_price` decimal(8,2) NOT NULL,
   `new_duration` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `extend_requests`
---
-
-INSERT INTO `extend_requests` (`id`, `form_id`, `new_end_date`, `term`, `status`, `created_at`, `updated_at`, `t_price`, `new_duration`) VALUES
-(10, 31, '2024-11-09', 'short_term', 'approved', '2024-10-16 20:06:08', '2024-10-16 20:10:02', 2700.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -196,7 +256,9 @@ INSERT INTO `favorites` (`id`, `user_id`, `dorm_id`, `created_at`, `updated_at`)
 (19, 22, 42, '2024-09-29 23:42:09', '2024-09-29 23:42:09'),
 (31, 9, 43, '2024-10-18 00:16:28', '2024-10-18 00:16:28'),
 (32, 9, 44, '2024-10-18 00:16:31', '2024-10-18 00:16:31'),
-(33, 9, 30, '2024-10-18 00:16:34', '2024-10-18 00:16:34');
+(33, 9, 30, '2024-10-18 00:16:34', '2024-10-18 00:16:34'),
+(34, 9, 45, '2024-10-23 01:36:17', '2024-10-23 01:36:17'),
+(37, 10, 43, '2024-11-07 00:15:57', '2024-11-07 00:15:57');
 
 -- --------------------------------------------------------
 
@@ -428,7 +490,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (33, '2024_10_10_021057_update_extend-request_table', 22),
 (34, '2024_10_10_021702_update_extend-request_table', 23),
 (35, '2024_10_15_022017_create_billings_table', 24),
-(36, '2024_10_17_072602_create_reviews_table', 25);
+(36, '2024_10_17_072602_create_reviews_table', 25),
+(37, '2024_10_23_060222_remove_room_from_reviews_table', 26),
+(38, '2024_11_03_051518_create_reports_table', 27),
+(39, '2024_11_05_141932_create_curse_words_table', 28);
 
 -- --------------------------------------------------------
 
@@ -442,9 +507,10 @@ CREATE TABLE `notifications` (
   `type` varchar(255) NOT NULL,
   `data` text NOT NULL,
   `read` tinyint(1) NOT NULL DEFAULT 0,
+  `route` longtext DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `room_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `dorm_id` bigint(20) UNSIGNED DEFAULT NULL,
   `sender_id` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -452,80 +518,109 @@ CREATE TABLE `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `created_at`, `updated_at`, `room_id`, `sender_id`) VALUES
-(29, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 18:09:37', '2024-10-03 01:13:15', 5, 9),
-(30, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 18:12:49', '2024-09-09 18:12:49', 5, 9),
-(31, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 19:21:58', '2024-09-09 19:32:52', 8, 10),
-(32, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 19:28:11', '2024-09-09 19:28:11', 8, 10),
-(33, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 19:39:42', '2024-09-17 17:53:46', 8, 10),
-(35, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:12:13', '2024-09-09 20:12:13', 8, 10),
-(36, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:14:42', '2024-09-09 20:14:42', 8, 10),
-(37, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:21:34', '2024-09-09 22:12:33', 8, 10),
-(38, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:25:57', '2024-09-09 20:25:57', 8, 10),
-(39, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:28:25', '2024-09-09 20:28:25', 8, 10),
-(40, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:30:15', '2024-09-09 20:30:15', 8, 10),
-(41, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:30:34', '2024-09-09 20:30:34', 8, 10),
-(42, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:34:03', '2024-09-09 20:34:03', 8, 10),
-(43, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:34:24', '2024-09-25 22:36:31', 8, 10),
-(44, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:35:40', '2024-09-17 17:53:39', 8, 10),
-(45, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-09 20:36:22', '2024-09-09 20:36:22', 8, 10),
-(46, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:38:53', '2024-09-17 17:53:33', 8, 10),
-(47, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:40:20', '2024-09-09 20:40:25', 8, 10),
-(48, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-09 20:49:45', '2024-09-09 20:49:57', 8, 10),
-(55, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-17 19:03:08', '2024-09-30 21:47:29', 5, 8),
-(56, 10, 'Form Response', 'Rent Form approved', 0, '2024-09-20 07:12:00', '2024-09-20 07:12:00', 8, 8),
-(57, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:24:45', '2024-09-30 21:24:45', 6, 22),
-(58, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:26:42', '2024-09-30 21:26:42', 6, 22),
-(59, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:32:47', '2024-09-30 21:32:47', 6, 22),
-(60, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:34:15', '2024-09-30 21:34:15', 6, 22),
-(61, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:35:51', '2024-09-30 21:35:51', 6, 22),
-(62, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:40:39', '2024-09-30 21:40:39', 7, 22),
-(63, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:43:02', '2024-09-30 21:43:02', 7, 22),
-(64, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 21:43:44', '2024-09-30 21:47:46', 7, 22),
-(65, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 21:48:39', '2024-10-03 01:10:11', 6, 22),
-(66, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:49:02', '2024-09-30 21:49:02', 6, 22),
-(67, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 21:54:39', '2024-09-30 21:54:39', 6, 22),
-(68, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 21:58:21', '2024-10-03 01:13:25', 6, 22),
-(69, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:01:27', '2024-09-30 22:02:51', 6, 22),
-(70, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:02:38', '2024-09-30 22:07:56', 6, 22),
-(71, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:04:23', '2024-09-30 22:08:19', 6, 22),
-(72, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:16:14', '2024-09-30 22:22:33', 6, 22),
-(73, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:21:28', '2024-09-30 22:22:40', 6, 22),
-(74, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-09-30 22:25:16', '2024-09-30 22:25:16', 6, 22),
-(75, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:25:27', '2024-10-03 01:13:19', 6, 22),
-(76, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:28:11', '2024-09-30 22:28:15', 6, 22),
-(77, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:29:23', '2024-09-30 22:31:03', 6, 22),
-(78, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-09-30 22:30:51', '2024-09-30 22:30:54', 6, 22),
-(79, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-01 18:48:44', '2024-10-03 01:13:06', 6, 22),
-(80, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-01 19:41:03', '2024-10-03 01:09:58', 6, 22),
-(81, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-03 21:40:44', '2024-10-03 21:41:33', 28, 10),
-(82, 10, 'Form Response', 'Rent Form approved', 0, '2024-10-03 21:41:45', '2024-10-03 21:41:45', 28, 8),
-(83, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-10-03 23:30:19', '2024-10-03 23:30:19', 28, 10),
-(84, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-10-05 18:18:47', '2024-10-05 18:18:47', 29, 10),
-(85, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-06 19:28:20', '2024-10-06 19:28:25', 28, 10),
-(86, 10, 'Form Response', 'Rent Form approved', 1, '2024-10-06 19:33:26', '2024-10-06 19:33:37', 28, 8),
-(87, 10, 'Form Response', 'Rent Form approved', 0, '2024-10-06 19:35:12', '2024-10-06 19:35:12', 28, 8),
-(88, 10, 'Form Response', 'Rent Form approved', 1, '2024-10-06 19:37:33', '2024-10-06 19:37:38', 28, 8),
-(89, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-10-07 20:20:20', '2024-10-07 20:20:20', 28, 9),
-(90, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 0, '2024-10-07 22:53:46', '2024-10-07 22:53:46', 28, 9),
-(91, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-07 22:56:13', '2024-10-16 19:13:10', 28, 9),
-(92, 10, 'Form Response', 'Rent Form approved', 0, '2024-10-10 04:19:25', '2024-10-10 04:19:25', 28, 8),
-(93, 9, 'Form Response', 'Rent Form rejected', 1, '2024-10-13 19:32:14', '2024-10-16 19:09:35', 28, 8),
-(94, 9, 'Form Response', 'Rent Form approved', 0, '2024-10-13 19:33:27', '2024-10-13 19:33:27', 28, 8),
-(95, 9, 'Form Response', 'Rent Form approved', 0, '2024-10-13 19:33:57', '2024-10-13 19:33:57', 28, 8),
-(96, 9, 'Form Response', 'Extend Request approved', 0, '2024-10-13 20:41:07', '2024-10-13 20:41:07', 28, 8),
-(97, 9, 'Form Response', 'Extend Request approved', 1, '2024-10-13 20:43:08', '2024-10-13 20:52:30', 28, 8),
-(98, 9, 'Form Response', 'Extend Request approved', 0, '2024-10-14 20:58:24', '2024-10-14 20:58:24', 28, 8),
-(99, 9, 'Form Response', 'Extend Request approved', 0, '2024-10-16 19:17:41', '2024-10-16 19:17:41', 28, 8),
-(100, 9, 'Form Response', 'Extend Request approved', 0, '2024-10-16 20:09:59', '2024-10-16 20:09:59', 28, 8),
-(101, 8, 'review', 'Your Rent has Ended', 1, '2024-10-17 20:18:47', '2024-10-17 20:18:59', 28, 9),
-(102, 8, 'review', 'dsads has left From your Property', 1, '2024-10-17 20:26:45', '2024-10-17 20:26:52', 28, 9),
-(103, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-17 20:35:43', '2024-10-17 20:35:48', 29, 9),
-(104, 9, 'Form Response', 'Rent Form approved', 1, '2024-10-17 20:35:56', '2024-10-17 20:36:01', 29, 8),
-(105, 9, 'review', 'Your Rent has Ended', 0, '2024-10-17 22:38:14', '2024-10-17 22:38:14', 29, 8),
-(106, 9, 'Bills', 'Owner is Notifying you for payment', 1, '2024-10-17 22:39:45', '2024-10-17 22:39:48', 29, 8),
-(107, 9, 'Bills', 'Owner is Notifying you for payment', 1, '2024-10-17 23:58:59', '2024-10-17 23:59:02', 29, 8),
-(108, 8, 'Form Submit', 'A new rent form has been submitted for your room.', 1, '2024-10-17 23:59:40', '2024-10-17 23:59:43', 6, 9);
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `route`, `created_at`, `updated_at`, `dorm_id`, `sender_id`) VALUES
+(115, 9, 'Form Response', 'Rent Form approved', 1, '', '2024-10-20 23:00:00', '2024-10-20 23:01:45', 45, 8),
+(116, 9, 'Form Response', 'Rent Form approved', 0, '', '2024-10-20 23:02:18', '2024-10-20 23:02:18', 45, 8),
+(117, 9, 'Form Response', 'Rent Form approved', 0, '', '2024-10-20 23:04:30', '2024-10-20 23:04:30', 45, 8),
+(118, 9, 'Form Response', 'Booking Form approved', 0, '', '2024-10-20 23:09:50', '2024-10-20 23:09:50', 45, 8),
+(119, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-20 23:11:35', '2024-11-07 21:13:06', 45, 9),
+(120, 9, 'Form Response', 'Booking Form rejected', 0, '', '2024-10-20 23:13:23', '2024-10-20 23:13:23', 45, 8),
+(121, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-20 23:15:03', '2024-11-07 21:12:15', 45, 9),
+(122, 9, 'Form Response', 'Booking Form approved', 0, '', '2024-10-20 23:15:12', '2024-10-20 23:15:12', 45, 8),
+(127, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-21 20:36:43', '2024-10-21 20:36:59', 45, 9),
+(130, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, '', '2024-10-21 20:43:02', '2024-10-22 00:22:32', 45, 9),
+(131, 9, 'Form Response', 'Booking Form rejected', 0, '', '2024-10-21 23:37:48', '2024-10-21 23:37:48', 45, 8),
+(132, 9, 'Form Response', 'Booking Form approved', 1, '', '2024-10-21 23:46:00', '2024-10-23 02:32:33', 45, 8),
+(133, 9, 'Form Response', 'Booking Form approved', 1, '', '2024-10-21 23:49:09', '2024-10-23 02:32:28', 45, 8),
+(136, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-10-22 00:22:10', '2024-10-23 02:32:45', 45, 8),
+(137, 43, 'verification', 'Your Verification is Approved', 1, 'http://127.0.0.1:8000/home', '2024-10-28 02:29:07', '2024-11-09 20:32:50', NULL, 14),
+(138, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:42:08', '2024-11-07 21:02:28', NULL, 14),
+(139, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:43:28', '2024-11-01 22:45:16', NULL, 14),
+(140, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:43:41', '2024-11-01 22:45:13', NULL, 14),
+(141, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:44:03', '2024-11-01 23:08:22', NULL, 14),
+(142, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:48:33', '2024-11-01 23:08:19', NULL, 14),
+(143, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:48:44', '2024-11-01 23:27:47', NULL, 14),
+(144, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:50:16', '2024-11-01 22:50:23', NULL, 14),
+(145, 8, 'warning', 'Warning issued: Misleading information', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:51:42', '2024-11-01 23:36:42', NULL, 14),
+(146, 8, 'warning', 'Warning issued: Inappropriate language', 1, NULL, '2024-11-01 23:10:52', '2024-11-01 23:11:35', NULL, 14),
+(147, 8, 'warning', 'Warning issued: Spam activity', 1, NULL, '2024-11-01 23:14:06', '2024-11-01 23:39:03', NULL, 14),
+(148, 8, 'warning', 'Warning issued: Misleading information', 1, NULL, '2024-11-01 23:14:42', '2024-11-01 23:40:30', NULL, 14),
+(149, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 0 remaining</strong>', 1, NULL, '2024-11-01 23:44:36', '2024-11-07 21:11:55', NULL, 14),
+(150, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 2 remaining</strong>', 1, NULL, '2024-11-01 23:48:04', '2024-11-01 23:58:23', NULL, 14),
+(151, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 1 remaining</strong>', 1, NULL, '2024-11-01 23:54:58', '2024-11-01 23:58:21', NULL, 14),
+(152, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 0 remaining</strong>', 1, NULL, '2024-11-01 23:56:16', '2024-11-01 23:58:17', NULL, 14),
+(153, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>dadasd</p> <br><strong>You have 2 remaining</strong>', 1, NULL, '2024-11-01 23:57:57', '2024-11-01 23:58:31', NULL, 14),
+(154, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 1 remaining</strong>', 1, NULL, '2024-11-01 23:59:36', '2024-11-01 23:59:39', NULL, 14),
+(155, 43, 'warning', '<strong>Property Deactivated due to:</strong> <br> <p>Misleading information</p>', 1, NULL, '2024-11-02 00:10:44', '2024-11-09 20:32:37', 46, 14),
+(156, 8, 'warning', '<strong>Property Deactivated due to:</strong> <br> <p>Spam activity</p>', 1, NULL, '2024-11-02 00:11:06', '2024-11-02 00:11:11', 45, 14),
+(157, 8, 'Form Submit', 'Someone Booked your Property', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-04 21:54:45', '2024-11-05 21:39:47', 42, 9),
+(158, 9, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 2 remaining Strike(s)</strong>', 1, NULL, '2024-11-05 06:58:57', '2024-11-05 06:59:39', NULL, 9),
+(159, 9, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 1 remaining Strike(s)</strong>', 1, NULL, '2024-11-05 07:00:59', '2024-11-05 07:01:07', NULL, 9),
+(160, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:02', '2024-11-05 21:16:02', 45, 8),
+(161, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:02', '2024-11-05 21:16:02', 42, 8),
+(162, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:07', '2024-11-05 21:16:07', 45, 8),
+(163, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:07', '2024-11-05 21:16:07', 42, 8),
+(164, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:12', '2024-11-05 21:16:12', 45, 8),
+(165, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:12', '2024-11-05 21:16:12', 42, 8),
+(166, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:17', '2024-11-05 21:16:17', 45, 8),
+(167, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:17', '2024-11-05 21:16:17', 42, 8),
+(168, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:22', '2024-11-05 21:16:22', 45, 8),
+(169, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:22', '2024-11-05 21:16:22', 42, 8),
+(170, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:28', '2024-11-05 21:16:28', 45, 8),
+(171, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:28', '2024-11-05 21:16:28', 42, 8),
+(172, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:33', '2024-11-05 21:16:33', 45, 8),
+(173, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:33', '2024-11-05 21:16:33', 42, 8),
+(174, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>no bill bayad</p> <br><strong>You have 0 remaining Strike</strong>', 0, NULL, '2024-11-05 21:52:16', '2024-11-05 21:52:16', NULL, 14),
+(175, 8, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong></strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-06 02:15:02', '2024-11-06 02:15:12', NULL, 14),
+(176, 9, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong></strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p>', 1, NULL, '2024-11-06 02:15:03', '2024-11-06 02:15:28', NULL, 14),
+(177, 9, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>dasdsadaddada</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-06 02:24:10', '2024-11-06 23:41:50', NULL, 14),
+(179, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 02:27:05', '2024-11-06 02:27:05', NULL, 14),
+(180, 9, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>dsadasd</strong></p>', 1, NULL, '2024-11-06 02:27:05', '2024-11-06 23:41:40', NULL, 14),
+(181, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 04:08:33', '2024-11-06 04:08:33', NULL, 14),
+(182, 8, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 04:08:34', '2024-11-06 04:08:34', NULL, 14),
+(183, 51, 'verification', 'Your Verification is Approved', 1, 'http://localhost:8000/home', '2024-11-06 20:26:44', '2024-11-06 20:27:13', NULL, 14),
+(184, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your complaint and, after careful consideration, we have determined that it is invalid. However, the reported user will be placed under observation for further monitoring. No immediate action has been taken, but we will continue to monitor the situation.</p>', 1, NULL, '2024-11-06 23:53:53', '2024-11-06 23:54:01', NULL, 14),
+(185, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report, and after careful consideration, we have determined that the complaint is invalid. The property remains active.</p>', 1, NULL, '2024-11-06 23:54:11', '2024-11-06 23:56:27', NULL, 14),
+(186, 9, 'Bills', 'Owner is Notifying you for payment', 0, 'http://localhost:8000/user/rent-forms', '2024-11-06 23:57:18', '2024-11-06 23:57:18', 42, 8),
+(187, 8, 'Form Submit', 'Someone Booked your Property', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:29:06', '2024-11-07 21:13:16', 43, 9),
+(188, 8, 'Booking Cancellation', 'Booking Cancelled', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:29:52', '2024-11-07 00:35:46', 43, 9),
+(189, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 00:44:44', '2024-11-07 19:34:51', 43, 8),
+(190, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-07 08:50:27</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:50:27', '2024-11-07 21:04:39', 43, 10),
+(191, 14, 'upcoming_stay', 'Your stay at sigma house starts in 1 days! Please be prepared for your check-in.', 0, NULL, '2024-11-07 19:31:11', '2024-11-07 19:31:11', 45, 8),
+(192, 9, 'upcoming_stay', 'Your stay at house starts in 1 days! Please be prepared for your check-in.', 1, NULL, '2024-11-07 19:33:39', '2024-11-07 20:27:12', 43, 8),
+(193, 8, 'warning', '<p>dsads paid you 40,000.00</p>', 1, NULL, '2024-11-07 20:18:03', '2024-11-07 21:12:03', NULL, 9),
+(195, 9, 'review', '<strong>Your rent has ended</strong> <br> <p>Please leave a review for the property.</p>', 1, 'http://localhost/my-reviews', '2024-11-07 20:45:01', '2024-11-07 21:20:45', 43, 14),
+(196, 10, 'review', '<strong>Your rent has ended</strong> <br> <p>Please leave a review for the property.</p>', 1, 'http://localhost/my-reviews', '2024-11-07 20:45:01', '2024-11-09 20:31:22', 43, 14),
+(197, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-08 05:18:23</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:18:23', '2024-11-07 21:20:25', 42, 9),
+(198, 9, 'Form Response', 'Booking Form rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:20:36', '2024-11-07 21:20:49', 42, 8),
+(199, 9, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:23:53', '2024-11-07 21:24:05', 42, 8),
+(200, 8, 'Booking Cancellation', 'Booking Cancellation request', 0, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:24:11', '2024-11-07 21:24:11', 42, 9),
+(201, 14, 'Cancel Response', 'Booking Cancellation Rejected', 0, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:27:07', '2024-11-07 21:27:07', 45, 8),
+(202, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-08 05:30:06</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:30:06', '2024-11-07 21:30:14', 43, 9),
+(203, 9, 'Form Response', 'Booking Form rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:30:28', '2024-11-07 21:30:32', 43, 8),
+(204, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:31:17', '2024-11-07 21:31:22', 43, 9),
+(205, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:31:31', '2024-11-07 21:31:41', 43, 8),
+(206, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:32:26', '2024-11-07 21:32:41', 43, 9),
+(207, 9, 'Cancel Response', 'Booking Cancellation Rejected', 0, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:32:51', '2024-11-07 21:32:51', 43, 8),
+(208, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:33:06', '2024-11-07 21:33:08', 43, 9),
+(209, 9, 'Cancel Response', 'Booking Cancellation Approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:33:15', '2024-11-07 21:33:28', 43, 8),
+(210, 43, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-10 04:30:18</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:30:18', '2024-11-09 20:32:30', 46, 10),
+(211, 10, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:30:34', '2024-11-09 20:30:39', 46, 43),
+(212, 43, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:33:03', '2024-11-09 20:33:07', 46, 10),
+(213, 10, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:33:13', '2024-11-09 20:33:27', 46, 43),
+(214, 43, 'Booking Cancellation', 'Booking Cancellation request', 0, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:34:08', '2024-11-09 20:34:08', 46, 10),
+(215, 10, 'Cancel Response', 'Booking Cancellation Approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:35:21', '2024-11-09 20:35:43', 46, 43),
+(216, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-10 04:36:44</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:36:44', '2024-11-09 20:47:42', 42, 9),
+(217, 9, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:36:58', '2024-11-09 20:37:01', 42, 8),
+(218, 8, 'warning', '<p>dsads paid you 40,000.00</p>', 0, NULL, '2024-11-09 20:42:29', '2024-11-09 20:42:29', NULL, 9),
+(219, 9, 'upcoming_stay', '<p>Your stay at shane house starts in 6 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-09 20:49:33', '2024-11-09 20:49:41', 42, 8),
+(220, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-12 06:42:13</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:42:13', '2024-11-11 22:42:22', 47, 9),
+(221, 8, 'Booking Cancellation', 'Booking Cancelled', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:44:53', '2024-11-11 22:45:06', 47, 9),
+(222, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-12 06:52:12</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:52:12', '2024-11-11 22:52:25', 47, 9),
+(223, 14, 'Cancel Response', 'Booking Cancellation Rejected', 0, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:07:06', '2024-11-11 23:07:06', 43, 8),
+(224, 9, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: bogo ka on tqtqtqt</p><br><p>Date: 2024-11-12 07:07:35</p>', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:07:35', '2024-11-11 23:07:41', 47, 8),
+(225, 9, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at tqtqtqt has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-12 07:08:38</p><p>We look forward to hosting you!</p>', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:08:38', '2024-11-11 23:08:48', 47, 8),
+(226, 9, 'upcoming_stay', '<p>Your stay at tqtqtqt starts in 1 days! Please be prepared for your check-in.</p>', 0, NULL, '2024-11-11 23:09:06', '2024-11-11 23:09:06', 47, 8);
 
 -- --------------------------------------------------------
 
@@ -572,7 +667,10 @@ INSERT INTO `property_views` (`id`, `user_id`, `dorm_id`, `created_at`, `updated
 (12, 8, 44, '2024-10-03 21:26:24', '2024-10-03 21:26:24'),
 (13, 10, 44, '2024-10-03 21:35:31', '2024-10-03 21:35:31'),
 (14, 9, 44, '2024-10-05 18:04:53', '2024-10-05 18:04:53'),
-(15, 9, 38, '2024-10-17 01:42:28', '2024-10-17 01:42:28');
+(15, 9, 38, '2024-10-17 01:42:28', '2024-10-17 01:42:28'),
+(16, 8, 42, '2024-10-19 21:55:32', '2024-10-19 21:55:32'),
+(17, 8, 45, '2024-10-19 22:51:40', '2024-10-19 22:51:40'),
+(18, 9, 45, '2024-10-19 23:25:28', '2024-10-19 23:25:28');
 
 -- --------------------------------------------------------
 
@@ -583,12 +681,10 @@ INSERT INTO `property_views` (`id`, `user_id`, `dorm_id`, `created_at`, `updated
 CREATE TABLE `rent_forms` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `room_id` bigint(20) UNSIGNED NOT NULL,
   `dorm_id` bigint(20) UNSIGNED NOT NULL,
-  `term` enum('short_term','long_term') NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL,
+  `guest` int(11) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `status` enum('pending','active','approved','rejected','cancelled','completed') NOT NULL DEFAULT 'pending',
   `note` longtext DEFAULT NULL,
@@ -600,16 +696,47 @@ CREATE TABLE `rent_forms` (
 -- Dumping data for table `rent_forms`
 --
 
-INSERT INTO `rent_forms` (`id`, `user_id`, `room_id`, `dorm_id`, `term`, `start_date`, `end_date`, `duration`, `total_price`, `status`, `note`, `created_at`, `updated_at`) VALUES
-(23, 22, 6, 43, 'short_term', '2024-11-09', '2024-11-30', NULL, 0.00, 'cancelled', NULL, '2024-10-01 18:48:44', '2024-10-01 19:51:47'),
-(24, 22, 6, 43, 'short_term', '2024-10-05', '2024-10-25', NULL, 0.00, 'completed', NULL, '2024-10-01 19:41:03', '2024-10-01 19:53:06'),
-(25, 10, 28, 44, 'short_term', '2024-10-26', '2024-11-25', NULL, 0.00, 'cancelled', NULL, '2024-10-03 21:40:44', '2024-10-03 21:41:45'),
-(26, 10, 28, 44, 'short_term', '2024-10-12', '2024-10-26', NULL, 4500.00, 'pending', NULL, '2024-10-03 23:30:19', '2024-10-05 18:18:56'),
-(27, 10, 29, 44, 'long_term', '2024-10-08', NULL, 2, 10000.00, 'completed', NULL, '2024-10-05 18:18:47', '2024-10-06 19:27:41'),
-(28, 9, 28, 44, 'short_term', '2024-10-19', '2024-10-26', NULL, 2400.00, 'cancelled', 'nonononono', '2024-10-06 19:28:20', '2024-10-10 04:19:25'),
-(31, 9, 28, 44, 'short_term', '2024-10-17', '2024-11-30', 3, 2700.00, 'completed', 'dsadsad', '2024-10-07 22:56:13', '2024-10-17 20:26:45'),
-(32, 9, 29, 44, 'short_term', '2024-10-18', '2024-10-22', NULL, 900.00, 'active', 'dsadasdasdasd', '2024-10-17 20:35:43', '2024-10-17 22:05:01'),
-(33, 9, 6, 43, 'long_term', '2024-10-19', '2024-12-19', 2, 20000.00, 'pending', NULL, '2024-10-17 23:59:40', '2024-10-17 23:59:40');
+INSERT INTO `rent_forms` (`id`, `user_id`, `dorm_id`, `start_date`, `end_date`, `guest`, `total_price`, `status`, `note`, `created_at`, `updated_at`) VALUES
+(34, 9, 45, '2024-11-08', '2024-11-30', 2, 30000.00, 'cancelled', 'dsada', '2024-10-20 00:08:36', '2024-10-22 00:22:11'),
+(38, 9, 42, '2024-11-06', '2024-11-11', 1, 40000.00, 'cancelled', NULL, '2024-11-04 21:54:45', '2024-11-05 21:16:01'),
+(39, 14, 45, '2024-11-09', '2024-11-16', 2, 3000.00, 'completed', NULL, '2024-11-07 07:30:55', '2024-11-07 21:27:08'),
+(40, 14, 43, '2024-11-09', '2024-11-08', 2, 40000.00, 'approved', NULL, '2024-11-07 00:29:06', '2024-11-11 23:07:07'),
+(41, 10, 43, '2024-11-09', '2024-11-07', 2, 20000.00, 'completed', NULL, '2024-11-07 00:50:27', '2024-11-07 20:45:01'),
+(43, 9, 43, '2024-11-10', '2024-11-12', 2, 20000.00, 'cancelled', 'Issue with booking process', '2024-11-07 21:30:06', '2024-11-07 21:33:15'),
+(44, 10, 46, '2024-11-12', '2024-11-16', 2, 1600.00, 'cancelled', 'Change of plans', '2024-11-09 20:30:18', '2024-11-09 20:35:22'),
+(45, 9, 42, '2024-11-16', '2024-11-17', 2, 10000.00, 'cancelled', NULL, '2024-11-09 20:36:44', '2024-11-09 20:36:59'),
+(46, 9, 47, '2024-11-13', '2024-11-17', 6, 48888.00, 'cancelled', 'Found a better place', '2024-11-11 22:42:13', '2024-11-11 22:44:54'),
+(47, 9, 47, '2024-11-13', '2024-11-17', 5, 48888.00, 'approved', 'bogo ka', '2024-11-11 22:52:12', '2024-11-11 23:08:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reports`
+--
+
+CREATE TABLE `reports` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `reported_id` bigint(20) UNSIGNED NOT NULL,
+  `reported_type` varchar(255) NOT NULL,
+  `dorm_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `reason` varchar(255) NOT NULL,
+  `status` enum('pending','valid','invalid','') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`id`, `user_id`, `reported_id`, `reported_type`, `dorm_id`, `reason`, `status`, `created_at`, `updated_at`) VALUES
+(1, 8, 9, 'user', 28, 'dsadasd', 'valid', '2024-11-02 23:00:07', '2024-11-06 02:27:05'),
+(2, 8, 9, 'user', NULL, 'dsad', 'valid', '2024-11-02 23:03:45', '2024-11-06 02:15:04'),
+(3, 8, 9, 'user', NULL, 'Inappropriate Content', 'valid', '2024-11-02 23:04:01', '2024-11-06 01:19:25'),
+(4, 8, 9, 'user', NULL, 'Harassment', 'invalid', '2024-11-02 23:05:05', '2024-11-06 23:53:56'),
+(14, 8, 8, 'property', 45, 'Unsafe Conditions', 'invalid', '2024-11-06 03:24:55', '2024-11-06 23:54:11'),
+(15, 8, 8, 'property', 45, 'dsadasd', 'valid', '2024-11-06 04:07:40', '2024-11-06 04:08:34');
 
 -- --------------------------------------------------------
 
@@ -620,7 +747,6 @@ INSERT INTO `rent_forms` (`id`, `user_id`, `room_id`, `dorm_id`, `term`, `start_
 CREATE TABLE `reviews` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `room_id` bigint(20) UNSIGNED NOT NULL,
   `dorm_id` bigint(20) UNSIGNED NOT NULL,
   `rating` tinyint(3) UNSIGNED DEFAULT NULL,
   `comments` text DEFAULT NULL,
@@ -632,9 +758,13 @@ CREATE TABLE `reviews` (
 -- Dumping data for table `reviews`
 --
 
-INSERT INTO `reviews` (`id`, `user_id`, `room_id`, `dorm_id`, `rating`, `comments`, `created_at`, `updated_at`) VALUES
-(1, 9, 28, 44, 5, 'dsadas', '2024-10-16 23:52:41', '2024-10-17 01:26:09'),
-(3, 9, 28, 44, 1, 'bogo', '2024-10-17 20:26:45', '2024-10-17 20:28:52');
+INSERT INTO `reviews` (`id`, `user_id`, `dorm_id`, `rating`, `comments`, `created_at`, `updated_at`) VALUES
+(1, 9, 44, 1, 'hoy boks', '2024-10-16 23:52:41', '2024-11-05 06:49:05'),
+(3, 9, 44, 4, 'bogo', '2024-10-17 20:26:45', '2024-10-17 20:28:52'),
+(4, 9, 43, 5, 'dasdasdasd', '2024-10-20 05:56:29', '2024-10-20 05:56:35'),
+(5, 9, 34, 5, 'ghnthnfng', '2024-10-24 10:13:53', '2024-10-24 10:13:53'),
+(8, 9, 43, NULL, NULL, '2024-11-07 20:45:01', '2024-11-07 20:45:01'),
+(9, 10, 43, NULL, NULL, '2024-11-07 20:45:01', '2024-11-07 20:45:01');
 
 -- --------------------------------------------------------
 
@@ -733,9 +863,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('06xBVVgaMTUlEHdVjsHeNYtwT3Xhwr7e0f58PWUs', 9, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoia1FqYjYwdjFielE4S1hIUHFmR0x3Rk11d25NMzhkdTMybWZQeVRKaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo5O30=', 1729239397),
-('6tfBj1E6oWcgvVByJSMuii1TD9rmOMA2t67WVXlO', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRFdGNmFJOHRvR0k0R3B2THF2VE5ubkxIR0NOMWo3U2F6bXdjZTR6YyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1729239554),
-('jx5gqliVcxu8TjF728FdoKcidffjO4kvlqACd6yP', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiWTFkV05kVWpyUjVzWVpaZ3daTG9PbXluNG5kVUhHZ1pMSlA2cHRubSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1729233613);
+('HC9rhV6GVOv0Ljr9Ht6XzudxYzlRUHxdvTOa0Ouz', 9, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoicnRvOWJvcmw5QmZiSGJudXU3TEFObGdWSU9FS2tHN0g0RnBFV1Q2SCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ub3RpZmljYXRpb25zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo5O30=', 1731395347),
+('PoSIKKtq9UpD7eTJmtMVKLj3TMsD5yeT6TCp0HjY', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiV2w0aVlodEdOZjIzbGJCY1hHekxqdWVCb3VYQUxIbTE2QUV2blRRWiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozNToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo4O30=', 1731395347);
 
 -- --------------------------------------------------------
 
@@ -751,14 +880,17 @@ CREATE TABLE `users` (
   `password` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `fb_id` bigint(20) DEFAULT NULL,
-  `fb_username` varchar(100) DEFAULT NULL,
+  `google_id` varchar(100) DEFAULT NULL,
   `profile_picture` varchar(255) DEFAULT NULL,
   `address` longtext DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `active_status` tinyint(1) NOT NULL DEFAULT 0,
-  `role` varchar(255) NOT NULL DEFAULT 'tenant',
+  `verify_status` tinyint(1) NOT NULL DEFAULT 0,
+  `role` varchar(255) DEFAULT NULL,
+  `strike` tinyint(4) NOT NULL DEFAULT 3,
+  `note` longtext DEFAULT NULL,
   `email_verification_code` int(15) DEFAULT NULL,
   `email_verified_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -767,15 +899,22 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `fb_username`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `role`, `email_verification_code`, `email_verified_at`) VALUES
-(8, 'roland', 'rshan0418@gmail.com1', 'roland', '$2y$12$.51GKwRYtnbfx3wBOdZwaeJ/kxWQSrvmCfVHpVk2iXetzIQKotEV2', '12314134', 0, NULL, '1721374668.png', NULL, NULL, '2024-07-18 23:37:48', '2024-10-03 19:37:48', 0, 'owner', NULL, '2024-10-04 03:37:48'),
-(9, 'dsads', 'russellcandilasa@gmail.com', 'rolando', '$2y$12$qJHoOqgn0jsnSk0QcV1qr.B/qc6Fnv7F2q.FsOMyfgUF5DHWHQcSK', '12314134', 0, NULL, NULL, NULL, NULL, '2024-07-28 03:30:53', '2024-10-03 20:28:19', 0, 'tenant', NULL, '2024-10-04 04:28:19'),
-(10, 'rolanda', 'dsa@f.vo', 'dsadsa', '$2y$12$r0hZYWws2BeT2pzsNlwaAOHufzxu/t7vxho7AJMGfnbbSV3k27GPm', '12314134', 0, NULL, '1722227103.jpg', NULL, NULL, '2024-07-28 20:25:03', '2024-10-03 21:35:18', 0, 'tenant', NULL, '2024-10-04 05:35:18'),
-(11, 'shane', 'dsa@f.vos', 'shane', '$2y$12$pfMTqwcBEoo7aXzeCe6HKeLT6vhdM4Bi0Xzqbpm0Y84flDKHNwxkm', '12314134', 0, NULL, '1723266283.png', NULL, NULL, '2024-08-09 21:04:44', '2024-09-15 21:14:21', 0, 'tenant', 0, NULL),
-(13, 'rolands', 'rshan0418@gmail.coms', 'rolands', '$2y$12$4AL119LT4Dvr6TOP.4Euy.2ZR/nx0KVUPGuSV76JoHjAH9drGRSzS', '12314134', 0, NULL, NULL, NULL, NULL, '2024-08-09 22:30:36', '2024-09-15 21:14:25', 1, 'tenant', 0, NULL),
-(14, 'shaner', 'lopezrolandshane@gmail.com', 'shaner', '$2y$12$KWBaHsB1eLFlGJ.2D.LF2O8u4qpNORuowbKP1xj0zcedchtSRZ81a', '12314134', 0, NULL, '1723435002.jpg', NULL, NULL, '2024-08-11 19:56:43', '2024-08-11 19:56:43', 0, 'admin', 0, NULL),
-(22, 'Roland Shane Lopez', NULL, NULL, NULL, '090909090909', 1037565838296943, NULL, '1727259206.jpg', NULL, NULL, '2024-09-24 21:46:08', '2024-10-03 20:05:49', 0, 'tenant', NULL, '2024-10-04 04:05:49'),
-(35, 'dsadsa', 'rshan0418@gmail.com', 'roland12', '$2y$12$IOdbcqiZQXBo6dZCuWqA5ORYTymq9.jtvIz.7JrmuH.FQbTWFeIu6', '12314134', NULL, NULL, '1728010298.jpg', NULL, NULL, '2024-10-03 18:51:38', '2024-10-03 19:23:44', 0, 'tenant', 325631, '2024-10-04 02:51:56');
+INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `google_id`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `verify_status`, `role`, `strike`, `note`, `email_verification_code`, `email_verified_at`) VALUES
+(8, 'roland', 'rshan0418@gmail.com1', 'roland', '$2y$12$KAoWHQSf1WZlzzR9rz5mYuNJEUMifBnkXIG4E8oGzi5kHzP4uenvG', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'dasda12', NULL, '2024-07-18 23:37:48', '2024-11-06 23:40:14', 0, 1, 'owner', 3, 'Spam or scam', NULL, '2024-11-06 03:33:15'),
+(9, 'dsads', 'russellcandilasa@gmail.com', 'rolando', '$2y$12$qJHoOqgn0jsnSk0QcV1qr.B/qc6Fnv7F2q.FsOMyfgUF5DHWHQcSK', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-07-28 03:30:53', '2024-11-05 07:00:59', 0, 0, 'tenant', 1, NULL, NULL, '2024-10-04 04:28:19'),
+(10, 'rolanda', 'dsa@f.vo', 'dsadsa', '$2y$12$r0hZYWws2BeT2pzsNlwaAOHufzxu/t7vxho7AJMGfnbbSV3k27GPm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-07-28 20:25:03', '2024-10-31 04:49:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-04 05:35:18'),
+(11, 'shane', 'dsa@f.vos', 'shane', '$2y$12$pfMTqwcBEoo7aXzeCe6HKeLT6vhdM4Bi0Xzqbpm0Y84flDKHNwxkm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 21:04:44', '2024-09-15 21:14:21', 0, 0, 'tenant', 3, NULL, 0, NULL),
+(13, 'rolands', 'rshan0418@gmail.coms', 'rolands', '$2y$12$4AL119LT4Dvr6TOP.4Euy.2ZR/nx0KVUPGuSV76JoHjAH9drGRSzS', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 22:30:36', '2024-11-01 20:19:59', 1, 0, 'tenant', 3, NULL, 730137, NULL),
+(14, 'Lopez Roland Shane', 'lopezrolandshane@gmail.com', 'shaner', '$2y$12$KWBaHsB1eLFlGJ.2D.LF2O8u4qpNORuowbKP1xj0zcedchtSRZ81a', '12314134', 0, '107236937285983559710', 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-11 19:56:43', '2024-11-06 20:19:18', 0, 0, 'admin', 3, NULL, 796437, '2024-11-07 04:19:18'),
+(22, 'Roland Shane Lopez', NULL, NULL, NULL, '090909090909', 1037565838296943, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-09-24 21:46:08', '2024-10-03 20:05:49', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-04 04:05:49'),
+(39, 'Roland  Lopez', 'rshan0418@gmail.com3', 'roland3', '$2y$12$hjICAtBMCq5irLmPaoVTW.G3TTUMG0wfLyM64D1VlbmEQVGrfKUFe', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-27 20:43:48', '2024-10-27 20:45:43', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-28 04:45:43'),
+(42, 'shane lopez', 'rshan0418@gmail.com4', 'roland4', '$2y$12$fEgxFdQZneJ/TRzyafjlx.kgYZXU7HXbkHLQug5P5vepPrrixuWx2', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-27 22:29:17', '2024-10-27 22:29:27', 0, 0, 'owner', 3, NULL, NULL, '2024-10-28 06:29:27'),
+(43, 'Roland 1 Lopez', 'rshan0418@gmail.com13', 'roland13', '$2y$12$EAFOVb2bXUDBFt/U68D30uJpUllirWCQb1.Oc.4Y.P8bNYfLTZHYa', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:19:17', '2024-10-28 01:46:02', 0, 1, 'owner', 3, NULL, NULL, '2024-10-28 09:46:02'),
+(44, 'shane123', 'russellcandilasa@gmail.com3', 'dsa123', '$2y$12$2.tr.8.H7mEitAEFjQxTfONReN0Y3RTUefBkRjE2nRoAb1F6Es.l6', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:22:09', '2024-10-28 01:22:33', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-28 09:22:33'),
+(46, 'Roland Shane Lopez123', 'rshan0418@gmail.com123', 'roland123', '$2y$12$60t3M74ElAw5RZBUcIv3Puh2lYnXOlfIRQIAxvocG91ZDsqgZgFKG', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'Tres De Mayo', NULL, '2024-11-03 23:01:11', '2024-11-03 23:01:12', 0, 0, 'tenant', 3, NULL, 649363, NULL),
+(51, 'Ro Shan', 'rshan0418@gmail.com', NULL, NULL, '090909090909', NULL, '107895499310321282475', 'profile_picture/0RUVxlvDG8p1m4EcyW2LlW1fG.jpg', 'Tres De Mayo', NULL, '2024-11-06 20:25:44', '2024-11-06 20:26:12', 0, 0, 'owner', 3, NULL, NULL, '2024-11-07 04:25:44'),
+(52, 'Roland Shane Lopez', NULL, NULL, NULL, NULL, 1071441051576088, NULL, 'https://graph.facebook.com/v3.3/1071441051576088/picture', NULL, NULL, '2024-11-06 21:02:39', '2024-11-06 21:02:39', 0, 0, NULL, 3, NULL, NULL, NULL),
+(53, 'Roland Shane Lopez65', 'rshan0418@gmail.com41', 'roland41', '$2y$12$4jL5CcPlmIDa8veDnyGDe.jZq9sLz.9KFyPY0vltqlKzh/AO9FK7S', '12314134', NULL, NULL, 'profile_picture/atIIuo2wOwszhr1zlgGsAge5u.png', 'purok 3 tres de mayo', NULL, '2024-11-06 22:13:53', '2024-11-06 22:14:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-07 06:14:15');
 
 -- --------------------------------------------------------
 
@@ -799,11 +938,13 @@ CREATE TABLE `verifications` (
 --
 
 INSERT INTO `verifications` (`id`, `user_id`, `id_document`, `business_permit`, `status`, `note`, `created_at`, `updated_at`) VALUES
-(2, 10, '/id_documents/1726136340_66e2c014e5bc6.jpg', 'public/business_permits/1726136340_66e2c014e8abf.jpg', 'rejected', 'dsada', '2024-09-12 02:19:00', '2024-09-15 21:20:16'),
-(4, 9, '1726389248_66e69c00eb630.jpg', '1726389248_66e69c00ee0ed.jpg', 'rejected', 'dsada', '2024-09-15 00:34:08', '2024-09-15 21:19:39'),
-(6, 9, '1726466338_66e7c922cd643.jpg', '1726466338_66e7c922d05e8.jpg', 'approved', NULL, '2024-09-15 21:58:58', '2024-09-15 22:14:00'),
-(7, 9, '1726466413_66e7c96daf25e.jpg', '1726466413_66e7c96db0ef1.jpg', 'approved', NULL, '2024-09-15 22:00:13', '2024-09-15 22:35:54'),
-(8, 9, '1726466503_66e7c9c7d2270.jpg', '1726466503_66e7c9c7d4b02.jpg', 'rejected', 'dsadsadsadsdaddsadsadsadsadsdihifweuirhweuiruiweeruiwefuidufbjwadfjfuiwfuweuirweuifwuifuiwefhsfsd', '2024-09-15 22:01:43', '2024-09-15 23:02:09');
+(2, 10, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsada', '2024-09-12 02:19:00', '2024-09-15 21:20:16'),
+(4, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsada', '2024-09-15 00:34:08', '2024-09-15 21:19:39'),
+(6, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'approved', NULL, '2024-09-15 21:58:58', '2024-09-15 22:14:00'),
+(7, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'pending', NULL, '2024-09-15 22:00:13', '2024-09-15 22:35:54'),
+(8, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsadsadsadsdaddsadsadsadsadsdihifweuirhweuiruiweeruiwefuidufbjwadfjfuiwfuweuirweuifwuifuiwefhsfsd', '2024-09-15 22:01:43', '2024-09-15 23:02:09'),
+(9, 43, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'approved', NULL, '2024-10-28 01:19:17', '2024-10-28 02:29:07'),
+(10, 51, 'owner_documents/valid_id/8FogOHXdtOiviiSJYoCyRmSta.jpg', 'owner_documents/business_permit/YF1YNcITFeMsHw0fcA26tC7IC.jpg', 'approved', NULL, '2024-11-06 20:26:13', '2024-11-06 20:26:44');
 
 --
 -- Indexes for dumped tables
@@ -832,6 +973,13 @@ ALTER TABLE `chatrooms`
   ADD KEY `chat_rooms_dorm_id_foreign` (`dorm_id`),
   ADD KEY `chat_rooms_message_id_foreign` (`message_id`),
   ADD KEY `chatrooms_other_user_id_foreign` (`other_user_id`);
+
+--
+-- Indexes for table `curse_words`
+--
+ALTER TABLE `curse_words`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `curse_words_word_unique` (`word`);
 
 --
 -- Indexes for table `dorms`
@@ -898,8 +1046,8 @@ ALTER TABLE `migrations`
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
   ADD KEY `notifications_user_id_foreign` (`user_id`),
-  ADD KEY `notifications_room_id_foreign` (`room_id`),
-  ADD KEY `notifications_sender_id_foreign` (`sender_id`);
+  ADD KEY `notifications_sender_id_foreign` (`sender_id`),
+  ADD KEY `notifications_dorm_id_foreign` (`dorm_id`) USING BTREE;
 
 --
 -- Indexes for table `password_reset_tokens`
@@ -921,8 +1069,16 @@ ALTER TABLE `property_views`
 ALTER TABLE `rent_forms`
   ADD PRIMARY KEY (`id`),
   ADD KEY `rent_forms_user_id_foreign` (`user_id`),
-  ADD KEY `rent_forms_room_id_foreign` (`room_id`),
   ADD KEY `rent_forms_dorm_id_foreign` (`dorm_id`);
+
+--
+-- Indexes for table `reports`
+--
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reports_user_id_foreign` (`user_id`),
+  ADD KEY `reports_dorm_id_foreign` (`dorm_id`),
+  ADD KEY `reports_reported_id_foreign` (`reported_id`) USING BTREE;
 
 --
 -- Indexes for table `reviews`
@@ -930,7 +1086,6 @@ ALTER TABLE `rent_forms`
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD KEY `reviews_user_id_foreign` (`user_id`),
-  ADD KEY `reviews_room_id_foreign` (`room_id`),
   ADD KEY `reviews_dorm_id_foreign` (`dorm_id`);
 
 --
@@ -981,7 +1136,7 @@ ALTER TABLE `verifications`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `chatrooms`
@@ -990,10 +1145,16 @@ ALTER TABLE `chatrooms`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
+-- AUTO_INCREMENT for table `curse_words`
+--
+ALTER TABLE `curse_words`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+
+--
 -- AUTO_INCREMENT for table `dorms`
 --
 ALTER TABLE `dorms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `extend_requests`
@@ -1011,7 +1172,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -1029,31 +1190,37 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
 
 --
 -- AUTO_INCREMENT for table `property_views`
 --
 ALTER TABLE `property_views`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `rent_forms`
 --
 ALTER TABLE `rent_forms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `reports`
+--
+ALTER TABLE `reports`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `roomchats`
@@ -1071,13 +1238,13 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `verifications`
 --
 ALTER TABLE `verifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -1132,7 +1299,7 @@ ALTER TABLE `messages`
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `notifications_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
@@ -1148,15 +1315,21 @@ ALTER TABLE `property_views`
 --
 ALTER TABLE `rent_forms`
   ADD CONSTRAINT `rent_forms_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`),
-  ADD CONSTRAINT `rent_forms_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
   ADD CONSTRAINT `rent_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `reports`
+--
+ALTER TABLE `reports`
+  ADD CONSTRAINT `reports_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reports_reported_id_foreign` FOREIGN KEY (`reported_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reports_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `reviews`
 --
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `reviews_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
