@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>My Accommodation Reviews</h2>
+    <h2 style="text-align:center;">My Accommodation Reviews</h2>
 
     <!-- Custom Tabs for Pending and Past Reviews -->
     <div class="tabs">

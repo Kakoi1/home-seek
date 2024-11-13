@@ -3,7 +3,7 @@
 @section('title', 'My Lisitngs')
 
 @section('content')
-<h2>My Accomodations</h2>
+<h2 style="text-align:center;">My Accommodations</h2>
 
 <style>
     .custom-button {
@@ -68,8 +68,8 @@
 <br>
 <link rel="stylesheet" href="{{asset('css/perdorm.css')}}">
 <div style="padding: 20px;">
-    <a href="{{'adddorm'}}" class="custom-button">+ List a Accomodation</a>
-    <a href="{{ route('owner.archived') }}" class="custom-button">View Archived Accomodation</a>
+    <a href="{{'adddorm'}}" class="custom-button">+ List a Accommodation </a>
+    <a href="{{ route('owner.archived') }}" class="custom-button">View Archived Accommodation </a>
 </div>
 
 
