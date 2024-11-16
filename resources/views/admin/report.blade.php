@@ -109,7 +109,7 @@
         <select id="typeFilter">
             <option value="">All</option>
             <option value="user">User</option>
-            <option value="property">Property</option>
+            <option value="property">Accomodation</option>
         </select>
     </div>
 
@@ -118,7 +118,7 @@
             <tr>
                 <th>Reporter</th>
                 <th>Reported User</th>
-                <th>Property</th>
+                <th>Accomodation</th>
                 <th>Reason</th>
                 <th>Status</th>
                 <th>Type</th>
@@ -204,7 +204,7 @@
 
         // If there are reports, display them
         reports.forEach(report => {
-            const reportType = report.dorm_id ? "Property" : "User";
+            const reportType = report.dorm_id ? "Accomodation" : "User";
             const actionButtons = report.status === 'pending'
                 ? `
             <button class="btn-valid" onclick="handleAction(${report.id}, 'valid')">Valid</button>

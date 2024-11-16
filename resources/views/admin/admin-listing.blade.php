@@ -310,12 +310,12 @@
     }
 </style>
 <div class="container">
-    <h1>Manage Posted Properties</h1>
+    <h1>Manage Posted Accomodation</h1>
 
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Property Name</th>
+                <th>Accomodation Name</th>
                 <th>Owner</th>
                 <th>Location</th>
                 <th>Availability</th>
@@ -351,7 +351,7 @@
                                         @method('PUT')
                                         <input type="hidden" name="stat" value="">
                                         <button type="submit" class="btn btn-warning btn-sm"
-                                            onclick="return confirm('Are you sure you want to deactivate this property?');">
+                                            onclick="return confirm('Are you sure you want to deactivate this Accomodation?');">
                                             Deactivate
                                         </button>
                                     </form>
@@ -361,7 +361,7 @@
                                         @method('PUT')
                                         <input type="hidden" name="stat" value="">
                                         <button type="submit" class="btn btn-warning btn-sm"
-                                            onclick="return confirm('Are you sure you want to deactivate this property?');">
+                                            onclick="return confirm('Are you sure you want to deactivate this Accomodation?');">
                                             activate
                                         </button>
                                     </form>
@@ -521,13 +521,13 @@
     function handleAction(propertyId, isDeactivated) {
         if (isDeactivated) {
             // If property is deactivated, simply activate without modal
-            if (confirm('Are you sure you want to activate this property?')) {
+            if (confirm('Are you sure you want to activate this Accomodation?')) {
                 document.getElementById("deactivateForm").action = `/managepage/property${propertyId}/deactivate`;
                 document.getElementById("deactivateForm").submit();
             }
         } else {
             // If property is active, show modal to provide reason for deactivation
-            if (confirm('Are you sure you want to deactivate this property?')) {
+            if (confirm('Are you sure you want to deactivate this Accomodation?')) {
                 openDeactivateModal(propertyId);
             }
         }
@@ -599,7 +599,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: "Property Metrics (%)",
+                                label: "Accomodation Metrics (%)",
                                 data: rates,
                                 backgroundColor: ["#4CAF50", "#FFC107", "#FF5722"],
                                 borderColor: ["#388E3C", "#FFA000", "#D32F2F"],
@@ -652,7 +652,7 @@
                     reviewsList.appendChild(li);
                 });
             })
-            .catch(error => console.error("Error fetching property details:", error));
+            .catch(error => console.error("Error fetching Accomodation details:", error));
     }
 
     function closePropertyDetails() {

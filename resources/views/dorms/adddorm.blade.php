@@ -256,7 +256,7 @@
 
 
         <div class="form-group">
-            <label for="price">Price / month</label>
+            <label for="price">Price / Day</label>
             <input type="text" id="price" name="price" value="{{ $dorm->price ?? old('price') }}" required>
         </div>
 
@@ -293,8 +293,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                       {!! json_encode($dorm) !!}
-                                        </script>
+                                           {!! json_encode($dorm) !!}
+                                            </script>
                 @endif
 
             </div>
