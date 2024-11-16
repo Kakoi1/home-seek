@@ -45,14 +45,32 @@ class NotifyController extends Controller
         if (!$rentForm) {
             return response()->json(['success' => false, 'message' => 'No approved rent form found for this tenant.']);
         }
-        $today = Carbon::today();
+        $today = Carbon::now();
         $startDate = Carbon::parse($rentForm->start_date);
-        $daysUntilStay = $today->diffInDays($startDate);
+        $remainingTimeInHours = $today->diffInHours($startDate, false);
+        // Calculate days or hours until the stay begins
+        if ($remainingTimeInHours < 24) {
+            $hoursUntilStay = $today->diffInHours($startDate, false);
+            if ($hoursUntilStay > 0) {
+                $remainingTime = intval($hoursUntilStay) . ' hour' . (intval($hoursUntilStay) > 1 ? 's' : '');
+                $timeMessage = "Your stay at {$rentForm->dorm->name} starts in {$remainingTime}! Please be prepared for your check-in.";
+            } else {
+                $timeMessage = "Your stay at {$rentForm->dorm->name} starts today! Please be prepared for your check-in.";
+            }
+        } else {
+            $daysUntilStay = $today->diffInDays($startDate, false);
+            if ($daysUntilStay > 0) {
+                $remainingTime = intval($daysUntilStay) . ' day' . (intval($daysUntilStay) > 1 ? 's' : '');
+                $timeMessage = "Your stay at {$rentForm->dorm->name} starts in {$remainingTime}! Please be prepared for your check-in.";
+            } else {
+                $timeMessage = "Your stay at {$rentForm->dorm->name} has already started or is overdue!";
+            }
+        }
         // Send the notification
         $Notification = Notification::create([
             'user_id' => $tenantId,
             'type' => 'upcoming_stay',
-            'data' => "<p>Your stay at {$rentForm->dorm->name} starts in {$daysUntilStay} days! Please be prepared for your check-in.</p>",
+            'data' => "<p>{$timeMessage}</p>",
             'read' => false,
             'route' => null, // Adjust this route as needed
             'dorm_id' => $rentForm->dorm_id,

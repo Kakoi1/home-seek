@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Dorm;
-use App\Models\Room;
-use App\Models\Message;
 use App\Models\Reviews;
 use App\Models\RentForm;
-use App\Models\Roomchat;
 use App\Events\MessageEvent;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -22,254 +19,6 @@ use Illuminate\Support\Facades\Storage;
 class RoomController extends Controller
 {
 
-    public function index($dormId, $roomId)
-    {
-        $userId = Auth::id();
-        $room = Room::findOrFail($dormId);
-        $roomchat = Roomchat::findOrFail($roomId); // Fetch the chatroom by room_id
-        $dorm = Dorm::findOrFail($room->dorm_id);
-
-        Message::where('chat_id', $roomId)
-            ->where('user_id', '!=', $userId)
-            ->update(['is_read' => true]);
-
-        return view('room.chats', compact('room', 'dorm', 'roomchat'));
-    }
-    public function viewRoom($id, $action)
-    {
-        // Load the room with its associated dorm
-        $room = Room::with('dorm')->findOrFail($id);
-
-        // Fetch the approved rent form for this room (if any)
-        $occupied = RentForm::where('room_id', $room->id)
-            ->where('status', 'approved') // Active rent status
-            ->with('user') // Eager load the associated user
-            ->first();
-
-        // Fetch all pending rent forms for this room (inquiries)
-        $submited = RentForm::where('room_id', $room->id)
-            ->where('status', 'pending') // Pending status indicates inquiries
-            ->with('user') // Eager load the associated users
-            ->get();
-
-        // Pass all necessary data to the view
-        return view('room.edit', compact('room', 'action', 'occupied', 'submited'));
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        $room = Room::findOrFail($id);
-
-        $room->number = $request->input('number');
-        $room->capacity = $request->input('capacity');
-        $room->price = $request->input('price');
-        $room->status = $request->has('status');
-
-        // Handle the image upload
-        if ($request->hasFile('images')) {
-            // Delete the old image if exists
-            if ($room->images) {
-                Storage::delete('public/room_images/' . $room->images);
-            }
-
-            $file = $request->file('images');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/room_images', $filename);
-            $room->images = $filename;
-        }
-
-        $room->save();
-
-        return redirect()->route('dorms.posted', $room->dorm_id)->with('success', 'Room updated successfully.');
-    }
-
-    public function inquireRoom($roomId)
-    {
-        $room = Room::findOrFail($roomId);
-        $userId = Auth::id();
-
-        // Check if a roomchat already exists
-        $existingRoomchat = DB::select(
-            'SELECT * FROM roomchats 
-         WHERE room_id = ? 
-         AND ((user_id = ? AND other_user_id = ?) 
-         OR (user_id = ? AND other_user_id = ?)) 
-         LIMIT 1',
-            [$roomId, $userId, $room->dorm->user_id, $room->dorm->user_id, $userId]
-        );
-
-        if (!$existingRoomchat) {
-            // Create a new roomchat
-            DB::insert(
-                'INSERT INTO roomchats (user_id, other_user_id, room_id, created_at, updated_at) 
-             VALUES (?, ?, ?, NOW(), NOW())',
-                [$userId, $room->dorm->user_id, $roomId]
-            );
-
-            // Get the newly created roomchat ID
-            $roomchatId = DB::getPdo()->lastInsertId();
-
-            // Create a new message
-            DB::insert(
-                'INSERT INTO messages (rooms_id, user_id, message, chat_id, created_at, updated_at) 
-             VALUES (?, ?, ?, ?, NOW(), NOW())',
-                [$roomId, $userId, 'I am interested in This Room.', $roomchatId]
-            );
-
-            // Get the newly created message ID
-            $messageId = DB::getPdo()->lastInsertId();
-
-            // Update the roomchat with the new message's ID
-            DB::update(
-                'UPDATE roomchats SET message_id = ? WHERE id = ?',
-                [$messageId, $roomchatId]
-            );
-
-            event(new NotificationEvent([
-
-                'reciever' => $room->dorm->user_id,
-                'message' => 'I am interested in This Room.',
-                'sender' => Auth::id(),
-                'rooms' => $roomId,
-                'roomid' => $roomchatId,
-                'action' => 'inquire',
-                'route' => route('managetenant')
-            ]));
-
-        } else {
-            $roomchatId = Roomchat::find($existingRoomchat[0]->id);
-        }
-
-        return redirect()->route('room.chat', ['room' => $roomId, 'roomchat' => $roomchatId])->with('success', 'Rom inquire sent successfully!');
-    }
-
-    public function fetchMessages($dormId, $roomId)
-    {
-
-        $messages = Message::where('chat_id', $roomId)
-            ->with('user') // Assuming you have a 'user' relationship defined on the Message model
-            ->get();
-
-        return response()->json($messages);
-    }
-
-    public function fetchRoomChats()
-    {
-        $userId = Auth::id();
-
-        $roomChats = DB::select("
-            SELECT 
-            roomchats.id AS roomchat_id, 
-            roomchats.room_id, 
-            roomchats.user_id, 
-            rooms.number AS room_number, 
-            users.name AS user_name,
-            (SELECT COUNT(*) FROM messages WHERE user_id != ? AND chat_id = roomchats.id AND is_read = 0) as unread_count
-            FROM 
-                roomchats
-            JOIN 
-                rooms ON roomchats.room_id = rooms.id
-            JOIN 
-                users ON roomchats.user_id = users.id
-            WHERE 
-                roomchats.user_id = ? 
-                OR rooms.dorm_id IN (SELECT dorms.id FROM dorms WHERE dorms.user_id = ?)
-            ORDER BY 
-                roomchats.created_at DESC;
-
-            ", [$userId, $userId, $userId]);
-
-        return response()->json($roomChats);
-    }
-
-    public function sendMessage(Request $request, $roomId, $chatId)
-    {
-        $userId = Auth::id();
-        $room = Room::findOrFail($roomId);
-        $chat = Roomchat::findOrFail($chatId);
-
-        if (!$room) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Room not found'
-            ], 404);
-        }
-
-        if (is_null($chatId)) {
-            return response()->json(['status' => 'Room ID is required'], 400);
-        }
-
-        $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
-
-
-        $message = new Message();
-        $message->rooms_id = $roomId;
-        $message->user_id = $userId;
-        $message->message = $request->message;
-        $message->chat_id = $chatId; // Associate the message with the chatroom
-        $message->save();
-
-        event(new MessageEvent([
-
-            'reciever' => $chat_id,
-
-        ]));
-
-
-        return response()->json([
-            'status' => 'Message sent successfully',
-            'chat_id' => $chatId // Include room_id in the response
-        ]);
-
-    }
-
-    // public function sendRentFormUrl($roomId, $dormId)
-    // {
-    //     $userId = Auth::id();
-    //     $room = Room::findOrFail($dormId);
-    //     $dorm = Dorm::findOrFail($room->dorm->id);
-    //     $chat = Roomchat::findOrFail($roomId);
-
-    //     $chat_id = ($chat->user_id != $userId) ? $chat->user_id : $chat->other_user_id;
-
-    //     // Ensure that only the dorm owner can send the link
-    //     if (Auth::id() !== $room->dorm->user_id) {
-    //         abort(403, 'Unauthorized action.');
-    //         return response()->json(['status' => 'Unauthorized action.'], 403);
-    //     }
-
-
-    //     $available = Room::where('id', $room->id)
-    //         ->where('status', true)
-    //         ->exists();
-
-    //     if (!$available) {
-    //         return response()->json(['status' => 'Room already occupied']);
-    //     }
-    //     // Generate a signed URL that expires in 1 hour
-    //     $url = URL::temporarySignedRoute(
-    //         'rent.form',
-    //         now()->addHour(),
-    //         ['room' => $dormId]
-    //     );
-
-    //     // Create a new message with the generated URL
-    //     $message = new Message();
-    //     $message->rooms_id = $dormId;
-    //     $message->user_id = $userId;
-    //     $message->message = $url;
-    //     $message->chat_id = $roomId; // Associate the message with the chatroom
-    //     $message->save();
-
-    //     event(new MessageEvent([
-
-    //         'reciever' => $chat_id,
-
-    //     ]));
-
-    //     return response()->json(['status' => 'Link sent successfully']);
-    // }
 
     public function createBook(Request $request)
     {
@@ -287,16 +36,8 @@ class RoomController extends Controller
             return view('room.rentForm', compact('rent', 'property'));
         }
 
-        // Optional fallback if there's no rent form to edit (if you want to return room data here)
-        // $rooms = Room::all(); // Retrieve available rooms
-        // return view('room.rentForm', compact('rooms'));
-
         abort(404); // Send a 404 error if no ID was provided or form not found
     }
-
-
-
-
 
     public function storeBook(Request $request)
     {
@@ -309,6 +50,9 @@ class RoomController extends Controller
             'total_price' => 'required|numeric|min:0',
         ]);
         $dorm = Dorm::findOrFail($request->dorm_id);
+        if ($dorm->flag || $dorm->availabilty) {
+            return back()->withErrors('Accommodation not available');
+        }
         // Save the booking
         RentForm::create([
             'user_id' => $userId, // Assuming the user is logged in
@@ -324,7 +68,7 @@ class RoomController extends Controller
         $notification = Notification::create([
             'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
             'type' => 'Form Submit',
-            'data' => '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation ' . $dorm->name . '</p><br> <p>Date: ' . now() . '</p>',
+            'data' => '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>' . $dorm->name . '</strong></p><br> <p>Date: ' . now() . '</p>',
             'read' => false,
             'route' => route('managetenant'),
             'dorm_id' => $request->dorm_id,
@@ -390,19 +134,19 @@ class RoomController extends Controller
 
         // Check if the form is not approved yet
         if ($rentForm->status === 'approved') {
-            $rentForm->note = $request->cancelReason;
+            $rentForm->note = $request->cancelReason == 'Other' ? $request->otherReasonText : $request->cancelReason;
             $message = 'Cancellation Request has Sent';
             $data = '<strong>Booking Cancellation request</strong><br>' .
-                '<p>Cancellation request: ' . htmlspecialchars($request->cancelReason) . ' on ' . htmlspecialchars($rentForm->dorm->name) . '</p><br>' .
-                '<p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>';
+                '<p>Cancellation request: ' . htmlspecialchars($rentForm->note) . ' on <strong>' . htmlspecialchars($rentForm->dorm->name) . '</strong></p><br>' .
+                '<p>Sent on ' . now()->format('Y-m-d H:i:s') . '</p>';
         } else {
             $dorm = Dorm::find($rentForm->dorm_id);
             $rentForm->status = 'cancelled';
-            $rentForm->note = $request->cancelReason;
+            $rentForm->note = $request->cancelReason == 'Other' ? $request->otherReasonText : $request->cancelReason;
             $message = 'Booking form cancelled successfully';
             $data = '<strong>Booking Cancellation</strong><br>' .
-                '<p>Booking Cancelled due to: ' . htmlspecialchars($request->cancelReason) . ' on ' . htmlspecialchars($rentForm->dorm->name) . '</p><br>' .
-                '<p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>';
+                '<p>Booking Cancelled due to: ' . htmlspecialchars($rentForm->note) . ' on <strong>' . htmlspecialchars($rentForm->dorm->name) . '</strong></p><br>' .
+                '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
 
             $dorm->availability = false;
             $dorm->save();
@@ -434,30 +178,6 @@ class RoomController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-    public function checkForm(Request $request)
-    {
-        $userId = Auth::id();
-
-        // Execute the raw SQL query
-        $result = DB::select("SELECT EXISTS (
-            SELECT 1 
-            FROM rent_forms 
-            WHERE user_id = ? 
-            AND room_id = ?
-            AND (status = 'pending' OR status = 'approved')
-        ) AS `exists`;", [$userId, $request->roomId]);
-
-        // Extract the 'exists' value from the result
-        $existingForm = $result[0]->exists;
-
-        if ($existingForm) {
-            // If the user has already submitted a form, return a response indicating so
-            return response()->json(['success' => true]);
-        } else {
-            // If no form exists, return a response indicating so
-            return response()->json(['success' => false]);
-        }
-    }
 
     public function updateStatus(Request $request, $id)
     {
@@ -473,7 +193,7 @@ class RoomController extends Controller
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
                 'type' => 'Form Response',
                 'data' => '<strong>Booking Approved</strong><br>' .
-                    '<p>Congratulations! Your booking at ' . htmlspecialchars($dorm->name) . ' has been successfully approved.</p>' .
+                    '<p>Congratulations! Your booking at <strong>' . htmlspecialchars($dorm->name) . '</strong> has been successfully approved.</p>' .
                     '<p>Please prepare for your stay and let us know if you have any questions.</p>' .
                     '<p>Date Approved: ' . now()->format('Y-m-d H:i:s') . '</p>' .
                     '<p>We look forward to hosting you!</p>',
@@ -516,91 +236,7 @@ class RoomController extends Controller
         $rentForm->save();
         return redirect()->back()->with('success', 'Rent form status updated successfully.');
     }
-    public function addRooms(Request $request, $id)
-    {
-        $request->validate([
-            'rooms_available' => 'required|integer|min:1',
-        ]);
 
-        $dorm = Dorm::findOrFail($id); // Find the dorm or throw 404 if not found
-
-        for ($i = 1; $i <= $request->rooms_available; $i++) {
-            Room::create([
-                'dorm_id' => $dorm->id,
-                'number' => ($dorm->rooms()->count() + $i), // Dynamic room number based on existing rooms
-                'capacity' => null,
-                'price' => null,
-                'status' => true, // Set to available by default
-            ]);
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    public function deleteRooms(Request $request, $id)
-    {
-        $request->validate([
-            'rooms_to_delete' => 'required|array|min:1',
-            'rooms_to_delete.*' => 'exists:rooms,id',
-        ]);
-
-        // Find the dorm or throw 404 if not found
-        $dorm = Dorm::findOrFail($id);
-
-        // Loop through each room to be deleted
-        foreach ($request->rooms_to_delete as $roomId) {
-            // Find the room
-            $room = Room::findOrFail($roomId);
-
-            // Check if the room has an image and delete it
-            if (!empty($room->images)) {
-                Storage::delete('public/room_images/' . $room->images);
-            }
-
-            // Delete the room record
-            $room->delete();
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    public function leaveRent(Request $request, $id)
-    {
-
-        $rentForm = RentForm::findOrFail($id);
-        $rentForm->status = 'completed';
-        $rentForm->note = $request->input('leaveReason');
-        $rentForm->save();
-
-        Reviews::create([
-            'user_id' => $rentForm->user_id,
-            'room_id' => $rentForm->room_id,
-            'dorm_id' => $rentForm->room->dorm_id,  // Assuming property_id refers to the dorm
-            'rating' => null,  // Leave the rating as null
-            'comments' => null,  // Leave the comments as null
-        ]);
-
-        $notification = Notification::create([
-            'user_id' => $rentForm->dorm->user_id, // Assuming the owner is linked to the room
-            'type' => 'review',
-            'data' => $rentForm->user->name . ' has left From your Property',
-            'read' => false,
-            'dorm_id' => $rentForm->dorm_id,
-            'sender_id' => $rentForm->user_id
-        ]);
-
-        event(new NotificationEvent([
-            'reciever' => $notification->user_id,
-            'message' => $notification->data,
-            'sender' => $rentForm->user_id,
-            'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
-            'action' => 'rent',
-            'route' => route('managetenant')
-        ]));
-
-        return redirect()->back();
-    }
     public function notifyTenant($id)
     {
         $rentForm = RentForm::findOrFail($id);
@@ -620,7 +256,7 @@ class RoomController extends Controller
             'message' => $notification->data,
             'sender' => $rentForm->user_id,
             'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
+            'roomid' => $notification->dorm_id,
             'action' => 'Bills',
             'route' => route('user.rentForms')
         ]));

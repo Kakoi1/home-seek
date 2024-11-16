@@ -430,6 +430,14 @@
         return Math.ceil(filteredProperties.length / propertiesPerPage);
     }
 
+    // Capitalize first letter of each word in a string
+    function capitalizeFirstLetter(str) {
+        if (typeof str !== 'string') return str;
+        return str.replace(/\b\w/g, function (char) {
+            return char.toUpperCase();
+        });
+    }
+
     function renderTable(page) {
         const totalPages = calculateTotalPages();
         const start = (page - 1) * propertiesPerPage;
@@ -438,35 +446,49 @@
 
         const tableBody = document.querySelector("tbody");
         tableBody.innerHTML = propertiesToDisplay.map(property => {
+            // Shorten the address to a preview
             const shortAddress = property.address.split(',').slice(0, 3).join(', ');
-            const statusText = property.flag ? 'Deactivated' : 'Active';
-            const statusClass = property.flag ? 'text-danger' : 'text-success';
-            const activateButtonText = property.flag ? 'Activate' : 'Deactivate';
+
+            // Determine dorm and owner status
+            const isDormDeactivated = property.flag || property.user.active_status === 1;
+            const statusText = isDormDeactivated ? 'Deactivated' : 'Active';
+            const statusClass = isDormDeactivated ? 'text-danger' : 'text-success';
             const avail = property.availability ? 'Occupied' : 'Available';
 
+            // Return the HTML content with capitalized values
             return `
-            <tr>
-    <td style="cursor: pointer;" onclick="showPropertyDetails(${property.id})"><a href="javascript:void(0)"><strong>
-        ${property.name}</strong></a>
-    </td>
-    <td ><a href="javascript:void(0)" onclick="openUserPopup(${property.user.id})"><strong>${property.user.name}</strong></a></td>
-    <td>${shortAddress}</td>
-    <td>${avail}</td>
-    <td><span class="${statusClass}">${statusText}</span></td>
-    <td>
-        <button type="button" class="btn" 
-            onclick="handleAction(${property.id}, ${property.flag})">
-            ${property.flag ? 'Activate' : 'Deactivate'}
-        </button>
-    </td>
-</tr>
-            `;
+        <tr>
+            <td style="cursor: pointer;" onclick="showPropertyDetails(${property.id})">
+                <a href="javascript:void(0)">
+                    <strong>${capitalizeFirstLetter(property.name)}</strong>
+                </a>
+            </td>
+            <td>
+                <a href="javascript:void(0)" onclick="openUserPopup(${property.user.id})">
+                    <strong>${capitalizeFirstLetter(property.user.name)}</strong>
+                </a>
+            </td>
+            <td>${capitalizeFirstLetter(shortAddress)}</td>
+            <td>${capitalizeFirstLetter(avail)}</td>
+            <td><span class="${statusClass}">${capitalizeFirstLetter(statusText)}</span></td>
+            <td>
+                <button type="button" class="btn" ${property.flag || property.user.active_status ? 'disabled' : ''}
+                    onclick="handleAction(${property.id}, ${isDormDeactivated})">
+                     Deactivate
+                </button>
+            </td>
+        </tr>
+    `;
         }).join("");
 
-        document.getElementById("currentPage").textContent = currentPage;
+        // Update the current page text
+        document.getElementById("currentPage").textContent = page;
 
+        // Update pagination buttons (this function needs to be implemented somewhere)
         updatePaginationButtons(totalPages);
     }
+
+
 
     function nextPage() {
         const totalPages = calculateTotalPages();

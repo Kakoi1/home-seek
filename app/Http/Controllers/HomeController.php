@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\Dorm;
 use App\Models\Billing;
+use App\Models\Notification;
 use App\Models\RentForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -62,22 +64,46 @@ class HomeController extends Controller
         // Validate the incoming request
         $validated = $request->validate([
             'mode_of_payment' => 'required|in:cash,e_wallet,credit_card,bank_transfer,others',
-            'payment_reference' => $request->mode_of_payment !== 'cash' ? 'required|string|max:255' : 'nullable',
+            'payment_reference' => ($request->mode_of_payment !== 'cash') ? 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' : 'nullable',
             'payment_date' => 'required|date',
         ]);
+
 
         // Find the bill that corresponds to the rent form
         $paymentDate = Carbon::parse($validated['payment_date'])->setTime(now()->hour, now()->minute, now()->second);
         $bill = Billing::findOrFail($billId);
-
-        // Create a new payment record
+        if ($request->hasFile('payment_reference')) {
+            $file = $request->file('payment_reference');
+            $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('Proof_of_Payment', $filename, 'gcs');
+            $bill->reference = $path;
+        }
 
         $bill->mode = $validated['mode_of_payment'];
-        $bill->reference = $validated['payment_reference'];
         $bill->paid_at = $paymentDate;
         $bill->status = 'paid';
 
         $bill->save();
+        $notification = Notification::create([
+            'user_id' => $bill->user_id, // Assuming the owner is linked to the room
+            'type' => 'Bills',
+            'data' => '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱' . number_format($bill->amount, 2) . '</strong> on <strong>' . $bill->rentForm->dorm->name . '</strong></p><br><p>Paid on: <strong>' . $bill->paid_at->format('Y-m-d H:i:s') . '</strong></p><p>Mode of Payment: <strong>' . $bill->mode . '</strong></p><br><p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
+            'read' => false,
+            'route' => route('user.rentForms'),
+            'dorm_id' => $bill->rentForm->dorm_id,
+            'sender_id' => Auth::id()
+        ]);
+
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => Auth::id(),
+            'rooms' => $notification->id,
+            'roomid' => $notification->dorm_id,
+            'action' => 'Bills',
+            'route' => route('user.rentForms')
+        ]));
+
 
         // Send a success message or redirect to a success page
         return redirect()->back()

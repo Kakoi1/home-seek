@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\GoogleController;
 use App\Models\Dorm;
+use App\Models\User;
 use Chatify\ChatifyMessenger;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DormController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomController;
@@ -14,6 +14,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NotifyController;
 use App\Http\Controllers\MessageController;
+use Illuminate\Support\Carbon;
 
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -33,6 +34,49 @@ Route::middleware(['auth', 'admin'])->group(function () {
     })->name('reports.view');
     Route::post(' /reports/{id}/action', [AdminController::class, 'updateStatus']);
 
+    Route::get('/users-data', function () {
+        return User::where('role', '!=', 'owner')
+            ->select('name', 'email', 'active_status', 'created_at')
+            ->paginate(10)
+            ->through(function ($user) {
+                return [
+                    'name' => ucfirst($user->name),
+                    'email' => $user->email,
+                    'status' => $user->active_status ? 'Inactive' : 'Active',
+                    'joined' => $user->created_at->diffForHumans(),
+                ];
+            });
+    });
+
+    Route::get('/owners-data', function () {
+        return User::where('role', 'owner')
+            ->select('name', 'email', 'active_status', 'created_at')
+            ->paginate(10)
+            ->through(function ($owner) {
+                return [
+                    'name' => ucfirst($owner->name),
+                    'email' => $owner->email,
+                    'status' => $owner->active_status ? 'Inactive' : 'Active',
+                    'joined' => $owner->created_at->diffForHumans(),
+                ];
+            });
+    });
+
+    Route::get('/properties-data', function () {
+        return Dorm::select('name', 'address', 'availability', 'flag')
+            ->paginate(10)
+            ->through(function ($dorm) {
+                $fullAddress = $dorm->address;
+                $addressParts = explode(',', $fullAddress);
+                $shortenedAddress = implode(', ', array_slice($addressParts, 0, 3));
+                return [
+                    'name' => ucfirst($dorm->name),
+                    'address' => ucfirst($shortenedAddress),
+                    'availability' => $dorm->availability ? 'Occupied' : 'Available',
+                    'status' => $dorm->flag ? 'Inactive' : 'Active',
+                ];
+            });
+    });
     Route::get('/reports/fetch', [AdminController::class, 'fetchReports'])->name('reports.fetch');
     Route::get('/properties/{id}/details', [AdminController::class, 'show']);
 
@@ -92,77 +136,52 @@ Route::get('/upload', function () {
 Route::group(['middleware' => ['auth', 'email.verified']], function () {
 
     Route::group(['middleware' => ['auth', 'owner.verified']], function () {
-
-        Route::get('/home', [DormController::class, 'index'])->name('home');
-        Route::get('/dorms', [DormController::class, 'index'])->name('dorm');
-        Route::get('/dorms/{id}', [DormController::class, 'show'])->name('dorms.posted');
         Route::get('/user-data/{id}', [DormController::class, 'getUserData']);
-
-
-        Route::post('/get-coor', [Controller::class, 'getCoor'])->name('get-coor');
-        Route::post('/savedorm', [DormController::class, 'saveDorm'])->name('savedorm');
-        Route::get('/showdorms', [DormController::class, 'showDorms'])->name('showdorms');
-        Route::get('/adddorm', [DormController::class, 'adddorm'])->name('adddorm');
-        Route::get('/dorms/{id}/edit', [Controller::class, 'edit'])->name('dorms.adddorm');
-        Route::put('/dorms/{id}', [DormController::class, 'update'])->name('dorms.update');
         Route::get('/profile', [Controller::class, 'showProfile'])->name('profile.edit');
         Route::put('/profile/update', [Controller::class, 'updateProfile'])->name('profile.update');
-        Route::post('/dorms/{id}/archive', [DormController::class, 'archive'])->name('dorms.archive');
-        Route::get('/room/{id}/edit/{action}', [RoomController::class, 'viewRoom'])->name('room.edit');
-        Route::put('/room/{room}', [RoomController::class, 'update'])->name('room.update');
-        Route::get('/rooms/{room}/inquire', [RoomController::class, 'inquireRoom'])->name('room.inquire');
-        Route::post('/verify', [Controller::class, 'requestVerify'])->name('verify');
-        // routes/web.php
-
-        Route::get('/dorms/{dorm}/chat/{chatroom}', [ChatController::class, 'index'])->name('dorm.chat');
-        Route::get('/rooms/{room}/chat/{roomchat}', [RoomController::class, 'index'])->name('room.chat');
-        Route::post('/dorms/{dormId}/send-message/{roomId}', [ChatController::class, 'sendMessage'])->name('DormSendMessage');
-        Route::post('/rooms/{dormId}/send-message/{roomId}', [RoomController::class, 'sendMessage'])->name('RoomSendMessage');
-        Route::get('/dorms/{dormId}/chat/{roomId}/fetch-messages', [ChatController::class, 'fetchMessages'])->name('FetchDormMessage');
-        Route::get('/rooms/{dormId}/chat/{roomId}/fetch-messages', [RoomController::class, 'fetchMessages'])->name('FetchRoomMessage');
-        Route::get('/dorms/{id}/inquire', [ChatController::class, 'inquire'])->name('dorm.inquire');
-        Route::get('/chatrooms', [ChatController::class, 'fetchChatrooms'])->name('fetchChatrooms');
-        Route::get('/room-chats', [RoomController::class, 'fetchRoomChats'])->name('chatroom.Chatroom');
-        Route::post('/rooms/{id}/send-url/{chat_id}', [RoomController::class, 'sendRentFormUrl'])->name('send-url');
-        Route::post('/check-form', [RoomController::class, 'checkForm'])->name('check-form');
+        Route::get('/dorms/{id}', [DormController::class, 'show'])->name('dorms.posted');
         Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
         Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
-        Route::post('/mark-messages-read', [MessageController::class, 'markMessagesRead'])->name('message.read');
-        Route::post('/mark-as-read', [MessageController::class, 'markasRead']);
-        Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
-        Route::post('/dorm/{id}/delete-rooms', [RoomController::class, 'deleteRooms'])->name('dorm.deleteRooms');
-        Route::post('//dorm/{id}/add-rooms', [RoomController::class, 'addRooms'])->name('dorm.addRooms');
-        Route::post('/dorm/{dorm}/favorite', [DormController::class, 'toggleFavorite'])->name('dorm.favorite');
-        Route::post('/dorm/{dorm}/views', [DormController::class, 'trackView'])->name('dorm.view');
-
-        Route::put('/rentForms/update/{id}', [RoomController::class, 'updateBook'])->name('rentForm.update');
-        Route::post('/bookForm', [RoomController::class, 'storeBook'])->name('rentForm.store');
-        Route::post('/rentForm/edit', [RoomController::class, 'createBook'])->name('rentForm.edit');
-        Route::get('/user/rent-forms', [Controller::class, 'userRentForms'])->name('user.rentForms');
-        Route::post('/rentForm/cancel/{id}', [RoomController::class, 'cancel'])->name('rentForm.cancel');
-        Route::patch('/rentForm/leave/{id}', [RoomController::class, 'leaveRent'])->name('rentForm.leave');
-        Route::get('/rentForm/extend/{id}', [RoomController::class, 'extendForm'])->name('rentForm.extend');
-        Route::post('/extendSubmit', [Controller::class, 'extendRent'])->name('extend.submit');
-        Route::get('/extendEdit/{id}', [Controller::class, 'extendEdit'])->name('extendEdit');
-        Route::patch('/extendupdate/{id}', [Controller::class, 'extendUpdate'])->name('extendUpdate');
-        Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
-        Route::patch('/book/{id}/cancelStatus', [Controller::class, 'updateRequest'])->name('cancellation.updateStatus');
-        Route::get('/filter-billing', [Controller::class, 'filterBilling']);
-        Route::post('/make-payment/{id}', [Controller::class, 'makePayment'])->name('makePayment');
-        Route::get('/reviews/{id}', [Controller::class, 'review'])->name('reviews.store');
-        Route::get('/my-reviews', [Controller::class, 'userReviews'])->name('myReviews');
-        Route::patch('/reviews/{id}/submit', [Controller::class, 'submitReview'])->name('reviews.submit');
-        Route::post('/notifyTenant/{id}', [RoomController::class, 'notifyTenant'])->name('notifyTenant');
-        Route::get('/myfavourites', [DormController::class, 'favourites'])->name('favourites');
-        Route::get('/ownerhome', [DormController::class, 'ownerDashboard'])->name('owner.Dashboard');
-        Route::get('/owner-properties', [DormController::class, 'ownerProperty'])->name('owner.Property');
-        Route::get('/owner-properties/archived', [DormController::class, 'archivedProperty'])->name('owner.archived');
-        Route::get('/owner-history', [HomeController::class, 'history'])->name('owner.history');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
-        Route::post('/notify-tenant/{tenantId}', [NotifyController::class, 'sendUpcomingStayNotification']);
-        Route::patch('/process-payment/{rent_form_id}', [HomeController::class, 'processPayment'])->name('processPayment');
-        Route::post('/dorms/restore/{id}', [DormController::class, 'restore'])->name('dorms.restore');
+        // tenant here---------------------------------------------------
 
+        Route::middleware(['auth', 'tenant'])->group(function () {
+            Route::get('/home', [DormController::class, 'index'])->name('home');
+            Route::get('/dorms', [DormController::class, 'index'])->name('dorm');
+            Route::get('/showdorms', [DormController::class, 'showDorms'])->name('showdorms');
+            Route::post('/dorm/{dorm}/favorite', [DormController::class, 'toggleFavorite'])->name('dorm.favorite');
+            Route::post('/dorm/{dorm}/views', [DormController::class, 'trackView'])->name('dorm.view');
+            Route::put('/rentForms/update/{id}', [RoomController::class, 'updateBook'])->name('rentForm.update');
+            Route::post('/bookForm', [RoomController::class, 'storeBook'])->name('rentForm.store');
+            Route::post('/rentForm/edit', [RoomController::class, 'createBook'])->name('rentForm.edit');
+            Route::get('/user/rent-forms', [Controller::class, 'userRentForms'])->name('user.rentForms');
+            Route::post('/rentForm/cancel/{id}', [RoomController::class, 'cancel'])->name('rentForm.cancel');
+            Route::get('/reviews/{id}', [Controller::class, 'review'])->name('reviews.store');
+            Route::get('/my-reviews', [Controller::class, 'userReviews'])->name('myReviews');
+            Route::patch('/reviews/{id}/submit', [Controller::class, 'submitReview'])->name('reviews.submit');
+            Route::get('/myfavourites', [DormController::class, 'favourites'])->name('favourites');
+            // owner here---------------------------------------------------
+        });
+        Route::group(['middleware' => ['auth', 'owner']], function () {
+            Route::post('/get-coor', [Controller::class, 'getCoor'])->name('get-coor');
+            Route::post('/savedorm', [DormController::class, 'saveDorm'])->name('savedorm');
+            Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
+            Route::get('/adddorm', [DormController::class, 'adddorm'])->name('adddorm');
+            Route::get('/dorms/{id}/edit', [Controller::class, 'edit'])->name('dorms.adddorm');
+            Route::put('/dorms/{id}', [DormController::class, 'update'])->name('dorms.update');
+            Route::post('/dorms/{id}/archive', [DormController::class, 'archive'])->name('dorms.archive');
+            Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
+            Route::patch('/book/{id}/cancelStatus', [Controller::class, 'updateRequest'])->name('cancellation.updateStatus');
+            Route::post('/notifyTenant/{id}', [RoomController::class, 'notifyTenant'])->name('notifyTenant');
+            Route::get('/ownerhome', [DormController::class, 'ownerDashboard'])->name('owner.Dashboard');
+            Route::get('/owner-properties', [DormController::class, 'ownerProperty'])->name('owner.Property');
+            Route::get('/owner-properties/archived', [DormController::class, 'archivedProperty'])->name('owner.archived');
+            Route::get('/owner-history', [HomeController::class, 'history'])->name('owner.history');
+
+            Route::post('/notify-tenant/{tenantId}', [NotifyController::class, 'sendUpcomingStayNotification']);
+            Route::patch('/process-payment/{rent_form_id}', [HomeController::class, 'processPayment'])->name('processPayment');
+            Route::post('/dorms/restore/{id}', [DormController::class, 'restore'])->name('dorms.restore');
+        });
         Route::post('/pusher/auth', function () {
             return Broadcast::auth(request());
         })->middleware('auth');

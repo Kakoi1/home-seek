@@ -199,10 +199,10 @@
         transform: translate(-50%, -50%);
         background-color: white;
         padding: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); */
         border-radius: 10px;
         z-index: 1001;
-        max-width: 500px;
+        max-width: 400px;
         width: 100%;
     }
 
@@ -211,20 +211,13 @@
         width: 100%;
         padding: 10px;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        /* border: 1px solid #ccc; */
     }
 
     .
 
     /* Modal Close Button */
-    .close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        cursor: pointer;
-        color: #555;
-    }
+    .close-buttoner {}
 
     /* Button Styles */
 
@@ -381,6 +374,12 @@
         padding: 10px;
         /* Adjust padding as needed */
     }
+
+    .modal-contenter {
+        border: none !important;
+        padding: 10px !important;
+        width: ;
+    }
 </style>
 <br>
 <div class="container">
@@ -401,19 +400,31 @@
     <!-- Current Rented Property -->
     <div id="currentSection" class="rent-section rent-section-active">
         @if ($currentRent)
-                @php
-                    $today = \Carbon\Carbon::now();
-                    $date1 = date_create($currentRent->created_at->format("F j, Y"));
-                    $date2 = date_create($today->format("F j, Y"));
-                    $remainingTime = date_diff($date1, $date2);
-                @endphp
                 <div class="rent-form-card">
                     <h3>{{ $currentRent->dorm->name }}</h3>
                     <p>Check in Date: {{ $currentRent->start_date->format('F j, Y') }}</p>
                     <p>Check out Date: {{ $currentRent->end_date->format('F j, Y') }}</p>
                     <p>Status: <strong>{{ ucfirst($currentRent->status) }}</strong></p>
                     @if ($currentRent->status == 'active')
-                        <p>Days before check out: <strong>{{ $remainingTime->format("%a days")}}</strong></p>
+                            @php
+                                $date2 = \Carbon\Carbon::now();
+                                $date1 = \Carbon\Carbon::parse($currentRent->end_date); // Parse created_at to a Carbon instance
+                                $date3 = \Carbon\Carbon::parse('');
+
+                                // Calculate the difference in hours
+                                $remainingTimeInHours = $date2->diffInHours($date1, false);
+
+                                if ($remainingTimeInHours < 24) {
+                                    $remainingTime = intval($remainingTimeInHours) . ' hour' . (intval($remainingTimeInHours) > 1 ? 's' : '');
+                                    if ($remainingTime <= 0) {
+                                        $remainingTime = 'today';
+                                    }
+                                } else {
+                                    $remainingTimeInDays = $date2->diffInDays($date1, false);
+                                    $remainingTime = intval($remainingTimeInDays) . ' day' . (intval($remainingTimeInDays) > 1 ? 's' : '');
+                                }
+                            @endphp
+                            <p>Days before check out: <strong>{{ $remainingTime}}</strong></p>
                     @endif
 
                     <!-- Expandable Section -->
@@ -453,23 +464,31 @@
                             @endif
                         </div>
                     @elseif($currentRent->status == 'approved')
-                        @if ($remainingTime->format("%a") <= 2)
-                            <div class="btn-div">
-                                @if ($currentRent->note == '')
-                                    <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
-                                @else
-                                    <p><strong>You requested a Canellation</strong></p>
-                                @endif
+                            @php
 
-                            </div>
-                        @endif
+                                $today = Carbon\Carbon::now();
+                                $rentCreatedDate = $currentRent->created_at;
+                                $daysDifference = $rentCreatedDate->diffInDays($today);
+
+                            @endphp
+                            @if ($daysDifference < 1)
+                                <div class="btn-div">
+                                    @if ($currentRent->note == '')
+                                        <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
+                                    @else
+                                        <p><strong>You requested a Canellation</strong></p>
+                                    @endif
+
+                                </div>
+                            @endif
 
 
                     @endif
                 </div>
                 <div id="cancelReasonModal" class="cancel-modal">
-                    <div class="modal-content">
-                        <span class="close-button">&times;</span>
+                    <div class="modal-contenter">
+                        <span class="close-buttoner"
+                            style="position: relative;left: 340px;top: -15px;font-size: 25px;color: red;font-weight: bold; cursor: pointer;">&times;</span>
                         <h3>Why are you canceling this booking?</h3>
                         <form action="{{ route('rentForm.cancel', $currentRent->id) }}" method="POST">
                             @csrf
@@ -643,7 +662,9 @@
                                         <td>{{ ucfirst($payment->rentForm->dorm->name) }}</td>
                                         <td>₱{{ $payment->amount }}</td>
                                         <td><strong>{{ ucfirst($payment->status) }}</strong></td>
-                                        <td>{{ $payment->reference }}</td>
+                                        <td><a target='_blank'
+                                                href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>
+                                        </td>
                                         <td>{{ ucwords(str_replace('_', ' ', $payment->mode)) }}</td>
 
                                         <td>
@@ -687,7 +708,7 @@
             const cancelButton = document.getElementById('cancelButton');
             const cancelReasonModal = document.getElementById('cancelReasonModal');
             const modalOverlay = document.getElementById('modalOverlay');
-            const closeButton = document.querySelector('.close-button');
+            const closeButton = document.querySelector('.close-buttoner');
 
             // SweetAlert Confirmation for Cancel Booking
             cancelButton.addEventListener('click', function (e) {

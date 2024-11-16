@@ -7,10 +7,8 @@ use App\Models\Reviews;
 use DB;
 use Carbon\Carbon;
 use App\Models\Dorm;
-use App\Models\Room;
 use App\Models\User;
 use App\Models\Billing;
-use App\Models\Chatroom;
 use App\Models\RentForm;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -61,9 +59,9 @@ class Controller extends BaseController
             } else {
                 // If the user exists, simply log them in and redirect to home
                 if (!$user->email) {
-                    return view('emails.collect_email_phone', ['user' => $user])->with('success', 'Provide gmail and Phone no. to login');
+                    return view('emails.collect_email_phone', ['user' => $user])->withErrors(['logname', 'Provide gmail and Phone no. to login']);
                 } else if ($user->email_verified_at == null) {
-                    return redirect()->route('send.email', $user)->withErrors(['logname' => 'Please verify your email to continue.']);
+                    return redirect()->route('send.email', [$user->id, 'verify'])->withErrors(['logname' => 'Please verify your email to continue.']);
                 } else {
                     Auth::login($user);
                     if ($user->role == 'owner') {
@@ -86,46 +84,17 @@ class Controller extends BaseController
         $user = User::findOrFail($request->user_id);
 
         $request->validate([
-            'email' => $user->email ? 'nullable|email' : ['required|email', Rule::unique('users', 'email')],
+            'email' => !$user->email
+                ? ['required', 'email', Rule::unique('users', 'email')]
+                : 'nullable|email',
             'role' => 'required',
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'address' => 'required|string|max:255',
             'phone_number' => ['required', 'regex:/^\+?[0-9]{7,15}$/'],  // Example: Simple international phone number regex
         ]);
 
-
         if ($user->fb_id) {
-            // Update the user with the email and phone number
-            if ($user->email) {
-                $verificationCode = rand(100000, 999999); // Random 6-digit code
-                $user->email_verification_code = $verificationCode;
-                $user->save();
-            } else {
-                $user->email = $request->email;
-                $user->phone = $request->phone_number;
-                $user->role = $request->role;
-                $user->address = $request->address;
-
-                if ($request->hasFile('profile_picture')) {
-                    $file = $request->file('profile_picture');
-                    $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
-                    $path = $file->storeAs('profile_picture', $filename, 'gcs');
-                }
-
-                // Generate a verification code
-                $verificationCode = rand(100000, 999999);
-                $user->email_verification_code = $verificationCode;
-                $user->profile_picture = $path;
-                $user->save();
-            }
-            // Send the verification code via email
-            Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
-
-            // Redirect the user to a verification page
-            return view('emails.email_verfy', ['user' => $user])->with('success', 'a Verification code was sent to your gmail');
-
-        } else if ($user->google_id) {
-
+            $user->email = $request->email;
             $user->phone = $request->phone_number;
             $user->role = $request->role;
             $user->address = $request->address;
@@ -136,11 +105,11 @@ class Controller extends BaseController
                 $path = $file->storeAs('profile_picture', $filename, 'gcs');
             }
 
-            $user->profile_picture = $path;
-            $user->save();
-
             if ($request->role == 'owner') {
-
+                $request->validate([
+                    'valid_id' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                    'business_permit' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                ]);
                 $verify = new Verifications();
                 $verify->user_id = $user->id;
 
@@ -162,16 +131,139 @@ class Controller extends BaseController
 
                 $verify->save();
 
-                Auth::login($user);
-                return redirect('/home');
+                // Notification for admin
+                $notification = Notification::create([
+                    'user_id' => 14, // Assuming the owner is linked to the room
+                    'type' => 'Bills',
+                    'data' => '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> ' . $user->name . '</p><p><strong>Email:</strong> ' . $user->email . '</p><p><strong>Registered on:</strong> ' . $user->created_at->format('Y-m-d H:i:s') . '</p><br><p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
+                    'read' => false,
+                    'route' => route('admin.manageuser'),
+                    'dorm_id' => null,
+                    'sender_id' => $user->id,
+                ]);
 
+                event(new NotificationEvent([
+                    'reciever' => $notification->user_id,
+                    'message' => $notification->data,
+                    'sender' => $user->id,
+                    'rooms' => $notification->id,
+                    'roomid' => $notification->dorm_id,
+                    'action' => 'Verify',
+                    'route' => route('admin.manageuser')
+                ]));
+
+                // Generate a verification code
+                $verificationCode = rand(100000, 999999);
+                $user->email_verification_code = $verificationCode;
+                $user->profile_picture = $path;
+                $user->save();
+
+                // Send email with verification code
+                Mail::to($user->email)->send(new SendVerificationCodeMail($verificationCode));
+
+                Auth::login($user);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'A verification code was sent to your email.',
+                    'redirect_url' => route('owner.Dashboard')
+                ]);
             }
+
+            // If no 'owner' role, just save profile picture
+            $user->profile_picture = $path;
+            $user->save();
+
+            // Default login redirect after successful registration
             Auth::login($user);
-            return redirect('/home')->with('success', 'Your all set.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Your registration is complete.',
+                'redirect_url' => route('home')
+            ]);
+        } else if ($user->google_id) {
+            // Similar logic for Google account
+            $user->phone = $request->phone_number;
+            $user->role = $request->role;
+            $user->address = $request->address;
+
+            if ($request->hasFile('profile_picture')) {
+                $file = $request->file('profile_picture');
+                $filename = Str::random(25) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('profile_picture', $filename, 'gcs');
+            }
+
+            $user->profile_picture = $path;
+            $user->save();
+
+            if ($request->role == 'owner') {
+                $request->validate([
+                    'valid_id' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                    'business_permit' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                ]);
+                $verify = new Verifications();
+                $verify->user_id = $user->id;
+
+                if ($request->hasFile('valid_id')) {
+                    $validIdFile = $request->file('valid_id');
+                    $validIdFilename = Str::random(25) . '.' . $validIdFile->getClientOriginalExtension();
+                    $validIdPath = $validIdFile->storeAs('owner_documents/valid_id', $validIdFilename, 'gcs');
+                    $verify->id_document = $validIdPath;
+                }
+
+                if ($request->hasFile('business_permit')) {
+                    $businessPermitFile = $request->file('business_permit');
+                    $businessPermitFilename = Str::random(25) . '.' . $businessPermitFile->getClientOriginalExtension();
+                    $businessPermitPath = $businessPermitFile->storeAs('owner_documents/business_permit', $businessPermitFilename, 'gcs');
+                    $verify->business_permit = $businessPermitPath;
+                }
+
+                $verify->save();
+
+                // Notification for admin
+                $notification = Notification::create([
+                    'user_id' => 14, // Assuming the owner is linked to the room
+                    'type' => 'Bills',
+                    'data' => '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> ' . $user->name . '</p><p><strong>Email:</strong> ' . $user->email . '</p><p><strong>Registered on:</strong> ' . $user->created_at->format('Y-m-d H:i:s') . '</p><br><p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
+                    'read' => false,
+                    'route' => route('admin.manageuser'),
+                    'dorm_id' => null,
+                    'sender_id' => $user->id,
+                ]);
+
+                event(new NotificationEvent([
+                    'reciever' => $notification->user_id,
+                    'message' => $notification->data,
+                    'sender' => $user->id,
+                    'rooms' => $notification->id,
+                    'roomid' => $notification->dorm_id,
+                    'action' => 'Verify',
+                    'route' => route('admin.manageuser')
+                ]));
+
+                // Successful login after Google registration
+                Auth::login($user);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Your registration is complete.',
+                    'redirect_url' => route('owner.Dashboard')
+                ]);
+            }
+
+            // Default login redirect for Google account after registration
+            Auth::login($user);
+            return response()->json([
+                'success' => true,
+                'message' => 'Your registration is complete.',
+                'redirect_url' => route('home')
+            ]);
         } else {
-            return redirect('/login')->withErrors('User not found.');
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ]);
         }
     }
+
     public function verifyEmail(Request $request)
     {
         $user = User::find($request->user_id);
@@ -218,17 +310,16 @@ class Controller extends BaseController
             return redirect()->back()->withErrors(['error' => 'User not found.']);
         }
 
-        // Update the password
         $user->password = Hash::make($request->password);
         $user->save();
-        Auth::login($user);
-        if (Auth::user()->role == 'owner') {
 
-            return redirect()->route('owner.Dashboard')->with('success', 'Your password has been reset successfully.');
+        // Log out the user and redirect with a success message
+        Auth::logout();
+        session()->flash('success', 'Your password has been reset successfully. Please log in again.');
 
-        } else {
-            return redirect()->route('home')->with('success', 'Your password has been reset successfully.');
-        }
+        return redirect()->route('login');
+
+
     }
 
     public function forgotPass(Request $request)
@@ -347,6 +438,26 @@ class Controller extends BaseController
             }
 
             $verify->save();
+
+            $notification = Notification::create([
+                'user_id' => 14, // Assuming the owner is linked to the room
+                'type' => 'Bills',
+                'data' => '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> ' . $user->name . '</p><p><strong>Email:</strong> ' . $user->email . '</p><p><strong>Registered on:</strong> ' . $user->created_at->format('Y-m-d H:i:s') . '</p><br><p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
+                'read' => false,
+                'route' => route('admin.manageuser'),
+                'dorm_id' => null,
+                'sender_id' => $verify->user_id,
+            ]);
+
+            event(new NotificationEvent([
+                'reciever' => $notification->user_id,
+                'message' => $notification->data,
+                'sender' => $verify->user_id,
+                'rooms' => $notification->id,
+                'roomid' => $notification->dorm_id,
+                'action' => 'Verify',
+                'route' => route('admin.manageuser')
+            ]));
         }
 
         // Redirect the user to a verification page
@@ -595,52 +706,7 @@ class Controller extends BaseController
         return redirect()->back()->with('success', 'Accommodation updated successfully!');
     }
 
-    public function requestVerify(Request $request)
-    {
-        $userid = Auth::id();
 
-        $request->validate([
-            'id_document.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'business_permit.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        // Handle ID Document Image Upload
-
-        if ($request->hasFile('id_document')) {
-            $docID = $request->file('id_document');
-            $filename1 = time() . '_' . uniqid() . '.' . $docID->getClientOriginalExtension();
-            $idDocumentPaths = $docID->storeAs('public/id_documents', $filename1); // Save in storage/app/public/id_documents
-
-        }
-
-        // Handle Business Permit Image Upload
-
-        if ($request->hasFile('business_permit')) {
-            $permit = $request->file('business_permit');
-            $filename2 = time() . '_' . uniqid() . '.' . $permit->getClientOriginalExtension();
-            $businessPermitPath = $permit->storeAs('public/business_permits', $filename2); // Save the business permit
-        }
-
-        // Now, store the image paths in your database (example with a 'users' table):
-        $verify = new Verifications();
-        $verify->user_id = $userid; // Get the authenticated user
-        $verify->id_document = $filename1; // Store paths in the database
-        $verify->business_permit = $filename2;
-        $verify->save();
-
-        event(new NotificationEvent([
-
-            'reciever' => 14,
-            'message' => 'Verification Request was Sent',
-            'sender' => Auth::id(),
-            'rooms' => null,
-            'roomid' => null,
-            'action' => 'verify',
-            'route' => route('admin.manageuser')
-        ]));
-
-        return redirect()->back()->with('success', 'Verification Request Sent!');
-    }
 
     public function userRentForms()
     {
@@ -687,41 +753,7 @@ class Controller extends BaseController
 
         return view('userRentForms', compact('currentRent', 'rentHistory', 'extend', 'checkExtend', 'pendingBills', 'pendingPayments', 'paidPayments', 'billingCount'));
     }
-    public function filterBilling(Request $request)
-    {
-        $month = $request->get('month');
-        $type = $request->get('type');
-        $userId = auth()->id();
-        $search = $request->get('search', '');
-        $page = $request->get('page', 1); // Current page number
-        $perPage = 10; // Fixed number of items per page
 
-        if ($type == 'pending') {
-            $query = Billing::where('user_id', $userId)
-                ->whereMonth('billing_date', '=', date('m', strtotime($month)))
-                ->where('status', 'pending')
-                ->whereHas('rentForm.dorm', function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%');
-                })
-                ->with(['rentForm.dorm']);
-
-            $pendingPayments = $query->paginate($perPage, ['*'], 'page', $page);
-
-            return response()->json(['payments' => $pendingPayments]);
-        } else {
-            $query = Billing::where('user_id', $userId)
-                ->whereMonth('paid_at', '=', date('m', strtotime($month)))
-                ->where('status', 'paid')
-                ->whereHas('rentForm.dorm', function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%');
-                })
-                ->with(['rentForm.dorm']);
-
-            $paidPayments = $query->paginate($perPage, ['*'], 'page', $page);
-
-            return response()->json(['payments' => $paidPayments]);
-        }
-    }
 
 
 
@@ -735,112 +767,8 @@ class Controller extends BaseController
         }
         return view('room.extend_rent', compact('rentForm'));
     }
-    public function extendRent(Request $request)
-    {
-        $rentForm = RentForm::findOrFail($request->form_id);
 
-        // Validation
-        $validatedData = $request->validate([
-            'term' => 'required',
-            'end_date' => 'nullable|date|after:' . $rentForm->end_date,
-            'duration' => 'nullable|integer|min:1',
-            'total_price' => 'required|numeric|min:0',
-        ]);
 
-        // Process extension logic based on the selected term
-        if ($validatedData['term'] == 'short_term') {
-            // For short term, we set a new end date
-            $newEndDate = Carbon::parse($validatedData['end_date']);
-        } elseif ($validatedData['term'] == 'long_term') {
-            $duration = (int) $validatedData['duration'];
-            $newEndDate = Carbon::parse($rentForm->end_date)->addMonths($duration);
-        }
-
-        // Update the rentForm with the new end date
-        ExtendRequest::create([
-            'form_id' => $rentForm->id,
-            'new_end_date' => $newEndDate,
-            'term' => $validatedData['term'],
-            't_price' => $validatedData['total_price'],
-            'new_duration' => $validatedData['duration']
-        ]);
-
-        $notification = Notification::create([
-            'user_id' => $rentForm->dorm->user_id, // Assuming the owner is linked to the room
-            'type' => 'review',
-            'data' => $rentForm->user->name . ' has sent A Extend Request',
-            'read' => false,
-            'room_id' => $rentForm->room_id,
-            'sender_id' => $rentForm->user_id
-        ]);
-
-        event(new NotificationEvent([
-            'reciever' => $notification->user_id,
-            'message' => $notification->data,
-            'sender' => $rentForm->user_id,
-            'rooms' => $notification->id,
-            'roomid' => $notification->room_id,
-            'action' => 'rent',
-            'route' => route('managetenant')
-        ]));
-
-        // Return a response for AJAX
-        return response()->json([
-            'success' => true,
-            'message' => 'Rent extended successfully!',
-            'new_end_date' => $newEndDate->format('Y-m-d')
-        ]);
-    }
-    public function extendEdit($id)
-    {
-        $extend = ExtendRequest::findOrFail($id);
-        $rentForm = RentForm::findOrFail($extend->form_id);
-        if ($rentForm) {
-            $rentForm->start_date = Carbon::parse($rentForm->start_date);
-            $rentForm->end_date = Carbon::parse($rentForm->end_date);
-        }
-
-        $extend->new_date_end = Carbon::parse($extend->new_date_end);
-
-        return view('room.extend_rent', compact('extend', 'rentForm'));
-    }
-    public function extendUpdate(Request $request, $id)
-    {
-        $rentForm = RentForm::findOrFail($request->form_id);
-        $extendForm = ExtendRequest::find($id);
-        // Validation
-        $validatedData = $request->validate([
-            'term' => 'required',
-            'end_date' => 'nullable|date|after:' . $rentForm->end_date,
-            'duration' => 'nullable|integer|min:1',
-            'total_price' => 'required|numeric|min:0',
-        ]);
-
-        // Process extension logic based on the selected term
-        if ($validatedData['term'] == 'short_term') {
-            // For short term, we set a new end date
-            $newEndDate = Carbon::parse($validatedData['end_date']);
-        } elseif ($validatedData['term'] == 'long_term') {
-            $duration = (int) $validatedData['duration'];
-            $newEndDate = Carbon::parse($rentForm->end_date)->addMonths($duration);
-        }
-
-        // Update the rentForm with the new end date
-
-        $extendForm->form_id = $rentForm->id;
-        $extendForm->new_end_date = $newEndDate;
-        $extendForm->term = $validatedData['term'];
-        $extendForm->t_price = $validatedData['total_price'];
-        $extendForm->new_duration = $validatedData['duration'];
-        $extendForm->save();
-
-        // Return a response for AJAX
-        return response()->json([
-            'success' => true,
-            'message' => 'updated Successfully!',
-            'new_end_date' => $newEndDate->format('Y-m-d')
-        ]);
-    }
     // RentFormController.php
 
     public function showOwnerDashboard()
@@ -865,7 +793,7 @@ class Controller extends BaseController
             INNER JOIN dorms d ON rf.dorm_id = d.id
             INNER JOIN users u ON rf.user_id = u.id
             WHERE d.user_id = ?
-            AND rf.status = 'approved' OR rf.status = 'active'
+            AND (rf.status = 'approved' OR rf.status = 'active');
         ", [$ownerId]);
 
         // Fetch pending rent form submissions
@@ -908,7 +836,27 @@ class Controller extends BaseController
         AND rf.note != '' AND rf.status = 'approved' 
     ", [$ownerId]);
 
+        $pendingRentFormsCount = DB::select("
+        SELECT COUNT(*) as count
+        FROM rent_forms rf
+        INNER JOIN dorms d ON rf.dorm_id = d.id
+        INNER JOIN users u ON rf.user_id = u.id
+        WHERE d.user_id = ?
+        AND rf.status = 'pending'
+    ", [$ownerId]);
 
+        $cancellationsCount = DB::select("
+        SELECT COUNT(*) as count
+        FROM rent_forms rf
+        INNER JOIN dorms d ON rf.dorm_id = d.id
+        INNER JOIN users u ON rf.user_id = u.id
+        WHERE d.user_id = ?
+        AND rf.note != '' AND rf.status = 'approved' 
+    ", [$ownerId]);
+
+        $counts = $cancellationsCount[0]->count;
+
+        $count = $pendingRentFormsCount[0]->count;
         // Process the approved rent forms into properties -> rooms -> tenants structure
 
         $properties = [];
@@ -949,7 +897,7 @@ class Controller extends BaseController
         }
 
 
-        return view('manage_tenant', compact('properties', 'pendingRentForms', 'cancellations'));
+        return view('manage_tenant', compact('properties', 'pendingRentForms', 'cancellations', 'count', 'counts'));
     }
 
     public function updateRequest(Request $request, $id)
@@ -959,31 +907,38 @@ class Controller extends BaseController
 
         if ($request->input('status') == 'approved') {
             $rentForm->status = 'cancelled';
+            $data = '<strong>Booking Cancellation Approved</strong><br>' .
+                '<p>Your request for cancellation has been processed successfully.</p><br>' .
+                '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
-                'type' => 'Cancel Response',
-                'data' => 'Booking Cancellation Approved',
+                'type' => 'Cancellation Response',
+                'data' => $data,
                 'read' => false,
                 'route' => route('user.rentForms'),
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+
             $dorm = Dorm::find($rentForm->dorm_id);
             $dorm->availability = false;
             $dorm->save();
 
         } else if ($request->input('status') == 'rejected') {
-
+            $data = '<strong>Booking Cancellation Rejected</strong><br>' .
+                '<p>Unfortunately, your request for cancellation has been declined.</p><br>' .
+                '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
             $rentForm->note = null;
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
-                'type' => 'Cancel Response',
-                'data' => 'Booking Cancellation Rejected',
+                'type' => 'Cancellation Response',
+                'data' => $data,
                 'read' => false,
                 'route' => route('user.rentForms'),
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+
 
         }
 
@@ -999,43 +954,7 @@ class Controller extends BaseController
         $rentForm->save();
         return redirect()->back()->with('success', 'status updated successfully.');
     }
-    public function makePayment($paymentId)
-    {
-        // Retrieve the payment by ID
-        $payment = Billing::findOrFail($paymentId);
-        $rent = RentForm::with('dorm')->find($payment->rent_form_id);
 
-        // Logic to handle the payment (e.g., mark as paid)
-        $payment->status = 'paid';
-        $payment->paid_at = now();
-        $payment->save();
-
-        $reporterNotification = Notification::create([
-            'user_id' => $rent->dorm->user_id,  // Reporter
-            'type' => 'warning',
-            'data' => '<p>' . Auth::user()->name . ' paid you ' . number_format($payment->amount, 2) . '</p>',
-            'read' => false,
-            'route' => null,
-            'dorm_id' => null,
-            'sender_id' => Auth::id(),
-        ]);
-
-        // Trigger notification event for the reporter
-        event(new NotificationEvent([
-            'reciever' => $reporterNotification->user_id,
-            'message' => $reporterNotification->data,
-            'sender' => Auth::id(),
-            'rooms' => $reporterNotification->id,
-            'roomid' => $reporterNotification->room_id,
-            'action' => 'Report',
-            'route' => null
-        ]));
-
-        // Return the updated list of pending payments (or success message)
-        $pendingPayments = Billing::where('status', 'pending')->get();
-
-        return redirect()->back()->with('success', 'Payment success.');
-    }
 
     public function review($id)
     {
@@ -1134,9 +1053,6 @@ class Controller extends BaseController
         return redirect()->route('home')->with('success', 'Review submitted successfully!');
     }
 
-
-
-
     public function userReviews()
     {
         $userId = auth()->id();
@@ -1158,10 +1074,10 @@ class Controller extends BaseController
 
     public function ownerDashboard()
     {
-        $userid = auth()->id();
+        $userId = auth()->id();
 
         // Fetch all dorms owned by the user
-        $ownerDorms = Dorm::where('user_id', $userid)->get();
+        $ownerDorms = Dorm::where('user_id', $userId)->where('archive', 0)->where('flag', 0)->get();
 
         // Count total properties (dorms)
         $totalProperties = $ownerDorms->count();
@@ -1188,25 +1104,48 @@ class Controller extends BaseController
             ->whereMonth('paid_at', now()->month)
             ->sum('amount');
 
-        // Booking rate for each dorm (property)
+        $ownerDormIds = $ownerDorms->pluck('id')->toArray();
+
+        if (!empty($ownerDormIds)) {
+            $query = "
+                    SELECT rent_forms.dorm_id, dorms.name, dorms.address, SUM(billings.amount) AS total_earnings
+                    FROM billings
+                    INNER JOIN rent_forms ON billings.rent_form_id = rent_forms.id
+                    INNER JOIN dorms ON rent_forms.dorm_id = dorms.id
+                    WHERE rent_forms.dorm_id IN (" . implode(',', $ownerDormIds) . ")
+                    AND billings.status = 'paid'
+                    AND MONTH(billings.paid_at) = ?
+                    GROUP BY rent_forms.dorm_id, dorms.name, dorms.address
+                ";
+
+            $monthlyEarningsPerDorm = DB::select($query, [now()->month]);
+        } else {
+            $monthlyEarningsPerDorm = []; // Return an empty array if there are no dorm IDs
+        }
         $bookingRates = [];
 
         foreach ($ownerDorms as $dorm) {
-            // Total capacity of the dorm (number of beds)
-            $totalBeds = $dorm->capacity;
+            // Count the number of completed RentForms for the dorm
+            $completedBookings = RentForm::where('dorm_id', $dorm->id)
+                ->where('status', '!=', 'cancelled')
+                ->count();
 
-            // Count the number of active/approved RentForms for the dorm (this gives us the "booked" status)
-            $bookedTenants = RentForm::where('dorm_id', $dorm->id)
+            // Count the number of cancellations for the dorm
+            $canceledBookings = RentForm::where('dorm_id', $dorm->id)
+                ->where('status', 'cancelled')
+                ->count();
 
-                ->count(); // This gives the number of bookings (tenants)
+            // Total number of bookings (completed + canceled)
+            $totalBookings = $completedBookings + $canceledBookings;
 
-            // Calculate booking rate as a percentage
-            $bookingRate = $totalBeds > 0 ? ($bookedTenants / $totalBeds) * 100 : 0;
+            // Calculate booking rate as a percentage of completed bookings, with a cap at 100%
+            $bookingRate = $totalBookings > 0 ? ($completedBookings / $totalBookings) * 100 : 0;
 
             $bookingRates[] = [
                 'dorm' => $dorm->name,
                 'bookingRate' => round($bookingRate, 2),
-                'bookingCount' => $bookedTenants, // Add the booking count
+                'bookingCount' => $completedBookings,
+                'cancellationCount' => $canceledBookings,
             ];
         }
 
@@ -1215,12 +1154,11 @@ class Controller extends BaseController
             'totalTenants',
             'pendingRequests',
             'monthlyEarnings',
-            'bookingRates'
+            'bookingRates',
+            'ownerDorms',
+            'tenants',
+            'monthlyEarningsPerDorm'
         ));
     }
-
-
-
-
 
 }

@@ -39,6 +39,15 @@
         border-radius: 8px 8px 0 0;
     }
 
+    .btns {
+        background: linear-gradient(to left, rgba(11, 136, 147, 0.712), rgba(54, 0, 51, 0.74));
+        color: white;
+        padding: 10px 15px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+    }
+
     .card-body {
         padding: 20px;
     }
@@ -212,11 +221,19 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" id="rent-requests-tab" data-toggle="tab" href="#rentRequests" role="tab"
-                aria-controls="rentRequests" aria-selected="false">Booking Requests</a>
+                aria-controls="rentRequests" aria-selected="false">Booking Requests
+                @if ($count > 0)
+                    <span class="badge badge-danger">{{ $count }}</span>
+                @endif
+            </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="cancel-requests-tab" data-toggle="tab" href="#cancellations" role="tab"
-                aria-controls="cancellations" aria-selected="false">Cancellations</a>
+                aria-controls="cancellations" aria-selected="false">Cancellations
+                @if ($counts > 0)
+                    <span class="badge badge-danger">{{ $counts }}</span>
+                @endif
+            </a>
         </li>
     </ul>
 
@@ -252,14 +269,25 @@
                                                     <div id="tenantDetails{{ $tenant['user_id'] }}" class="hidden">
                                                         @if ($tenant['status'] == 'approved')
                                                                         @php
-                                                                            $today = \Carbon\Carbon::now();
-                                                                            $startDate = \Carbon\Carbon::parse($tenant['start_date']);
-                                                                            $remainingTime = (int) $startDate->diffInDays($today, false);
+                                                                            $today = Carbon\Carbon::now();
+                                                                            $startDate = Carbon\Carbon::parse($tenant['start_date']);
+                                                                            $remainingTimeInHours = $today->diffInHours($startDate, false);
+                                                                            if ($remainingTimeInHours < 24) {
+                                                                                $remainingTime = intval($remainingTimeInHours) . ' hour' . (intval($remainingTimeInHours) > 1 ? 's' : '');
+                                                                                if ($remainingTime <= 0) {
+                                                                                    $remainingTime = 'today';
+                                                                                }
+                                                                            } else {
+                                                                                $remainingTimeInDays = $today->diffInDays($startDate, false);
+                                                                                $remainingTime = intval($remainingTimeInDays) . ' day' . (intval($remainingTimeInDays) > 1 ? 's' : '');
+                                                                            }
+
                                                                         @endphp
                                                                         <p>Rent Start Date: <strong>{{ $tenant['start_date'] }}</strong></p>
-                                                                        <p>Rent will start in: {{ abs($remainingTime) }} days</p>
+                                                                        <p>Rent will start in: {{ $remainingTime }}</p>
                                                                         <br>
-                                                                        <button onclick="sendNotification({{ $tenant['user_id'] }})">Send Upcoming Stay
+                                                                        <button class="btns" onclick="sendNotification({{ $tenant['user_id'] }})">Send Upcoming
+                                                                            Stay
                                                                             Notification</button>
                                                         @elseif($tenant['status'] == 'active')
                                                                         @php
@@ -306,7 +334,7 @@
                                                                                         <div style="display: flex; justify-content: flex-start; gap: 10px;">
                                                                                             <form method="POST" action="{{ route('notifyTenant', $bill['rent_form_id']) }}">
                                                                                                 @csrf
-                                                                                                <button type="submit" class="btn btn-warning btn-sm">Notify Payment</button>
+                                                                                                <button type="submit" class="btns">Notify Payment</button>
                                                                                             </form>
 
                                                                                             <!-- Over the Counter Pay Button -->
@@ -318,7 +346,8 @@
                                                                                         <!-- Hidden Form for Over the Counter Payment -->
                                                                                         <div id="paymentForm{{ $bill['id'] }}"
                                                                                             style="display:none; margin-top: 10px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;">
-                                                                                            <form method="POST" action="{{ route('processPayment', $bill['id']) }}">
+                                                                                            <form method="POST" action="{{ route('processPayment', $bill['id']) }} "
+                                                                                                enctype="multipart/form-data">
                                                                                                 @csrf
                                                                                                 @method('PATCH')
                                                                                                 <div class="form-group">
@@ -335,14 +364,15 @@
 
                                                                                                 <div class="form-group">
                                                                                                     <label for="payment_reference">Payment Reference:</label>
-                                                                                                    <input type="text" id="payment_reference" name="payment_reference"
-                                                                                                        class="form-control" placeholder="Enter payment reference number">
+                                                                                                    <input type="file" id="payment_reference" name="payment_reference"
+                                                                                                        accept="image/png, image/gif, image/jpeg" style="height: 45px;"
+                                                                                                        class="form-control" placeholder="Proof of payment">
                                                                                                 </div>
 
                                                                                                 <div class="form-group">
                                                                                                     <label for="payment_date">Payment Date:</label>
                                                                                                     <input type="date" id="payment_date" name="payment_date"
-                                                                                                        min="{{ now()->format('Y-m-d') }}" class="form-control" required>
+                                                                                                        class="form-control" required>
                                                                                                 </div>
 
                                                                                                 <button type="submit" class="btn btn-success btn-sm">Submit Payment</button>
@@ -410,7 +440,6 @@
                                         href="javascript: void(0)">{{ ucfirst($rentForm->tenant_name) }}</a></strong></p>
                             <p>Submitted on: {{ \Carbon\Carbon::parse($rentForm->created_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
-                                <!-- Approve Button -->
                                 <form id="approveBook" action="{{ route('rentForm.updateStatus', $rentForm->rent_form_id) }}"
                                     method="POST" style="display: inline;">
                                     @csrf
@@ -418,9 +447,8 @@
                                     <input type="hidden" name="status" value="approved">
                                 </form>
 
-                                <button type="button"
-                                    onclick="event.preventDefault(); document.getElementById('approveBook').submit();"
-                                    class="approve-btn btn-success">Approve</button>
+                                <button type="button" class="approve-btn btn-success"
+                                    onclick="confirmApproval()">Approve</button>
                                 <!-- Reject Button triggers modal -->
                                 <button class="reject-btn btn-danger" data-toggle="modal" data-target="#rejectModal"
                                     data-rent-id="{{ $rentForm->rent_form_id }}">Reject</button>
@@ -473,14 +501,19 @@
                             <p>Cancellation Reason: {{ $cancellation->cancel_reason }}</p>
                             <p>Requested on: {{ \Carbon\Carbon::parse($cancellation->updated_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
-                                <form action="{{ route('cancellation.updateStatus', $cancellation->rent_form_id) }}"
-                                    method="POST" style="display: inline;">
+                                <form id="cancellationForm"
+                                    action="{{ route('cancellation.updateStatus', $cancellation->rent_form_id) }}" method="POST"
+                                    style="display: inline;">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" class="approve-btn btn-success" name="status"
-                                        value="approved">Approve</button>
-                                    <button type="submit" class="reject-btn btn-danger" name="status"
-                                        value="rejected">Reject</button>
+
+                                    <!-- Approve button -->
+                                    <button type="button" class="approve-btn btn-success"
+                                        onclick="confirmAction('approved')">Approve</button>
+
+                                    <!-- Reject button -->
+                                    <button type="button" class="reject-btn btn-danger"
+                                        onclick="confirmAction('rejected')">Reject</button>
                                 </form>
                             </div>
                         </div>
@@ -551,6 +584,50 @@
         } else {
             form.style.display = "none";
         }
+    }
+    function confirmApproval() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to approve this booking?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, approve it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form if confirmed
+                document.getElementById('approveBook').submit();
+            }
+        });
+    }
+    function confirmAction(status) {
+        let actionText = status === 'approved' ? 'approve' : 'reject';
+        let actionTitle = status === 'approved' ? 'Are you sure you want to approve this cancellation?' : 'Are you sure you want to reject this cancellation?';
+        let actionButtonText = status === 'approved' ? 'Yes, approve it!' : 'Yes, reject it!';
+
+        Swal.fire({
+            title: actionTitle,
+            text: 'You won\'t be able to revert this action.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: actionButtonText,
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Set the status value and submit the form
+                let form = document.getElementById('cancellationForm');
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'status';
+                input.value = status;
+                form.appendChild(input);
+
+                // Submit the form after adding the status value
+                form.submit();
+            }
+        });
     }
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\NotificationEvent;
 use App\Models\Billing;
 use Carbon\Carbon;
 use App\Models\Dorm;
@@ -44,7 +45,7 @@ class CompleteRentalsAndRequestReviews extends Command
                 $rentForm->status = 'completed';
                 $rentForm->save();
 
-                $dorm->availability = true;
+                $dorm->availability = false;
                 $dorm->save();
                 // Create an empty review with null fields for rating and comments
                 Reviews::create([
@@ -56,15 +57,24 @@ class CompleteRentalsAndRequestReviews extends Command
                 ]);
 
                 // Send notification to the user
-                Notification::create([
+                $notification = Notification::create([
                     'user_id' => $rentForm->user_id,
                     'type' => 'review',
-                    'data' => '<strong>Your rent has ended</strong> <br> <p>Please leave a review for the property.</p>',
+                    'data' => '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>' . ucfirst($dorm->name) . '</strong> Please leave a review for the Accomodation.</p><br>' . '<p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
                     'read' => false,
                     'route' => route('myReviews'),
                     'dorm_id' => $dorm->id,
                     'sender_id' => 14,
                 ]);
+                event(new NotificationEvent([
+                    'reciever' => $rentForm->user_id,
+                    'message' => $notification->data,
+                    'sender' => 14,
+                    'rooms' => $notification->id,
+                    'roomid' => $notification->dorm_id,
+                    'action' => 'response',
+                    'route' => route('myReviews')
+                ]));
             } else {
                 // If the rent form has an unpaid bill, log it
                 $this->info('RentForm ID ' . $rentForm->id . ' has an unpaid bill, rent not marked as completed.');

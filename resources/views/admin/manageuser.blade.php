@@ -158,16 +158,19 @@
         background: white;
         padding: 20px;
         border-radius: 8px;
-        width: 300px;
+        width: 500px;
+        height: auto;
         text-align: center;
     }
 
     .modal-content input[type="text"] {
         margin-top: 10px;
-        width: 90%;
+        width: 100%;
     }
 
     .reasoner {
+        width: 70%;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -316,11 +319,18 @@
                 </div>
                 <div>
                     <label><input type="radio" name="reason" value="Other"> Other</label>
-                    <input type="text" id="customReason" placeholder="Specify reason" style="display: none;">
+
                 </div>
+                <div style="width: 100%;">
+                    <textarea id="customReason" class="form-control" placeholder="Specify reason"
+                        style="display: none;"></textarea>
+                </div>
+                <br>
             </div>
-            <button type="button" class="btn btn-success" onclick="submitDeactivation()">Submit</button>
-            <button type="button" class="btn btn-danger" onclick="closeDeactivateModal()">Cancel</button>
+            <div style="width: 100%;">
+                <button type="button" class="btn btn-success" onclick="submitDeactivation()">Submit</button>
+                <button type="button" class="btn btn-danger" onclick="closeDeactivateModal()">Cancel</button>
+            </div>
         </form>
     </div>
 </div>
@@ -342,14 +352,22 @@
                 </div>
                 <div>
                     <label><input type="radio" name="warnReason" value="Other"> Other</label>
-                    <input type="text" id="customWarnReason" placeholder="Specify reason" style="display: none;">
+
                     <br>
                 </div>
-            </div>
-            <button type="button" class="btn btn-success" onclick="submitWarning()">Submit</button>
-            <button type="button" class="btn btn-danger" onclick="closeWarningModal()">Cancel</button>
+                <div style="width: 100%;">
+                    <textarea name="customWarnReason" class="form-control" id="customWarnReason"
+                        placeholder="Specify reason" style="display: none;"></textarea>
+
+                </div>
+                <br>
+                <div style="width: 100%;">
+                    <button type="button" class="btn btn-success" onclick="submitWarning()">Submit</button>
+                    <button type="button" class="btn btn-danger" onclick="closeWarningModal()">Cancel</button>
+                </div>
         </form>
     </div>
+</div>
 </div>
 <script>
     // JavaScript functions for handling actions and modal functionality
@@ -589,6 +607,14 @@
     }
 
     // Function to render the table based on current page data
+    // Capitalize first letter of each word in a string
+    function capitalizeFirstLetter(str) {
+        if (typeof str !== 'string') return str;
+        return str.replace(/\b\w/g, function (char) {
+            return char.toUpperCase();
+        });
+    }
+
     function renderTable(page) {
         const totalPages = calculateTotalPages();
         const start = (page - 1) * usersPerPage;
@@ -596,26 +622,33 @@
         const usersToDisplay = filteredUsers.slice(start, end);
 
         const tableBody = document.getElementById("userTableBody");
-        tableBody.innerHTML = usersToDisplay.map(user => `
+        tableBody.innerHTML = usersToDisplay.map(user => {
+            // Capitalize user name, role, and status
+            const userName = capitalizeFirstLetter(user.name);
+            const userRole = capitalizeFirstLetter(user.role);
+            const userStatus = user.active_status ? 'Inactive' : 'Active'; // 'Active' is already properly capitalized
+
+            return `
             <tr>
                 <td><img src="${user.profile_picture ? 'https://storage.googleapis.com/homeseek-profile-image/' + user.profile_picture : 'https://via.placeholder.com/80x80'}" alt="User Image" width="50"></td>
-                <td > <a href="javascript:void(0)" onclick="openUserPopup(${user.id})"><strong>${user.name}</strong></a></td>
-                <td>${user.active_status ? 'Inactive' : 'Active'}</td>
-                <td>${user.role}</td>
+                <td><a href="javascript:void(0)" onclick="openUserPopup(${user.id})"><strong>${userName}</strong></a></td>
+                <td>${capitalizeFirstLetter(userStatus)}</td>
+                <td>${userRole}</td>
                 <td>${user.strike}</td>
                 <td>
-                 <button class="btn btn-warning" onclick="openWarningModal(${user.id})">Warn</button>
-                  <button class="btn-act" ${user.active_status ? '' : 'hidden'}
-                                        onclick="activate(${user.id})">Activate</button>
-                                  <button class="btn-deact" ${user.active_status ? 'hidden' : ''} onclick="openDeactivateModal(${user.id})">Deactivate</button>
+                    <button class="btn btn-warning" onclick="openWarningModal(${user.id})">Warn</button>
+                    <button class="btn-act" ${user.active_status ? '' : 'hidden'} onclick="activate(${user.id})">Activate</button>
+                    <button class="btn-deact" ${user.active_status ? 'hidden' : ''} onclick="openDeactivateModal(${user.id})">Deactivate</button>
                 </td>
             </tr>
-        `).join("");
+        `;
+        }).join("");
 
-        document.getElementById("currentPage").textContent = currentPage;
+        document.getElementById("currentPage").textContent = page;
 
         updatePaginationButtons(totalPages);
     }
+
 
     // Functions for pagination controls
     function nextPage() {

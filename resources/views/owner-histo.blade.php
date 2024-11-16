@@ -118,6 +118,7 @@
                     <tr>
                         <th>Tenant Name</th>
                         <th>Accommodation Name</th>
+                        <th>Proof of Payment</th>
                         <th>Amount</th>
                         <th>Billing Date</th>
                         <th>Paid Date</th>
@@ -133,6 +134,9 @@
                             </td>
                             <td><strong><a
                                         href="{{route('dorms.posted', $payment->rentForm->dorm->id)}}">{{  ucfirst($payment->rentForm->dorm->name) }}</a></strong>
+                            </td>
+                            <td><a target='_blank'
+                                    href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>
                             </td>
                             <td>${{ number_format($payment->amount, 2) }}</td>
                             <td>{{ \Carbon\Carbon::parse($payment->billing_date)->format('F d, Y') }}</td>

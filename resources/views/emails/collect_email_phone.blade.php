@@ -243,7 +243,8 @@
         </div>
 
         <!-- Registration form -->
-        <form method="POST" action="{{ route('collect.email.phone') }}" enctype="multipart/form-data">
+        <form id="registrationForm" method="POST" action="{{ route('collect.email.phone') }}"
+            enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="user_id" value="{{ $user->id }}">
 
@@ -251,7 +252,7 @@
             <div class="form-group">
                 <label for="profile_picture" class="profile-picture-label">Upload Profile Picture</label>
                 <input type="file" name="profile_picture" id="profile_picture" accept="image/*" class="form-control"
-                    onchange="previewImage(event)">
+                    max="1" onchange="previewImage(event)">
             </div>
 
             @if ($user->fb_id)
@@ -260,6 +261,7 @@
                     <input type="email" name="email" class="form-control" required>
                 </div>
             @endif
+
             <div class="input-b">
                 <label for="wrapper">Sign up as:</label>
                 <span class="info-icon"
@@ -281,11 +283,11 @@
             <div id="owner-inputs" style="display: none;">
                 <div class="form-group">
                     <label for="valid-id">Upload Valid ID:</label>
-                    <input type="file" id="valid-id" name="valid_id" class="form-control" accept="image/*">
+                    <input type="file" id="valid-id" name="valid_id" class="form-control" accept="image/*" max="1">
                 </div>
                 <div class="form-group">
                     <label for="business-permit">Upload Business Permit:</label>
-                    <input type="file" id="business-permit" name="business_permit" class="form-control"
+                    <input type="file" id="business-permit" name="business_permit" class="form-control" max="1"
                         accept="image/*">
                 </div>
                 <br>
@@ -297,7 +299,7 @@
                 <input type="text" name="phone_number" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="phone_number">Address</label>
+                <label for="address">Address</label>
                 <input type="text" name="address" class="form-control" required>
             </div>
 
@@ -306,7 +308,6 @@
         </form>
     </div>
 </div>
-
 <!-- Script for image preview -->
 <script>
     function previewImage(event) {
@@ -325,5 +326,58 @@
         ownerInputs.style.display = isOwner ? 'block' : 'none';
     }
 </script>
+<script>
+    // Form Submission via AJAX
+    $('#registrationForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
 
+        // Create a FormData object to send all form data (including files)
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'), // URL from the action attribute
+            type: 'POST',
+            data: formData,
+            processData: false, // Important for file uploads
+            contentType: false, // Important for file uploads
+            success: function (response) {
+                if (response.success) {
+                    // Show success message using SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message || 'Registration completed successfully!',
+                    }).then(function () {
+                        window.location.href = response.redirect_url || '/home'; // Redirect after success
+                    });
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    // If validation errors are returned
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessages = '<ul>';
+                    $.each(errors, function (key, value) {
+                        errorMessages += '<li>' + value[0] + '</li>';
+                    });
+                    errorMessages += '</ul>';
+
+                    // Show validation errors using SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: errorMessages,
+                    });
+                } else {
+                    // Show generic error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Something went wrong!',
+                        text: 'Please try again later.',
+                    });
+                }
+            }
+        });
+    });
+</script>
 @endsection

@@ -12,25 +12,12 @@
         const notifyUrl = window.routes.notificationUrl;
         const roomEditUrlTemplate = window.routes.roomEditUrl;
         const markNotificationUrlTemplate = window.routes.markNotificationUrl;
-        Pusher.logToConsole = true;
-
-
-
-
-
-
+        Pusher.logToConsole = false;
         if (userId) {
 
             var channel = pusher.subscribe('user.' + userId);
             var channel2 = pusher.subscribe('message.' + userId);
 
-            // channel2.bind('test.message', function (data) {
-            //     console.log(data);
-
-            //     if (data) {
-            //         fetchConvo();
-            //     }
-            // });
 
             channel.bind('test.notification', function (data) {
 
@@ -47,26 +34,26 @@
                     if (data.route === null) {
                         fetchNotifications();
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
-                        notificationContent = `
-                        <div onclick='openPopup("${data.message}"); markNotificationAsRead("${data.rooms}", null);' class="notification-content" id="notify">
-                            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-                        </div>
-                    `;
-                    }
 
-                    else {
+                        notificationContent = `
+        <div onclick='openPopup("${data.message}", null); markNotificationAsRead("${linker}", null);' class="notification-content" id="notify">
+            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
+            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${data.message}</span>
+        </div>
+    `;
+                    } else {
                         fetchNotifications();
                         linker = markNotificationUrlTemplate.replace(':id', data.rooms);
+
+                        // Ensure data.message is properly escaped for use in openPopup
                         notificationContent = `
-               
-                        <div onclick='openPopup(${data.message}, ${data.route});markNotificationAsRead("${data.rooms}", null);' class="notification-content" id="">
-                            <i class="fas fa-user"></i> <span>${data.sender.name}</span>
-                            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${truncatedMessage}</span>
-                        </div>
-               
-            `;
+        <div onclick='openPopup("${data.message}", "${data.route}"); markNotificationAsRead("${linker}", null);' class="notification-content">
+            <i class="fas fa-user"></i> <span>${data.sender.name}</span><br>
+            <i class="fas fa-book" style="margin-left: 20px;"></i> <span>${data.message}</span>
+        </div>
+    `;
                     }
+
 
                     toastr.info(notificationContent, 'New Notification', {
                         closeButton: true,

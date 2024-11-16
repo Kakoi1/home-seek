@@ -1,12 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\Billing;
 use App\Models\Dorm;
+use App\Models\Notification;
 use App\Models\RentForm;
 use App\Models\Reports;
 use App\Models\Reviews;
-use App\Models\Room;
 use App\Models\Favorite;
 use App\Models\PropertyView;
 use DateTime;
@@ -63,7 +64,7 @@ class DormController extends Controller
         ]);
 
         // Redirect with success message
-        return redirect()->back()->with('success', 'Dorm added successfully!');
+        return redirect()->back()->with('success', 'Accommodation added successfully!');
     }
 
     public function showDorms()
@@ -75,13 +76,17 @@ class DormController extends Controller
     {
         $query = Dorm::query();
 
+        // Join with the users table to filter by owner's active_status
+        $query->join('users', 'dorms.user_id', '=', 'users.id')
+            ->where('users.active_status', 0); // Only include dorms where the owner's active_status is 1
+
         // Apply search filters
         if ($request->has('search')) {
             $search = $request->input('search');
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('address', 'like', '%' . $search . '%');
+                    $q->where('dorms.name', 'like', '%' . $search . '%')
+                        ->orWhere('dorms.address', 'like', '%' . $search . '%');
                 });
             }
         }
@@ -90,25 +95,32 @@ class DormController extends Controller
         if ($request->has('min_price')) {
             $min_price = $request->input('min_price');
             if (!empty($min_price)) {
-                $query->where('price', '>=', $min_price);
+                $query->where('dorms.price', '>=', $min_price);
             }
         }
         if ($request->has('max_price')) {
             $max_price = $request->input('max_price');
             if (!empty($max_price)) {
-                $query->where('price', '<=', $max_price);
+                $query->where('dorms.price', '<=', $max_price);
             }
         }
         if ($request->has('rooms_avail')) {
             $rooms_avail = $request->input('rooms_avail');
             if (!empty($rooms_avail)) {
-                $query->where('rooms_available', '>=', $rooms_avail);
+                $query->where('dorms.rooms_available', '>=', $rooms_avail);
             }
         }
 
         // Order by latest posted dorms
-        $query->orderBy('created_at', 'desc')->withCount('favoritedBy')->where('availability', false)->where('archive', false)->where('flag', false);
+        $query->orderBy('dorms.created_at', 'desc')
+            ->withCount('favoritedBy')
+            ->where('dorms.availability', false)
+            ->where('dorms.archive', false)
+            ->where('dorms.flag', false);
+
+        // Load reviews relationship
         $query->with('reviews');
+
         // Paginate results
         $dorms = $query->paginate(12);
 
@@ -122,9 +134,9 @@ class DormController extends Controller
             ]);
         }
 
-
         return view('home', compact('dorms'));
     }
+
 
     public function adddorm()
     {
@@ -139,47 +151,59 @@ class DormController extends Controller
     {
         $user = auth()->user();
         $dorm = Dorm::with('user')->findOrFail($id);
-        $rooms = Room::where('dorm_id', $dorm->id)->count();
+
+        // Check if the dorm's owner is deactivated
+        if ($dorm->user->active_status == 1) {
+            return back()->withErrors('Accommodation not available - Owner is deactivated');
+        }
+
+        // Check if the user has pending or active rent forms
         $hasPendingOrActiveRentForm = RentForm::where('user_id', $user->id)
             ->whereIn('status', ['pending', 'active', 'approved'])
             ->exists();
-        if ($dorm->availability) {
-            return back()->withErrors('Property not Available');
+
+        if ($dorm->availability || $dorm->flag) {
+            return back()->withErrors('Accommodation not available');
         }
+
         if ($dorm->archive) {
-            return back()->withErrors('Property is Deleted');
+            return back()->withErrors('Accommodation is deleted');
         }
+
         $propertyReview = Dorm::with([
             'reviews' => function ($query) {
                 $query->where('rating', '>', 0); // Only include reviews with a rating greater than 0
             }
         ])->findOrFail($id);
 
-        if (auth()->user()->role == 'owner') {
+        // Set up breadcrumbs based on user role
+        if ($user->role == 'owner') {
             Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
                 $trail->parent('owner.Property');
                 $trail->push($dorm->name, route('dorms.posted', $dorm->id));
             });
-        } elseif (auth()->user()->role == 'tenant') {
+        } elseif ($user->role == 'tenant') {
             Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
                 $trail->parent('home');
                 $trail->push($dorm->name, route('dorms.posted', $dorm->id));
             });
-        } elseif (auth()->user()->role == 'admin') {
+        } elseif ($user->role == 'admin') {
             Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
                 $trail->parent('admin.manageProp');
                 $trail->push($dorm->name, route('dorms.posted', $dorm->id));
             });
         }
-        return view('dorms.posted', compact('dorm', 'rooms', 'propertyReview', 'hasPendingOrActiveRentForm'));
+
+        return view('dorms.posted', compact('dorm', 'propertyReview', 'hasPendingOrActiveRentForm'));
     }
+
 
     public function archive($id)
     {
         $dorm = Dorm::findOrFail($id);
         $dorm->update(['archive' => true]);
 
-        return redirect()->back()->with('success', 'Dorm archived successfully!');
+        return redirect()->back()->with('success', 'Accommodation archived successfully!');
     }
 
     public function toggleFavorite($propertyId)
@@ -224,11 +248,11 @@ class DormController extends Controller
                 'dorm_id' => $propertyId,
             ]);
 
-            return response()->json(['message' => 'Property view tracked.']);
+            return response()->json(['message' => 'Accommodation view tracked.']);
         }
 
         // If a record exists, you might want to handle this case (optional)
-        return response()->json(['message' => 'Property view already exists.']);
+        return response()->json(['message' => 'Accommodation view already exists.']);
     }
 
     public function favourites()
@@ -246,7 +270,8 @@ class DormController extends Controller
 
         // Active Properties
         $properties = Dorm::where('user_id', $userid)
-            ->where('archive', 0) // Active properties
+            ->where('archive', 0)
+            ->where('flag', 0) // Active properties
             ->orderBy('created_at', 'desc')
             ->withCount('favoritedBy')
             ->paginate(12);
@@ -268,7 +293,8 @@ class DormController extends Controller
 
             // Fetch archived properties (archive = 1)
             $properties = Dorm::where('user_id', $userid)
-                ->where('archive', 1) // Archived properties
+                ->where('archive', 1)
+                ->where('flag', 0) // Archived properties
                 ->orderBy('created_at', 'desc')
                 ->withCount('favoritedBy')
                 ->paginate(12);
@@ -330,6 +356,7 @@ class DormController extends Controller
                 ->paginate(5);
 
             // Prepare content with property details
+
             $content = "<div class='property-list'>";
             $content .= "<h4>Active Properties:</h4>";
             $content .= "<p class='owner-rating'><strong>Owner Rating:</strong> {$averageOwnerRating} / 5 ({$totalReviews} reviews)</p>";
@@ -365,6 +392,8 @@ class DormController extends Controller
                 'role' => ucfirst($user->role),
                 'content' => $content,
                 'profile_picture' => $user->profile_picture,
+                'joined' => $user->created_at->diffForHumans(),
+                'status_acc' => $user->active_status ? 'Inactive' : 'Active',
                 'pagination' => [
                     'total' => $dorms->total(),
                     'per_page' => $dorms->perPage(),
@@ -380,7 +409,6 @@ class DormController extends Controller
                     ->where('status', 'active')
                     ->with('dorm')
                     ->first();
-
                 if ($rentedProperty) {
                     $content .= '<div class="rented-property">';
                     $content .= '<h4>Current Rented Property:</h4>';
@@ -457,7 +485,9 @@ class DormController extends Controller
                 'name' => $user->name,
                 'role' => ucfirst($user->role),
                 'content' => $content,
-                'profile_picture' => $user->profile_picture
+                'profile_picture' => $user->profile_picture,
+                'joined' => $user->created_at->diffForHumans(),
+                'status_acc' => $user->active_status ? 'Inactive' : 'Active',
             ]);
         } else {
             $content = '<div class="review-item">';
@@ -489,6 +519,29 @@ class DormController extends Controller
             'reason' => $request->Repreason == 'Other' ? $request->otherReason : $request->Repreason,
 
         ]);
+
+        $reporterNotification = Notification::create([
+            'user_id' => 14,  // Reporter
+            'type' => 'Reported',
+            'data' => "<strong>Report Complaint</strong><p>A user has reported a complaint regarding " .
+                ($request->dorm_id ? "the accommodation: <strong>{$report->dorm->name}</strong>" : "a user: <strong>{$report->reported->name}</strong>") .
+                ". Please review the report and take the necessary actions.</p>",
+            'read' => false,
+            'route' => route('reports.view'),
+            'dorm_id' => null,
+            'sender_id' => Auth::id(),
+        ]);
+
+        // Trigger notification event for the reporter
+        event(new NotificationEvent([
+            'reciever' => $reporterNotification->user_id,
+            'message' => $reporterNotification->data,
+            'sender' => Auth::id(),
+            'rooms' => $reporterNotification->id,
+            'roomid' => $reporterNotification->room_id,
+            'action' => 'Report',
+            'route' => route('reports.view')
+        ]));
 
         return response()->json(['message' => 'Report submitted successfully']);
     }

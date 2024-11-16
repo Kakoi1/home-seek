@@ -22,7 +22,6 @@ class GoogleController extends Controller
 
             $user = Socialite::driver('google')->user();
             $finduser = User::where('google_id', $user->id)->first();
-
             if ($finduser) {
                 if (!$finduser->role) {
                     return view('emails.collect_email_phone', ['user' => $finduser])->with('success', 'Provide additional information. to login');

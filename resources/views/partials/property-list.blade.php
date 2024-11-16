@@ -87,7 +87,8 @@
             @endif
             <div class="card-body" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
                 <h5 class="card-title">{{ $dorm->name }}</h5>
-
+                <h6 style="color: {{$dorm->availability ? 'red' : 'black'}};">
+                    {{$dorm->availability ? 'Occupied' : 'Available'}}</h6>
             </div>
         </div>
     </div>

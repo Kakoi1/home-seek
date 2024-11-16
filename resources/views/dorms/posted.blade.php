@@ -664,11 +664,6 @@
     </div>
 
 
-    <!-- Manage Rooms Button -->
-
-    <!-- Room Management Section -->
-
-
     <div id="imageModal" class="image-modal" style="display: none;">
         <span class="closemodal">&times;</span>
         <img class="modal-content" id="fullImage">
@@ -733,89 +728,34 @@
                     document.getElementById("final-total").textContent = "₱0";
                 }
             }
+
         });
     @endif
 
+    document.addEventListener("DOMContentLoaded", function () {
+        trackView({{ $dorm->id }});
+    });
 
-    // Function to jump to a specific carousel slide
     function jumpToSlide(index) {
         $('#carouselExampleControls').carousel(index);
     }
-    // Room count variable to track the current number of rooms
+    function trackView(propertyId) {
+        fetch(`/dorm/${propertyId}/views`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ propertyId: propertyId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Log the response message
+            })
+            .catch(error => {
 
-
-    // Close button for room management modal
-
-
-    // Function to show the room delete modal with its own overlay
-
-
-
-
-    // Confirm Delete Button: Send selected room(s) for deletion
-    document.getElementById('confirm-delete').addEventListener('click', function () {
-        let selectedRooms = [];
-        document.querySelectorAll('input[name="rooms_to_delete[]"]:checked').forEach(function (checkbox) {
-            selectedRooms.push(checkbox.value);
-        });
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (selectedRooms.length > 0) {
-                    // Make an AJAX request to delete rooms
-                    fetch('{{ route('dorm.deleteRooms', $dorm->id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ rooms_to_delete: selectedRooms })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            alert('Rooms deleted successfully!');
-                            // Hide modal and update room count/display
-                            document.getElementById('room-delete-modal').style.display = 'none';
-                            document.getElementById('room-delete-overlay').style.display = 'none';
-                            roomCount -= selectedRooms.length;
-                            document.getElementById('room-count').innerText = roomCount;
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Failed to delete rooms.');
-                        });
-                } else {
-                    alert('Please select at least one room to delete.');
-                }
-            }
-        });
-    });
-
-    // Hide the delete modal if the user cancels the action
-    document.getElementById('cancel-delete').addEventListener('click', function () {
-        document.getElementById('room-delete-modal').style.display = 'none';
-    });
-
-    // Function to hide the room management modal and overlay
-    function hideRoomManagementModal() {
-        document.getElementById('room-management').style.display = 'none';
-        document.getElementById('room-management-overlay').style.display = 'none';
+            });
     }
-
-    // Function to hide room delete modal and its overlay
-    function hideDeleteModal() {
-        document.getElementById('room-delete-modal').style.display = 'none';
-        document.getElementById('room-delete-overlay').style.display = 'none';
-    }
-
 
 </script>
 <script>

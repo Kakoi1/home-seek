@@ -91,14 +91,14 @@
 
         <!-- Start Date -->
         <div class="form-group mb-3">
-            <label for="start_date" class="form-label">Start Date</label>
+            <label for="start_date" class="form-label">Check-in Date</label>
             <input type="date" name="start_date" id="start_date" class="form-control"
                 value="{{ old('start_date', $rent->start_date) }}" required>
         </div>
 
         <!-- End Date -->
         <div class="form-group mb-3">
-            <label for="end_date" class="form-label">End Date</label>
+            <label for="end_date" class="form-label">Check-out Date</label>
             <input type="date" name="end_date" id="end_date" class="form-control"
                 value="{{ old('end_date', $rent->end_date) }}" required>
         </div>

@@ -236,13 +236,11 @@
 <script>
     // Define global JavaScript variables for routes
     window.routes = {
-        chatroomsUrl: "{{ route('fetchChatrooms') }}",
-        roomchatUrl: "{{ route('chatroom.Chatroom') }}",
+
         notificationUrl: "{{ route('notifies') }}",
-        dormUrl: "{{ route('dorm.chat', ['dorm' => ':id', 'chatroom' => ':room_id']) }}",
-        roomUrl: "{{ route('room.chat', ['room' => ':id', 'roomchat' => ':room_id']) }}",
+
         markNotificationUrl: "{{ route('markAsRead', ':id') }}", // Route with placeholder for notification ID
-        roomEditUrl: "{{ route('room.edit', ['id' => ':room_id', 'action' => 'view']) }}",  // Route with placeholder for room_id
+
         homeUrl: "{{ route('home') }}",
         mapUrl: "{{route('dorms.posted', ':dormId')}}"
     };

@@ -17,22 +17,77 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $usersCount = User::count();
+        // User Metrics
+        $usersCount = User::all();
+        $ownersCount = User::where('role', 'owner')->get();
+        $tenantsCount = User::where('role', 'tenant')->count();
+        $activeUsersCount = User::where('active_status', 0)->count();
+        $inactiveUsersCount = User::where('active_status', 1)->count();
 
-        // Count of property owners (assuming 'role' or 'is_owner' field indicates a property owner)
-        $ownersCount = User::where('role', 'owner')->count();
+        // Monthly Data for Line Graph
+        $months = [];
+        $activeCounts = [];
+        $inactiveCounts = [];
+        $tenantCounts = [];
+        $ownerCounts = [];
 
-        // Count of listed properties
-        $propertiesCount = Dorm::count(); // Assuming Dorm model handles property listings
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $months[] = $month->format('M Y');
+            $activeCounts[] = User::where('active_status', 1)->whereMonth('created_at', $month->month)->count();
+            $inactiveCounts[] = User::where('active_status', 0)->whereMonth('created_at', $month->month)->count();
+            $tenantCounts[] = User::where('role', 'tenant')->whereMonth('created_at', $month->month)->count();
+            $ownerCounts[] = User::where('role', 'owner')->whereMonth('created_at', $month->month)->count();
+        }
 
-        // Pass the data to the view
-        return view('admin.dashboard', compact('usersCount', 'ownersCount', 'propertiesCount'));
+        // Property Insights
 
+        $totalProperties = Dorm::all();
+
+        // Properties that are available (availability = 0) and the owner's active_status = 1
+        $availableProperties = Dorm::where('availability', 0)
+            ->whereHas('user', function ($query) {
+                $query->where('active_status', 0);
+            })
+            ->count();
+
+        // Properties that are unavailable (availability = 1) or the owner's active_status = 0
+        $unavailableProperties = Dorm::where('availability', 1)
+            ->orWhereHas('user', function ($query) {
+                $query->where('active_status', 1);
+            })
+            ->count();
+
+        // Archived properties
+        $archivedProperties = Dorm::where('archive', 1)->count();
+
+        // Flagged properties (flag = 1)
+        $flaggedProperties = Dorm::where('flag', 1)->count();
+
+
+        return view('admin.dashboard', compact(
+            'usersCount',
+            'ownersCount',
+            'tenantsCount',
+            'activeUsersCount',
+            'inactiveUsersCount',
+            'months',
+            'activeCounts',
+            'inactiveCounts',
+            'tenantCounts',
+            'ownerCounts',
+            'totalProperties',
+            'availableProperties',
+            'unavailableProperties',
+            'archivedProperties',
+            'flaggedProperties'
+        ));
     }
+
 
     public function manageUsers()
     {
-        $users = User::all();
+        $users = User::where('role', '!=', 'admin')->get();
         $verificationRequests = Verifications::where('status', 'pending')
             ->with('user')
             ->get();
@@ -54,7 +109,9 @@ class AdminController extends Controller
             $notification = Notification::create([
                 'user_id' => $verification->user_id, // Assuming the owner is linked to the room
                 'type' => 'verification',
-                'data' => 'Your Verification is Approved',
+                'data' => '<strong>Account Verified</strong><br>' .
+                    '<p>Your account has been verified. You can now proceed to post or list accommodations for rent.</p><br>' .
+                    '<p>Sent on ' . now()->format('Y-m-d H:i:s') . '</p>',
                 'read' => false,
                 'route' => null,
                 'dorm_id' => null,
@@ -88,27 +145,6 @@ class AdminController extends Controller
             $verification->status = 'rejected';
             $verification->note = $request->input('reason'); // Assuming 'reason' is the field name
             $verification->save();
-
-            $notification = Notification::create([
-                'user_id' => $verification->user_id, // Assuming the owner is linked to the room
-                'type' => 'verification',
-                'data' => "Your Verification was denied Due to: " . $request->input('reason'),
-                'read' => false,
-                'dorm_id' => null,
-                'sender_id' => auth::id(),
-                'route' => null,
-            ]);
-
-            event(new NotificationEvent([
-
-                'reciever' => $notification->user_id,
-                'message' => $notification->data,
-                'sender' => Auth::id(),
-                'rooms' => $notification->id,
-                'roomid' => $notification->room_id,
-                'action' => 'verify',
-                'route' => null,
-            ]));
 
             return response()->json(['message' => 'Verification rejected successfully.']);
         } else {
@@ -207,7 +243,7 @@ class AdminController extends Controller
             $notification = Notification::create([
                 'user_id' => $property->user_id,
                 'type' => 'warning',
-                'data' => "<strong>Property Deactivated due to:</strong> <br> <p>" . $request->reason . "</p>",
+                'data' => "<strong>Accomodation Deactivated</strong> <br> <p> Your Accomodation has been Deactivated due to:" . $request->reason . "</p>",
                 'read' => false,
                 'route' => null,
                 'dorm_id' => $property->id,
@@ -327,7 +363,7 @@ class AdminController extends Controller
                     }
                     $rep_user->save();
                     $data1 = "<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>" . $report->reason . "</strong></p> <p>Please monitor the situation to ensure compliance.</p>";
-                    $data2 = "<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>" . $report->reason . "</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p>";
+                    $data2 = "<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>" . $report->reason . "</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p> <br>" . "<strong>You have " . $rep_user->strike . " remaining Strike</strong>";
                 }
                 // Notification for the reporter (user who submitted the report)
                 $reporterNotification = Notification::create([

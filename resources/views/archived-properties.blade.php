@@ -70,7 +70,11 @@
 </div>
 
 <div class="proper-cont" id="archived-property-list">
-    @include('partials.property-list', ['properties' => $properties])
+    @if ($properties->isEmpty())
+        <h4>No Archived Accomodation found</h4>
+    @else
+        @include('partials.property-list', ['properties' => $properties])
+    @endif
 </div>
 
 <div id="archived-pagination-links" class="d-flex justify-content-center">

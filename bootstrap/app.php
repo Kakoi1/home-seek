@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'email.verified' => \App\Http\Middleware\CheckEmailVerified::class,
             'owner.verified' => \App\Http\Middleware\CheckOwnerVerify::class,
+            'tenant' => \App\Http\Middleware\TenantMiddleware::class,
+            'owner' => \App\Http\Middleware\OwnerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

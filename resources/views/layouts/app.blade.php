@@ -284,22 +284,22 @@
     .popupnot {
         background: #fff;
         padding: 20px;
-        width: 400px;
+        width: 500px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         z-index: 1001;
         text-align: center;
     }
 
-    .report-popup-content {
-        position: relative;
-        width: 300px;
-        background-color: #fff;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1001;
-        text-align: center;
+    .popupnot button {
+        padding: 10px 15px;
+        border: none;
+        border-color: #007bff;
+        background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877));
+        color: white;
+        border-radius: 5px;
+        margin: 0 auto;
+        display: block;
     }
 
     .user-popup-content h2 {
@@ -309,38 +309,6 @@
     }
 
     /* Styling for the form labels */
-    .report-popup-content label {
-        font-size: 1em;
-        color: #333;
-        display: block;
-        margin: 10px 0;
-    }
-
-    /* Styling for the submit and cancel buttons */
-    .report-popup-content button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 15px;
-        cursor: pointer;
-        margin: 5px;
-        transition: background-color 0.3s ease;
-    }
-
-    .report-popup-content button:hover {
-        background-color: #0056b3;
-    }
-
-    /* Cancel button specific styling */
-    .report-popup-content button:last-of-type {
-        background-color: #ccc;
-        color: #333;
-    }
-
-    .report-popup-content button:last-of-type:hover {
-        background-color: #999;
-    }
 
     .report-popup {
         position: fixed;
@@ -454,6 +422,8 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        width: 80%;
+        margin: 0 auto;
     }
 
     /* Custom CSS for breadcrumbs */
@@ -482,26 +452,125 @@
         margin: 0 10px;
         color: #6c757d;
     }
+
+    /* This will style the custom checkboxes */
+    .custom-check {
+        margin-bottom: 10px;
+        /* Space between each radio button */
+        display: flex;
+        /* Flexbox will align items horizontally */
+        align-items: center;
+        /* Aligns radio button and label vertically */
+    }
+
+    /* Style the label to provide space between radio button and label text */
+    .custom-check label {
+        margin-left: 10px;
+        cursor: pointer;
+        /* Cursor changes to pointer on hover */
+    }
+
+    /* Popup Overlay (background overlay) */
+    .report-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        /* Hidden by default */
+        z-index: 9999;
+    }
+
+    /* User popup overlay (clicking this closes the popup) */
+    .user-popup-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Popup Content */
+    .report-popup-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 50px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 450px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .report-popup h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .report-popup p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    /* Input fields and buttons */
+    .report-popup input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .report-popup button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .report-popup button[type="button"]:hover {
+        background-color: #0056b3;
+    }
+
+    .report-popup button[type="button"]:nth-child(2) {
+        background-color: #dc3545;
+    }
+
+    .report-popup button[type="button"]:nth-child(2):hover {
+        background-color: #c82333;
+    }
 </style>
 
 <body>
     <div id="reportPopup" class="report-popup" style="display: none;">
-        <div class="user-popup-overlay" onclick="closeReportPopup()"></div>
+
         <div class="report-popup-content">
             <h2>Report</h2>
             <form id="reportForm">
                 <input type="hidden" name="reported_id" id="reported_id">
                 <input type="hidden" name="dorm_id" id="dorm_id">
                 <input type="hidden" name="type" id="type">
-                <p>Select a reason:</p>
+                <h5>Select a reason:</h5>
                 <div id="reasonPop"></div>
-                <br>
                 <div id="otherReasonInput" style="display: none;">
-                    <input type="text" name="otherReason" placeholder="Please specify..." />
+                    <textarea type="text" name="otherReason" class="form-control"
+                        placeholder="Please specify..."></textarea>
                 </div>
                 <br>
-                <button type="button" onclick="submitReport()">Submit Report</button>
-                <button type="button" onclick="closeReportPopup()">Cancel</button>
+                <div style="display: flex;width: 100%;justify-content: center;gap: 15px;">
+                    <button type="button" onclick="submitReport()">Submit Report</button>
+                    <button type="button" onclick="closeReportPopup()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
@@ -515,6 +584,10 @@
                 <div>
                     <h3 style="color: black;" id="userName"></h3>
                     <p id="userRole"></p>
+                    <span>
+                        <p id="joined"></p>
+                        <p id="status_acc"></p>
+                    </span>
                 </div>
                 <div class="userButton" id="userButton"></div>
             </div>
@@ -655,6 +728,8 @@
 
                     document.getElementById('userName').innerText = data.name;
                     document.getElementById('userRole').innerText = data.role;
+                    document.getElementById('joined').innerHTML = `</p><strong>Joined: ${data.joined}</strong>`;
+                    document.getElementById('status_acc').innerText = data.status_acc;
                     document.getElementById('userProfilePicture').src =
                         data.profile_picture
                             ? `https://storage.googleapis.com/homeseek-profile-image/${data.profile_picture}`
@@ -662,7 +737,9 @@
 
                     const userButton = document.getElementById('userButton');
                     userButton.innerHTML = ''; // Clear previous buttons
-                    if (data.role !== 'admin') {
+                    if (data.role !== 'Admin') {
+                        console.log(data.role);
+
                         if (userid === currentUserId) {
                             // Create 'Edit Profile' button
                             const editButton = document.createElement('button');
@@ -679,10 +756,13 @@
                             userButton.appendChild(editButton);
                         }
                         else {
-                            const reportButton = document.createElement('button');
-                            reportButton.innerText = 'Report User';
-                            reportButton.addEventListener('click', () => showReportPopup(currentUserId, null, 'user'));
-                            userButton.appendChild(reportButton);
+                            @if(Auth::check() && Auth::user()->role !== 'admin')
+                                const reportButton = document.createElement('button');
+                                reportButton.innerText = 'Report User';
+                                reportButton.addEventListener('click', () => showReportPopup(currentUserId, null, 'user'));
+                                userButton.appendChild(reportButton);
+                            @endif
+
                         }
                     }
 
@@ -705,10 +785,12 @@
             function updatePaginationControls(pagination) {
                 const paginationControls = document.getElementById('paginationControls');
                 paginationControls.innerHTML = `
-            <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''}>Previous</button>
-            <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-            <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page ? 'disabled' : ''}>Next</button>
-        `;
+    <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+                    }>Previous</button>
+    <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+    <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+                        ? 'disabled' : ''}>Next</button>
+    `;
             }
 
             window.changePage = function (page) {
@@ -724,9 +806,11 @@
         window.updatePaginationControls = function (pagination) {
             const paginationControls = document.getElementById('paginationControls');
             paginationControls.innerHTML = `
-        <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''}>Previous</button>
-        <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-        <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page ? 'disabled' : ''}>Next</button>
+    <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+                }>Previous</button>
+    <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+    <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+                    ? 'disabled' : ''}>Next</button>
     `;
         };
 
@@ -737,7 +821,7 @@
             document.getElementById('type').value = typeRep;
 
             // Show the popup
-            document.getElementById("reportPopup").style.display = "flex";
+            document.getElementById("reportPopup").style.display = "block";
 
             // Close any other popups if necessary
             closeUserPopup();
@@ -773,9 +857,9 @@
         function toggleOtherInput(show) {
             const otherReasonInputDiv = document.getElementById('otherReasonInput');
             if (show) {
-                otherReasonInputDiv.style.display = 'block';  // Show the input field
+                otherReasonInputDiv.style.display = 'block'; // Show the input field
             } else {
-                otherReasonInputDiv.style.display = 'none';   // Hide the input field
+                otherReasonInputDiv.style.display = 'none'; // Hide the input field
             }
         }
 
@@ -806,30 +890,44 @@
 
             // Insert custom CSS styles into the document head
             const style = document.createElement('style');
-            style.innerHTML = ``;
+            style.innerHTML = `
+        .custom-check {
+            margin-bottom: 10px; /* Space between each radio button */
+            display: flex; /* Align radio and label horizontally */
+            
+            align-items: center; /* Aligns radio button and label vertically */
+        } .custom-check input{
+ width: 50px;
+        }
+           
+        .custom-check label {
+            margin-left: 10px;
+            cursor: pointer; /* Cursor changes to pointer on hover */
+        }
+    `;
             document.head.appendChild(style);
 
             // Add the reason options dynamically
             reasonOptions.forEach(reason => {
                 // Create radio button container
                 const div = document.createElement('div');
-                div.classList.add('custom-check');  // Custom class for radio button container
+                div.classList.add('custom-check'); // Custom class for radio button container
 
                 // Create the radio button input
                 const radio = document.createElement('input');
                 radio.type = 'radio';
-                radio.classList.add('custom-check-input');  // Custom class for radio button
-                radio.name = 'Repreason';  // Same name to group them
+                radio.classList.add('custom-check-input'); // Custom class for radio button
+                radio.name = 'Repreason'; // Same name to group them
                 radio.value = reason;
-                radio.id = `reason-${reason}`;  // Give a unique ID for each radio button
+                radio.id = `reason-${reason}`; // Give a unique ID for each radio button
 
                 // Create the label for the radio button
                 const label = document.createElement('label');
-                label.setAttribute('for', radio.id);  // Set the "for" attribute for accessibility
+                label.setAttribute('for', radio.id); // Set the "for" attribute for accessibility
                 label.innerHTML = reason;
 
                 // Append radio inside the label (radio button comes before the text)
-                label.insertBefore(radio, label.firstChild);  // Insert radio input at the beginning
+                label.insertBefore(radio, label.firstChild); // Insert radio input at the beginning
 
                 // Append the label to the div container
                 div.appendChild(label);
@@ -845,7 +943,7 @@
             const otherRadio = document.createElement('input');
             otherRadio.type = 'radio';
             otherRadio.classList.add('custom-check-input');
-            otherRadio.name = 'Repreason';  // Same name to group with other radio buttons
+            otherRadio.name = 'Repreason'; // Same name to group with other radio buttons
             otherRadio.value = 'Other';
             otherRadio.id = 'reason-Other';
 
@@ -861,23 +959,24 @@
 
             // Add the "Other" input field (hidden by default)
             const otherInputDiv = document.getElementById('otherReasonInput');
-            otherInputDiv.style.display = 'none';  // Hide the input field by default
+            otherInputDiv.style.display = 'none'; // Hide the input field by default
 
             // Add event listener to the "Other" radio button to toggle the input field visibility
             otherRadio.addEventListener('change', () => {
                 if (otherRadio.checked) {
-                    otherInputDiv.style.display = 'block';  // Show input field when "Other" is selected
+                    otherInputDiv.style.display = 'block'; // Show input field when "Other" is selected
                 } else {
-                    otherInputDiv.style.display = 'none';  // Hide input field when "Other" is not selected
+                    otherInputDiv.style.display = 'none'; // Hide input field when "Other" is not selected
                 }
             });
         }
+
 
         // Event delegation: Listen for changes on the "Repreason" radio buttons
         document.getElementById('reasonPop').addEventListener('change', function (e) {
             if (e.target.name === 'Repreason') {
                 if (e.target.value === "Other") {
-                    toggleOtherInput(true);  // Show the "Other" input when "Other" is selected
+                    toggleOtherInput(true); // Show the "Other" input when "Other" is selected
                 } else {
                     toggleOtherInput(false); // Hide the "Other" input when any other option is selected
                 }

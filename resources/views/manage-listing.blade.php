@@ -75,7 +75,12 @@
 
 <br>
 <div class="proper-cont" id="property-list">
-    @include('partials.property-list', ['properties' => $properties])
+    @if ($properties->isEmpty())
+        <h4>No Accomodation found</h4>
+    @else
+        @include('partials.property-list', ['properties' => $properties])
+    @endif
+
 </div>
 <div id="pagination-links" class="d-flex justify-content-center">
     {{ $properties->links() }}
