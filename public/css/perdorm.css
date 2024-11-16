@@ -134,7 +134,9 @@
     /* Add a border for separation */
     height: 100%;
 }
-
+h2{
+    text-align: center !important;
+}
 .cardbody h2,
 .cardbody h5 {
     font-size: 1.25rem;
