@@ -194,7 +194,7 @@
         box-sizing: border-box;
     }
 </style>
-
+<script src="{{ asset('js/map.js') }}"></script>
 <div>
     <h1>{{ $dorm ? 'Edit Accommodation' : 'List Accommodation' }}</h1>
 
@@ -293,8 +293,8 @@
             <div id="map" style="width: 100%; height: 100%;">
                 @if ($dorm)
                     <script id="dorms-data" type="application/json">
-                                           {!! json_encode($dorm) !!}
-                                            </script>
+                                                   {!! json_encode($dorm) !!}
+                                                    </script>
                 @endif
 
             </div>

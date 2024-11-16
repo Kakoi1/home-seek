@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 16, 2024 at 04:42 AM
+-- Generation Time: Nov 16, 2024 at 08:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -155,24 +155,24 @@ CREATE TABLE `dorms` (
 --
 
 INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitude`, `longitude`, `price`, `capacity`, `beds`, `bedroom`, `image`, `archive`, `availability`, `flag`, `created_at`, `updated_at`) VALUES
-(27, 8, 'roland12', 'dadssa', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25732354, 123.79582294, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:50:17', '2024-10-22 19:41:52'),
-(28, 8, 'lando', 'dasdsa', '\"Tubod, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25918163, 123.79865443, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:57:24', '2024-08-09 20:50:15'),
-(29, 8, 'oli house', 'new house', '\"Teves, Vito, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25521206, 123.79410364, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:17', '2024-09-25 22:45:30'),
-(30, 8, 'oli house1', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24372536, 123.79625195, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:33', '2024-09-25 22:50:32'),
-(31, 8, 'oli house2', 'new house', '\"Escala at Corona Del Mar, Pooc, Cebu, Central Visayas, 6045, Pilipinas\"', 10.23831971, 123.82036251, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:46', '2024-09-25 22:51:38'),
-(32, 8, 'oli house4', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24262734, 123.79153281, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:07', '2024-09-25 22:52:03'),
-(33, 8, 'oli house4', 'new house', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25518391, 123.80474642, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 1, 0, 0, '2024-08-04 21:09:38', '2024-11-11 18:33:06'),
-(34, 8, 'oli house5', 'new house', '\"Vito Elementary School, Vito-Cadulawan Road, Teves, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25360732, 123.79316306, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:52', '2024-09-25 22:53:43'),
-(35, 8, 'oli house6', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24296519, 123.79530813, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:11', '2024-09-25 22:54:05'),
-(36, 8, 'oli house7', 'new house', '\"Bacay Elementary School, A. Apostol Street, Tulay, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.23806632, 123.79307726, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113706_671f70aa9a7dd.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70ab94107.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70abe48dc.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:41', '2024-10-31 22:51:57'),
-(37, 8, 'oli house8', 'new house', '\"Lower Tiber, Poblacion Ward I, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas\"', 10.24307783, 123.79890595, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113679_671f708f975b2.jpg\\\",\\\"dorm_pictures\\\\\\/1730113680_671f7090c4483.jpg\\\",\\\"dorm_pictures\\\\\\/1730113681_671f7091262fb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:11:21', '2024-10-31 23:01:39'),
-(38, 8, 'roland44', 'ewqewqe', '\"Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25495868, 123.80433083, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113634_671f7062789a5.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f706421aca.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f70646f810.jpg\\\"]\"', 0, 0, 0, '2024-08-08 01:35:26', '2024-10-28 03:07:17'),
-(42, 8, 'shane house', 'cool', '\"Hickory Street, Springwoods Country Homes Subdivision, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24093808, 123.79084639, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113609_671f704929945.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a3fac4.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a98cc3.jpg\\\"]\"', 0, 1, 0, '2024-08-14 20:22:16', '2024-11-09 20:36:58'),
-(43, 8, 'house', 'dsadsa', '\"Linao, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25690124, 123.80423160, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113501_671f6fdde8aba.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf142d3.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf62b6a.jpg\\\"]\"', 0, 0, 0, '2024-09-04 01:52:50', '2024-11-14 23:34:43'),
-(44, 8, 'inday house', 'vbeebbe', '\"Poblacion Ward IV, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24614837, 123.79108429, 5000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-07-31 21:26:15', '2024-11-11 18:31:17'),
+(27, 8, 'roland12', 'dadssa', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25627836, 123.79611254, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732691_673824d39ec1a.jpg\\\",\\\"dorm_pictures\\\\\\/1731732692_673824d4d7438.jpg\\\",\\\"dorm_pictures\\\\\\/1731732693_673824d539d28.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:50:17', '2024-11-15 20:51:45'),
+(28, 8, 'lando', 'dasdsa', 'Pakigne-Tubod Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25610944, 123.80160570, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732531_67382433ac869.jpg\\\",\\\"dorm_pictures\\\\\\/1731732532_673824349c637.jpg\\\",\\\"dorm_pictures\\\\\\/1731732533_673824352615a.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:57:24', '2024-11-15 20:48:53'),
+(29, 8, 'oli house', 'new house', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25475809, 123.79465342, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732441_673823d965007.jpg\\\",\\\"dorm_pictures\\\\\\/1731732442_673823da45287.jpg\\\",\\\"dorm_pictures\\\\\\/1731732442_673823dab9ffb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:17', '2024-11-15 20:49:32'),
+(30, 8, 'oli house1', 'new house', 'Caballero Street, Poblacion Ward I, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24352476, 123.79688501, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732413_673823bdb2203.jpg\\\",\\\"dorm_pictures\\\\\\/1731732414_673823bec63d8.jpg\\\",\\\"dorm_pictures\\\\\\/1731732415_673823bf29a41.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:33', '2024-11-15 20:50:01'),
+(31, 8, 'oli house2', 'new house', 'Abla Street, Escala at Corona Del Mar, Pooc, Minglanilla, Cebu, Central Visayas, 6045, Pilipinas', 10.24191997, 123.81902933, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732341_67382375d4e47.jpg\\\",\\\"dorm_pictures\\\\\\/1731732343_6738237750415.jpg\\\",\\\"dorm_pictures\\\\\\/1731732343_67382377b5b93.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:46', '2024-11-15 20:45:44'),
+(32, 8, 'oli house4', 'new house', 'Cebu South Road, Springwoods Country Homes Subdivision, Tunghaan, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24344030, 123.79036188, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732297_673823491e21f.jpg\\\",\\\"dorm_pictures\\\\\\/1731732298_6738234a78a1b.jpg\\\",\\\"dorm_pictures\\\\\\/1731732298_6738234acf7f9.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:07', '2024-11-15 20:44:59'),
+(33, 8, 'oli house4', 'new house', 'Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas', 10.25391349, 123.80512476, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732817_673825512f7b6.jpg\\\",\\\"dorm_pictures\\\\\\/1731732818_673825527dee4.jpg\\\",\\\"dorm_pictures\\\\\\/1731732818_67382552d4114.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:38', '2024-11-15 20:53:39'),
+(34, 8, 'oli house5', 'new house', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25281551, 123.79328012, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732256_67382320065ba.jpg\\\",\\\"dorm_pictures\\\\\\/1731732257_67382321880cf.jpg\\\",\\\"dorm_pictures\\\\\\/1731732258_6738232209071.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:52', '2024-11-15 20:44:18'),
+(35, 8, 'oli house6', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24296519, 123.79530813, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732202_673822ea864cf.jpg\\\",\\\"dorm_pictures\\\\\\/1731732206_673822eecb383.jpg\\\",\\\"dorm_pictures\\\\\\/1731732207_673822ef2d6c8.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:11', '2024-11-15 20:43:28'),
+(36, 8, 'oli house7', 'new house', 'Tulay, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.23761232, 123.79242182, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113706_671f70aa9a7dd.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70ab94107.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70abe48dc.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:41', '2024-11-15 20:42:42'),
+(37, 8, 'oli house8', 'new house', 'Lower Tiber, Poblacion Ward I, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24301798, 123.79877329, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113679_671f708f975b2.jpg\\\",\\\"dorm_pictures\\\\\\/1730113680_671f7090c4483.jpg\\\",\\\"dorm_pictures\\\\\\/1730113681_671f7091262fb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:11:21', '2024-11-15 20:42:13'),
+(38, 8, 'roland44', 'ewqewqe', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25273105, 123.80246401, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113634_671f7062789a5.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f706421aca.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f70646f810.jpg\\\"]\"', 0, 0, 0, '2024-08-08 01:35:26', '2024-11-15 20:41:41'),
+(42, 8, 'shane house', 'cool', 'Tres de Mayo Street, Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24546739, 123.79310846, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113609_671f704929945.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a3fac4.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a98cc3.jpg\\\"]\"', 0, 1, 0, '2024-08-14 20:22:16', '2024-11-15 20:41:19'),
+(43, 8, 'house', 'dsadsa', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25425133, 123.80263567, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113501_671f6fdde8aba.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf142d3.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf62b6a.jpg\\\"]\"', 0, 0, 0, '2024-09-04 01:52:50', '2024-11-15 20:40:32'),
+(44, 8, 'inday house', 'vbeebbe', 'Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24521401, 123.79225016, 5000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732761_67382519cdeae.jpg\\\",\\\"dorm_pictures\\\\\\/1731732762_6738251ab9d2b.jpg\\\",\\\"dorm_pictures\\\\\\/1731732763_6738251b1ed07.jpg\\\"]\"', 0, 0, 0, '2024-07-31 21:26:15', '2024-11-15 20:52:43'),
 (45, 8, 'sigma house', 'dsadfsadwdfgwef', '\"Pakigne-Tubod Road, Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25138321, 123.80551338, 10000.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1730165435_67203abb8e6be.jpg\\\",\\\"dorm_pictures\\\\\\/1730165457_67203ad1a29db.jpg\\\",\\\"dorm_pictures\\\\\\/1730167717_672043a504546.jpg\\\",\\\"dorm_pictures\\\\\\/1730176504_672065f84f853.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_6720660230af8.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_67206602e6f49.jpg\\\"]\"', 0, 0, 1, '2024-10-19 22:46:29', '2024-11-11 18:34:02'),
-(46, 43, 'rolando house', 'dsadasdasdi;ohefgjirfgbjkl', '\"Poblacion Ward III, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25118869, 123.80209143, 400.00, 3, 12, 12, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 0, '2024-10-28 02:34:16', '2024-11-09 20:35:21'),
-(47, 8, 'tqtqtqt', 'rtioijfgjklgfgfkl', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25221373, 123.80712032, 12222.00, 12, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1731382231_6732cbd730855.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc30bdc.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc96a1e.jpg\\\"]\"', 1, 1, 0, '2024-11-11 19:30:36', '2024-11-15 00:01:14'),
+(46, 43, 'rolando house', 'dsadasdasdi;ohefgjirfgbjkl', '\"Poblacion Ward III, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25118869, 123.80209143, 400.00, 3, 12, 12, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 1, '2024-10-28 02:34:16', '2024-11-15 21:11:05'),
+(47, 8, 'tqtqtqt', 'rtioijfgjklgfgfkl', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25221373, 123.80712032, 12222.00, 12, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1731382231_6732cbd730855.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc30bdc.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc96a1e.jpg\\\"]\"', 1, 1, 0, '2024-11-11 19:30:36', '2024-11-15 20:54:24'),
 (48, 62, 'olis house', 'nice housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasd', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25053508, 123.80311847, 1200.00, 2, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1731719073_6737efa1200ef.jpg\\\",\\\"dorm_pictures\\\\\\/1731719074_6737efa28e7ca.jpg\\\",\\\"dorm_pictures\\\\\\/1731719075_6737efa30a314.jpg\\\"]\"', 0, 0, 0, '2024-11-15 17:04:35', '2024-11-15 19:31:57');
 
 -- --------------------------------------------------------
@@ -494,7 +494,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `route`, `
 (295, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 1 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 17:16:29', '2024-11-15 17:16:34', 48, 62),
 (296, 62, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on <strong>olis house</strong></p><br><p>Sent on 2024-11-16 02:03:30</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 18:03:30', '2024-11-15 18:03:37', 48, 63),
 (297, 63, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request for cancellation has been declined.</p><br><p>Sent on2024-11-16 02:03:44</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:03:44', '2024-11-15 18:03:49', 48, 62),
-(298, 9, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>tqtqtqt</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱0.00</strong></p><p>Billing Date: <strong>2024-11-17</strong></p><br><p>Date: 2024-11-16 02:04:01</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:04:01', '2024-11-15 18:04:01', 47, 14),
+(298, 9, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>tqtqtqt</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱0.00</strong></p><p>Billing Date: <strong>2024-11-17</strong></p><br><p>Date: 2024-11-16 02:04:01</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:04:01', '2024-11-15 22:38:00', 47, 14),
 (299, 63, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>olis house</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱0.00</strong></p><p>Billing Date: <strong>2024-11-23</strong></p><br><p>Date: 2024-11-16 02:04:02</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:04:02', '2024-11-15 18:05:22', 48, 14),
 (300, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 2 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:32:14', '2024-11-15 18:32:17', 48, 62),
 (301, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 2 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:35:56', '2024-11-15 18:36:03', 48, 62),
@@ -520,7 +520,8 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `route`, `
 (321, 63, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your complaint and, after careful consideration, we have determined that it is invalid. However, the reported user will be placed under observation for further monitoring. No immediate action has been taken, but we will continue to monitor the situation.</p>', 1, NULL, '2024-11-15 19:34:04', '2024-11-15 19:34:13', NULL, 14),
 (322, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding a user: <strong>shane lopez</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-11-15 19:34:39', '2024-11-15 19:34:43', NULL, 63),
 (323, 63, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>Inappropriate Content</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-15 19:34:50', '2024-11-15 19:34:55', NULL, 14),
-(324, 62, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>Inappropriate Content</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p> <br><strong>You have 2 remaining Strike</strong>', 1, NULL, '2024-11-15 19:34:51', '2024-11-15 19:35:06', NULL, 14);
+(324, 62, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>Inappropriate Content</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p> <br><strong>You have 2 remaining Strike</strong>', 1, NULL, '2024-11-15 19:34:51', '2024-11-15 19:35:06', NULL, 14),
+(325, 43, 'warning', '<strong>Accomodation Deactivated</strong> <br> <p> Your Accomodation has been Deactivated due to:Misleading information</p>', 1, NULL, '2024-11-15 21:11:04', '2024-11-15 21:12:11', 46, 14);
 
 -- --------------------------------------------------------
 
@@ -574,7 +575,10 @@ INSERT INTO `property_views` (`id`, `user_id`, `dorm_id`, `created_at`, `updated
 (19, 9, 36, '2024-11-12 18:07:39', '2024-11-12 18:07:39'),
 (20, 9, 46, '2024-11-12 18:50:08', '2024-11-12 18:50:08'),
 (21, 63, 48, '2024-11-15 17:09:16', '2024-11-15 17:09:16'),
-(22, 63, 43, '2024-11-15 19:41:40', '2024-11-15 19:41:40');
+(22, 63, 43, '2024-11-15 19:41:40', '2024-11-15 19:41:40'),
+(23, 9, 48, '2024-11-15 21:59:06', '2024-11-15 21:59:06'),
+(24, 9, 31, '2024-11-15 22:34:05', '2024-11-15 22:34:05'),
+(25, 46, 48, '2024-11-15 23:14:00', '2024-11-15 23:14:00');
 
 -- --------------------------------------------------------
 
@@ -702,9 +706,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('MpHJNF8oEiC14e5YoAVuY9DfslDEGqbPavuMeziC', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQXQ3ZTJBdndxenpJMVJQd1BhUGhCUG9lR3VKUVZSMEg5empuZnFybyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9fQ==', 1731728519),
-('NSUKawDgawQ5sLzaS2POShbpJhO9eY44ERkQZiem', 14, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiTk91OFhsVWpCZFRBS3ZHaUV1bDNjeTFPTHdRNldjeWdVMk9NMEFhTCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9yZXBvcnRzL2ZldGNoP3BhZ2U9MSZyZXBvcnRfdHlwZT0mc3RhdHVzPXBlbmRpbmciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjM6InVybCI7YToxOntzOjg6ImludGVuZGVkIjtzOjM1OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvbm90aWZpY2F0aW9ucyI7fXM6NToic3RhdGUiO3M6NDA6IlZpWWxMN2dkcmpCczU2MVRlZmlWcVR0dTlBVlBHSHZrbVEzYUl2QmwiO3M6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE0O30=', 1731728367),
-('yvZH4rPXWt8zEUgEpds6faSvaDhiK8hgNUGgQhbE', 63, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMmNJMjAzNG5ObFVzM01oM05nMndPSlZDVFc2TjIyN055SmtOaWV5NCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL25vdGlmaWNhdGlvbnMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo2Mzt9', 1731728095);
+('43wLgidpKJfyHRije9bSRcIO6SH3u1YGh06bKnou', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicUVPeWFmejdVcVVNM25oUnYwUG5RYlRYMTJsdFlNUmZSb3puSjh6RiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9fQ==', 1731742268),
+('gVkrZQZx8c0q5ibWkPFOM5ociZ3d8hXLQIVcXn60', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNjJnTmN3clhOQ2lRNmZNZjRCOWQ2QUZscGVUVXRRaHh2WVlWamc2ViI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NToic3RhdGUiO3M6NDA6Im9vWkpYc3FKbkREYjd2aDNpSUdUSHFZRlZHNVZSNElKT0t1UlZTWm8iO30=', 1731733943),
+('n29iDINssBYu2cUXsyvPDmiLYcOEXiHaSWe3Vb02', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ0RWSFlraG5rZ3R2d2FBN0dGR2RtM0Z1WDFDdG1NVWhRMzZXTHBZZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1731740570);
 
 -- --------------------------------------------------------
 
@@ -740,8 +744,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `google_id`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `verify_status`, `role`, `strike`, `note`, `email_verification_code`, `email_verified_at`) VALUES
-(8, 'roland', 'rshan0418@gmail.com1', 'roland', '$2y$12$KAoWHQSf1WZlzzR9rz5mYuNJEUMifBnkXIG4E8oGzi5kHzP4uenvG', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'dasda12', NULL, '2024-07-18 23:37:48', '2024-11-15 07:09:32', 0, 1, 'owner', 3, NULL, NULL, '2024-11-06 03:33:15'),
-(9, 'dsads', 'russellcandilasa@gmail.com', 'rolando', '$2y$12$qJHoOqgn0jsnSk0QcV1qr.B/qc6Fnv7F2q.FsOMyfgUF5DHWHQcSK', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-07-28 03:30:53', '2024-11-05 07:00:59', 0, 0, 'tenant', 1, NULL, NULL, '2024-10-04 04:28:19'),
+(8, 'roland', 'rshan0418@gmail.com1', 'roland', '$2y$12$KAoWHQSf1WZlzzR9rz5mYuNJEUMifBnkXIG4E8oGzi5kHzP4uenvG', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'dasda12', NULL, '2024-07-18 23:37:48', '2024-11-15 21:11:24', 0, 1, 'owner', 3, NULL, NULL, '2024-11-06 03:33:15'),
+(9, 'dsads', 'russellcandilasa@gmail.com', 'rolando', '$2y$12$qJHoOqgn0jsnSk0QcV1qr.B/qc6Fnv7F2q.FsOMyfgUF5DHWHQcSK', '12314134', 0, NULL, 'profile-pictures/oPswQC2EERKWtfY7WXfz3QkrmMVhy0NptwkcyliS.jpg', NULL, NULL, '2024-07-28 03:30:53', '2024-11-15 22:38:31', 0, 0, 'tenant', 1, NULL, NULL, '2024-10-04 04:28:19'),
 (10, 'rolanda', 'dsa@f.vo', 'dsadsa', '$2y$12$r0hZYWws2BeT2pzsNlwaAOHufzxu/t7vxho7AJMGfnbbSV3k27GPm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-07-28 20:25:03', '2024-10-31 04:49:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-04 05:35:18'),
 (11, 'shane', 'dsa@f.vos', 'shane', '$2y$12$pfMTqwcBEoo7aXzeCe6HKeLT6vhdM4Bi0Xzqbpm0Y84flDKHNwxkm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 21:04:44', '2024-09-15 21:14:21', 1, 0, 'tenant', 3, NULL, 0, NULL),
 (13, 'rolands', 'rshan0418@gmail.coms', 'rolands', '$2y$12$4AL119LT4Dvr6TOP.4Euy.2ZR/nx0KVUPGuSV76JoHjAH9drGRSzS', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 22:30:36', '2024-11-01 20:19:59', 1, 0, 'tenant', 3, NULL, 730137, NULL),
@@ -751,12 +755,14 @@ INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb
 (42, 'shane lopez', 'rshan0418@gmail.com4', 'roland4', '$2y$12$fEgxFdQZneJ/TRzyafjlx.kgYZXU7HXbkHLQug5P5vepPrrixuWx2', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-27 22:29:17', '2024-10-27 22:29:27', 0, 0, 'owner', 3, NULL, NULL, '2024-10-28 06:29:27'),
 (43, 'Roland 1 Lopez', 'rshan0418@gmail.com13', 'roland13', '$2y$12$EAFOVb2bXUDBFt/U68D30uJpUllirWCQb1.Oc.4Y.P8bNYfLTZHYa', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:19:17', '2024-10-28 01:46:02', 0, 1, 'owner', 3, NULL, NULL, '2024-10-28 09:46:02'),
 (44, 'shane123', 'russellcandilasa@gmail.com3', 'dsa123', '$2y$12$2.tr.8.H7mEitAEFjQxTfONReN0Y3RTUefBkRjE2nRoAb1F6Es.l6', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:22:09', '2024-10-28 01:22:33', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-28 09:22:33'),
-(46, 'Roland Shane Lopez123', 'rshan0418@gmail.com123', 'roland123', '$2y$12$60t3M74ElAw5RZBUcIv3Puh2lYnXOlfIRQIAxvocG91ZDsqgZgFKG', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'Tres De Mayo', NULL, '2024-11-03 23:01:11', '2024-11-03 23:01:12', 0, 0, 'tenant', 3, NULL, 649363, NULL),
+(46, 'Roland Shane Lopez123', 'rshan0418@gmail.com123', 'roland123', '$2y$12$jKhK6Wog27HePLSvpU9mNOXzK6p0ZHpofVTkEwj5mTdjZrSr25E66', '12314134', NULL, NULL, 'profile-pictures/9vwqyU7bvRHMR6GyCMt3LghKLgOAuINYu5fjR3jV.jpg', 'Tres De Mayo', NULL, '2024-11-03 23:01:11', '2024-11-15 23:14:20', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-16 07:13:18'),
 (51, 'Ro Shan', 'rshan0418@gmail.com', NULL, NULL, '090909090909', NULL, '107895499310321282475', 'profile_picture/0RUVxlvDG8p1m4EcyW2LlW1fG.jpg', 'Tres De Mayo', NULL, '2024-11-06 20:25:44', '2024-11-06 20:26:12', 0, 0, 'owner', 3, NULL, NULL, '2024-11-07 04:25:44'),
 (53, 'Roland Shane Lopez65', 'rshan0418@gmail.com41', 'roland41', '$2y$12$4jL5CcPlmIDa8veDnyGDe.jZq9sLz.9KFyPY0vltqlKzh/AO9FK7S', '12314134', NULL, NULL, 'profile_picture/atIIuo2wOwszhr1zlgGsAge5u.png', 'purok 3 tres de mayo', NULL, '2024-11-06 22:13:53', '2024-11-06 22:14:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-07 06:14:15'),
 (60, 'Suzette Villareal', 'suzettevillareal5@gmail.com', NULL, NULL, NULL, NULL, '106474133351444271009', NULL, NULL, NULL, '2024-11-15 01:51:18', '2024-11-15 01:51:18', 0, 0, NULL, 3, NULL, NULL, '2024-11-15 09:51:18'),
 (62, 'shane lopez', 'nokielopez@gmail.com', NULL, NULL, '090909090909', NULL, '106648757521862198329', 'profile_picture/BK1dAV20OhbN4iy2L0N5OyvLT.jpg', 'Tres De Mayo', NULL, '2024-11-15 16:59:11', '2024-11-15 19:39:05', 0, 0, 'owner', 3, NULL, NULL, '2024-11-16 00:59:11'),
-(63, 'Roland Shane Lopez', 'rshan0418@gmail.com144', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/eFirTtA3ht7ck0qvmIhngBSV0.jpg', 'Tres De Mayo', NULL, '2024-11-15 17:07:28', '2024-11-15 19:05:11', 0, 0, 'tenant', 2, NULL, NULL, '2024-11-16 01:08:57');
+(63, 'Roland Shane Lopez12355', NULL, NULL, NULL, '090909090909', NULL, NULL, 'profile_picture/eFirTtA3ht7ck0qvmIhngBSV0.jpg', 'Tres De Mayo', NULL, '2024-11-15 17:07:28', '2024-11-15 19:05:11', 0, 0, 'tenant', 2, NULL, NULL, '2024-11-16 01:08:57'),
+(64, 'deagmo', 'degamo@gmail.com', 'degamo', '$2y$12$5THbLAMpvk07m80Q0la2xuCOncotIHj0WMkheHgIVN3KcaOEgwDCa', '2131321', NULL, NULL, 'profile_picture/F6tEF12asN9e5kD0EKF8ogm9b.jpg', 'Tres De Mayo', NULL, '2024-11-15 23:24:48', '2024-11-15 23:25:20', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-16 07:25:20'),
+(65, 'Roland Shane Lopez', 'rshan0418@gmail.com6666', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/AvQj0P4CW3LcULMmj1uQ0wpZc.jpg', 'Tres De Mayo', NULL, '2024-11-15 23:28:06', '2024-11-15 23:30:51', 0, 0, 'tenant', 3, NULL, 542861, NULL);
 
 -- --------------------------------------------------------
 
@@ -883,8 +889,8 @@ ALTER TABLE `property_views`
 --
 ALTER TABLE `rent_forms`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `rent_forms_user_id_foreign` (`user_id`),
-  ADD KEY `rent_forms_dorm_id_foreign` (`dorm_id`);
+  ADD KEY `rent_forms_dorm_id_foreign` (`dorm_id`),
+  ADD KEY `rent_forms_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `reports`
@@ -976,13 +982,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=325;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=326;
 
 --
 -- AUTO_INCREMENT for table `property_views`
 --
 ALTER TABLE `property_views`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `rent_forms`
@@ -1006,7 +1012,7 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `verifications`
@@ -1057,8 +1063,8 @@ ALTER TABLE `property_views`
 -- Constraints for table `rent_forms`
 --
 ALTER TABLE `rent_forms`
-  ADD CONSTRAINT `rent_forms_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`),
-  ADD CONSTRAINT `rent_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `rent_forms_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rent_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `reports`

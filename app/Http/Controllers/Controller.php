@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CurseWords;
 use App\Models\Reviews;
+use Crypt;
 use DB;
 use Carbon\Carbon;
 use App\Models\Dorm;
@@ -61,7 +62,7 @@ class Controller extends BaseController
                 if (!$user->email) {
                     return view('emails.collect_email_phone', ['user' => $user])->withErrors(['logname', 'Provide gmail and Phone no. to login']);
                 } else if ($user->email_verified_at == null) {
-                    return redirect()->route('send.email', [$user->id, 'verify'])->withErrors(['logname' => 'Please verify your email to continue.']);
+                    return redirect()->route('send.email', [Crypt::encrypt($user->id), 'verify'])->withErrors(['logname' => 'Please verify your email to continue.']);
                 } else {
                     Auth::login($user);
                     if ($user->role == 'owner') {
@@ -281,7 +282,7 @@ class Controller extends BaseController
                     $user->email_verified_at = now();
                     $user->email_verification_code = null;
                     $user->save();
-                    return redirect()->route('reset.pass', $user->id)->with('success', 'Code Verified.');
+                    return redirect()->route('reset.pass', Crypt::encrypt($user->id))->with('success', 'Code Verified.');
                 } else {
                     return redirect()->back()->withErrors('Invalid Action');
                 }
@@ -331,18 +332,20 @@ class Controller extends BaseController
         }
         // Attach the reset_password value
 
-        return redirect()->route('send.email', [$user->id, 'forgot'])->withErrors(['logname' => 'A reset Code has sent to your email']);
+        return redirect()->route('send.email', [Crypt::encrypt($user->id), 'forgot'])->withErrors(['logname' => 'A reset Code has sent to your email']);
     }
-    public function resetPass($id)
+    public function resetPass($data)
     {
+        $id = Crypt::decrypt(request('data'));
         $user = User::findOrFail($id);
 
 
         return view('reset-pass', compact('user'));
     }
 
-    public function redirectEmail($data, $action)
+    public function redirectEmail($id, $action)
     {
+        $data = Crypt::decrypt(request('id'));
         $user = User::find($data);
 
         $verificationCode = rand(100000, 999999);
@@ -459,7 +462,7 @@ class Controller extends BaseController
                 'route' => route('admin.manageuser')
             ]));
         }
-
+        $user->encrypted_id = Crypt::encrypt($user->id);
         // Redirect the user to a verification page
         return response()->json([
             'data' => $user,
@@ -490,7 +493,7 @@ class Controller extends BaseController
             $request->session()->regenerate();
 
             if (auth()->user()->email_verified_at == null) {
-                return redirect()->route('send.email', ['user' => auth()->user(), 'action' => 'verify'])
+                return redirect()->route('send.email', ['user' => Crypt::encrypt(auth()->id()), 'action' => 'verify'])
                     ->withErrors(['logname' => 'Please verify your email to continue.']);
 
             } else {
@@ -625,8 +628,9 @@ class Controller extends BaseController
         return view('profile', compact('user'));
     }
 
-    public function edit($id)
+    public function edit($data)
     {
+        $id = Crypt::decrypt(request('data'));
         $dorm = Dorm::find($id);
         Breadcrumbs::for('dorms.adddorm', function (BreadcrumbTrail $trail) use ($dorm) {
             $trail->parent('owner.Property');
@@ -956,8 +960,9 @@ class Controller extends BaseController
     }
 
 
-    public function review($id)
+    public function review($data)
     {
+        $id = Crypt::decrypt(request('data'));
         $review = Reviews::findOrFail($id);
         $dorm = Dorm::find($review->dorm_id);
         // Make sure the logged-in user is the owner of the review

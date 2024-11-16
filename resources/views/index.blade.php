@@ -251,13 +251,15 @@
 </section>
 @endsection
 <script>
-    $('.carousel').on('slide.bs.carousel', function () {
-        $('.carousel-item').css('opacity', 0); // Set opacity to 0 when sliding
-    });
+    try {
+        $('.carousel').on('slide.bs.carousel', function () {
+            $('.carousel-item').css('opacity', 0); // Set opacity to 0 when sliding
+        });
 
-    $('.carousel').on('slid.bs.carousel', function () {
-        $('.carousel-item.active').css('opacity', 1); // Fade in the active item
-    });
+        $('.carousel').on('slid.bs.carousel', function () {
+            $('.carousel-item.active').css('opacity', 1); // Fade in the active item
+        });
+    } catch (error) {
 
-
+    }
 </script>

@@ -5,6 +5,7 @@
                 @php
                     // Decode the JSON string into an array
                     $images = json_decode($dorm->image, true);
+
                 @endphp
 
                 @if (is_array($images) && !empty($images))
@@ -23,10 +24,13 @@
                                 </button>
                                 <div id="dropdown-menu-{{ $dorm->id }}" class="dropdown-menu"
                                     style="display: none; position: absolute; left: 0; background-color: white; border: 1px solid #ccc; padding: 10px; border-radius: 4px; min-width: 100px;">
-
+                                    @php
+                                        $hashedData = Crypt::encrypt($dorm->id);
+                                    @endphp
                                     @if($dorm->archive == 0)
-                                        <a class="dropdown-item" href="{{ route('dorms.posted', $dorm->id) }}">Show</a>
-                                        <a class="dropdown-item" href="{{ route('dorms.adddorm', $dorm->id) }}">Edit</a>
+
+                                        <a class="dropdown-item" href="{{ route('dorms.posted', $hashedData) }}">Show</a>
+                                        <a class="dropdown-item" href="{{ route('dorms.adddorm', $hashedData) }}">Edit</a>
                                         <a class="dropdown-item text-danger" onclick="confirmArchive({{ $dorm->id }})">Delete</a>
                                     @else
                                         <a class="dropdown-item" href="#" style="pointer-events: none; color: gray;">Show (Disabled)</a>
@@ -85,10 +89,12 @@
                     </div>
                 </div>
             @endif
-            <div class="card-body" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
+
+            <div class="card-body" onclick="location.href='{{ route('dorms.posted', Crypt::encrypt($dorm->id)) }}'">
                 <h5 class="card-title">{{ $dorm->name }}</h5>
                 <h6 style="color: {{$dorm->availability ? 'red' : 'black'}};">
-                    {{$dorm->availability ? 'Occupied' : 'Available'}}</h6>
+                    {{$dorm->availability ? 'Occupied' : 'Available'}}
+                </h6>
             </div>
         </div>
     </div>

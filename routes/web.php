@@ -90,8 +90,8 @@ Route::get('/', function () {
 
     // Fetch dorms with their average rating and order by the highest
     $topRatedDorms = Dorm::with('reviews') // Load reviews relationship
-        ->withAvg('reviews', 'rating') // Calculate average rating
-        ->orderByDesc('reviews_avg_rating') // Order by the average rating
+        ->withAvg('reviews', 'rating')->where('flag', 0) // Calculate average rating
+        ->orderByDesc('reviews_avg_rating')->join('users', 'dorms.user_id', '=', 'users.id')->where('users.active_status', 0) // Order by the average rating
         ->limit(6) // Limit to 6 dorms
         ->get();
 
@@ -127,7 +127,7 @@ Route::post('/verify-email', [Controller::class, 'verifyEmail'])->name('verify.e
 
 
 
-Route::get('/send-email/{user}/{action}', [Controller::class, 'redirectEmail'])->name('send.email');
+Route::get('/send-email/{id}/{action}', [Controller::class, 'redirectEmail'])->name('send.email');
 Route::get('/resend/{user}', [Controller::class, 'reSend'])->name('resend.code');
 Route::get('/upload', function () {
     return view('upload_documents');
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
         Route::get('/user-data/{id}', [DormController::class, 'getUserData']);
         Route::get('/profile', [Controller::class, 'showProfile'])->name('profile.edit');
         Route::put('/profile/update', [Controller::class, 'updateProfile'])->name('profile.update');
-        Route::get('/dorms/{id}', [DormController::class, 'show'])->name('dorms.posted');
+        Route::get('/dorms/{data}', [DormController::class, 'show'])->name('dorms.posted');
         Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
         Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
@@ -156,7 +156,7 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
             Route::post('/rentForm/edit', [RoomController::class, 'createBook'])->name('rentForm.edit');
             Route::get('/user/rent-forms', [Controller::class, 'userRentForms'])->name('user.rentForms');
             Route::post('/rentForm/cancel/{id}', [RoomController::class, 'cancel'])->name('rentForm.cancel');
-            Route::get('/reviews/{id}', [Controller::class, 'review'])->name('reviews.store');
+            Route::get('/reviews/{data}', [Controller::class, 'review'])->name('reviews.store');
             Route::get('/my-reviews', [Controller::class, 'userReviews'])->name('myReviews');
             Route::patch('/reviews/{id}/submit', [Controller::class, 'submitReview'])->name('reviews.submit');
             Route::get('/myfavourites', [DormController::class, 'favourites'])->name('favourites');
@@ -167,7 +167,7 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
             Route::post('/savedorm', [DormController::class, 'saveDorm'])->name('savedorm');
             Route::patch('/rentForm/{id}/updateStatus', [RoomController::class, 'updateStatus'])->name('rentForm.updateStatus');
             Route::get('/adddorm', [DormController::class, 'adddorm'])->name('adddorm');
-            Route::get('/dorms/{id}/edit', [Controller::class, 'edit'])->name('dorms.adddorm');
+            Route::get('/dorms/{data}/edit', [Controller::class, 'edit'])->name('dorms.adddorm');
             Route::put('/dorms/{id}', [DormController::class, 'update'])->name('dorms.update');
             Route::post('/dorms/{id}/archive', [DormController::class, 'archive'])->name('dorms.archive');
             Route::get('/managetenant', [Controller::class, 'showOwnerDashboard'])->name('managetenant');
@@ -205,5 +205,5 @@ Route::middleware('guest')->group(function () {
         return view('terms-serv');
     })->name('Terms');
     Route::post('/forgot-pass/submit', [Controller::class, 'forgotPass'])->name('forgot.pass');
-    Route::get('/reset-password/{id}', [Controller::class, 'resetPass'])->name('reset.pass');
+    Route::get('/reset-password/{data}', [Controller::class, 'resetPass'])->name('reset.pass');
 });

@@ -10,8 +10,10 @@ use App\Models\Reports;
 use App\Models\Reviews;
 use App\Models\Favorite;
 use App\Models\PropertyView;
+use Crypt;
 use DateTime;
 use DB;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Diglactic\Breadcrumbs\Breadcrumbs;
@@ -69,7 +71,18 @@ class DormController extends Controller
 
     public function showDorms()
     {
-        $dorms = Dorm::where('archive', 0)->where('availability', 0)->where('flag', 0)->get();
+        $dorms = Dorm::where('archive', 0)
+            ->where('availability', 0)
+            ->where('flag', 0)
+            ->join('users', 'dorms.user_id', '=', 'users.id')
+            ->where('users.active_status', 0)
+            ->select('dorms.*') // Select only dorm-related fields
+            ->get();
+
+        $dorms = $dorms->map(function ($dorm) {
+            $dorm->encrypted_id = Crypt::encrypt($dorm->id);
+            return $dorm;
+        });
         return view('dorms.map', compact('dorms'));
     }
     public function index(Request $request)
@@ -147,8 +160,9 @@ class DormController extends Controller
         });
         return view('dorms.adddorm', compact('dorm'));
     }
-    public function show($id)
+    public function show($data)
     {
+        $id = Crypt::decrypt(request('data'));
         $user = auth()->user();
         $dorm = Dorm::with('user')->findOrFail($id);
 
@@ -372,10 +386,10 @@ class DormController extends Controller
                 $reviewCount = $property->reviews->count();
                 $images = json_decode($property->image, true);
                 $firstImage = isset($images[0]) ? 'https://storage.googleapis.com/homeseek-profile-image/' . $images[0] : 'https://via.placeholder.com/80x80';
-
+                $hashedData = Crypt::encrypt($property->id);
                 $content .= "<li>";
                 $content .= "<img src='" . asset($firstImage) . "' alt='Property Image' width='80'>";
-                $content .= "<div class='property-details' style='cursor: pointer;' onclick='location.href=\"" . route('dorms.posted', $property->id) . "\"'>";
+                $content .= "<div class='property-details' style='cursor: pointer;' onclick='location.href=\"" . route('dorms.posted', $hashedData) . "\"'>";
                 $content .= "<h5>{$property->name}</h5>";
                 $content .= "<p><strong>Location:</strong> {$shortAddress}</p>";
                 $content .= "<p class='rating'><strong>Rating:</strong> {$propertyRating} / 5 ({$reviewCount} reviews)</p>";
@@ -460,9 +474,10 @@ class DormController extends Controller
                 $content .= '<li>No reviews available.</li>';
             } else {
                 foreach ($reviews as $review) {
+                    $hashedDatas = Crypt::encrypt($review->dorm_id);
                     // Building each review item HTML
                     $content .= '<div class="review-item">';
-                    $content .= "<h5 onclick='location.href=\"" . route('dorms.posted', $review->dorm_id) . "\"'>
+                    $content .= "<h5 onclick='location.href=\"" . route('dorms.posted', $hashedDatas) . "\"'>
                                     <strong> <a href='javascript: void(0)'>" . htmlspecialchars($review->dorm->name) . '</a></strong></h5>';
                     $content .= '<p>Located at: ' . htmlspecialchars($review->dorm->address) . '</p>';
                     $content .= '<div class="rating">Rating: ';

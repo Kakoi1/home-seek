@@ -149,6 +149,7 @@
         @elseif(!request()->routeIs('login.view') && !request()->routeIs('register.view'))
             <i class='fa-solid fa-bars' id="hamburger"></i>
             <script>
+
                 document.getElementById('hamburger').addEventListener('click', function () {
                     const navMenu = document.getElementById('navMenu');
                     navMenu.classList.toggle('show');
@@ -246,22 +247,28 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Select the chevron icon and the dropdown menu
-        const chevronIcon = document.querySelector('.bx-chevron-down');
-        const dropdownMenu = document.querySelector('.dropdownMenu');
+        try {
 
-        // Add click event listener to the chevron icon
-        chevronIcon.addEventListener('click', function () {
-            // Toggle the 'show' class on the dropdown menu to show/hide it
-            dropdownMenu.classList.toggle('show');
-        });
 
-        // Close the dropdown if clicking outside of it
-        document.addEventListener('click', function (event) {
-            // Check if the clicked element is not inside the profile details container
-            if (!event.target.closest('.profile-details')) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
+            // Select the chevron icon and the dropdown menu
+            const chevronIcon = document.querySelector('.bx-chevron-down');
+            const dropdownMenu = document.querySelector('.dropdownMenu');
+
+            // Add click event listener to the chevron icon
+            chevronIcon.addEventListener('click', function () {
+                // Toggle the 'show' class on the dropdown menu to show/hide it
+                dropdownMenu.classList.toggle('show');
+            });
+
+            // Close the dropdown if clicking outside of it
+            document.addEventListener('click', function (event) {
+                // Check if the clicked element is not inside the profile details container
+                if (!event.target.closest('.profile-details')) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        } catch (error) {
+
+        }
     });
 </script>

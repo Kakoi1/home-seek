@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
                     // Bind popup with dorm details
                     marker.bindPopup(`
-                        <h2 class="dorm-name" data-dorm-id="${dorm.id}" style="cursor:pointer;">${dorm.name}</h2>
+                        <h2 class="dorm-name" data-dorm-id="${dorm.encrypted_id}" style="cursor:pointer;">${dorm.name}</h2>
                         ₱${dorm.price}<br>
                         <a href="#" onclick="getDirections(${dorm.latitude}, ${dorm.longitude}); return false;">Direction</a>
                     `);
@@ -33,8 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 var dorm = dorms;
                 var marker = L.marker([dorm.latitude, dorm.longitude]).addTo(map);
+                console.log(dorms);             
                 marker.bindPopup(`
-                    <h2 class="dorm-name" data-dorm-id="${dorm.id}" style="cursor:pointer;">${dorm.name}</h2>
+                    <h2 class="dorm-name" data-dorm-id="${dorm.encrypted_id}" style="cursor:pointer;">${dorm.name}</h2>
                     ₱${dorm.price}<br>
                     <a href="#" onclick="getDirections(${dorm.latitude}, ${dorm.longitude}); return false;">Direction</a>
                 `);

@@ -2,6 +2,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Crypt;
 use Illuminate\Support\Facades\Auth;
 
 class CheckEmailVerified
@@ -9,7 +10,7 @@ class CheckEmailVerified
     public function handle($request, Closure $next)
     {
         if (Auth::check() && is_null(Auth::user()->email_verified_at)) {
-            return redirect()->route('send.email', [Auth::user(), 'verify'])
+            return redirect()->route('send.email', [Crypt::encrypt(Auth::id()), 'verify'])
                 ->withErrors(['logname' => 'Please verify your email to access this section.']);
         }
 

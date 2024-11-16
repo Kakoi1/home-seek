@@ -22,7 +22,7 @@
                         <div class="review-item">
                             <h5>{{ $review->dorm->name }}</h5>
                             <p>Located at: {{ $review->dorm->address }}</p>
-                            <a href="{{ route('reviews.store', $review->id) }}" class="btn">Leave a Review</a>
+                            <a href="{{ route('reviews.store', Crypt::encrypt($review->id)) }}" class="btn">Leave a Review</a>
                         </div>
                     @endforeach
                 </div>

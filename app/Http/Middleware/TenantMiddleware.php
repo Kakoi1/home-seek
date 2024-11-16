@@ -18,7 +18,7 @@ class TenantMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check() || Auth::user()->role !== 'tenant') {
-            return redirect()->route('home')->with('error', 'Unauthorized access for tenants only.');
+            return redirect()->back()->with('error', 'Unauthorized access for Tenants only.');
         }
 
         return $next($request);

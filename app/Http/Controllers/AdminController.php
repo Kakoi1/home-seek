@@ -7,6 +7,7 @@ use App\Models\RentForm;
 use App\Models\Reports;
 use App\Models\User;
 use App\Models\Notification;
+use Crypt;
 use Illuminate\Http\Request;
 use App\Models\Verifications;
 use App\Events\NotificationEvent;
@@ -273,15 +274,26 @@ class AdminController extends Controller
 
     public function manageProp()
     {
-        $properties = Dorm::orderBy('created_at', 'desc')->withCount('favoritedBy')->with('reviews')->with('user')->get();
+        $properties = Dorm::orderBy('created_at', 'desc')
+            ->withCount('favoritedBy')  // Count of users who favorited this dorm
+            ->with('reviews')           // Load related reviews for the dorm
+            ->with('user')              // Load the user who owns this dorm
+            ->get();
 
+        // Add encrypted id to each property for security (e.g., for passing in URLs)
+        $properties = $properties->map(function ($propertie) {
+            $propertie->encrypted_id = Crypt::encrypt($propertie->id);
+            return $propertie;
+        });
+        // dd($properties);
         return view('admin.admin-listing', compact('properties'));
     }
+
 
     public function show($id)
     {
         $dorm = Dorm::findOrFail($id);
-
+        $dorm->encrypted_id = Crypt::encrypt($dorm->id);
         // Count total bookings
         $bookingCount = RentForm::where('dorm_id', $id)->count();
 

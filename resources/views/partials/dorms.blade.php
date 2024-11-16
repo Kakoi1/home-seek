@@ -144,7 +144,10 @@
                             </div>
                         </div>
                     @endif
-                    <div class="cardbody" onclick="location.href='{{ route('dorms.posted', $dorm->id) }}'">
+                    @php
+                        $hashedData = Crypt::encrypt($dorm->id);
+                    @endphp
+                    <div class="cardbody" onclick="location.href='{{ route('dorms.posted', $hashedData) }}'">
                         @if($validReviews->count())
                             <div>
                                 <span class="rating-star">★ {{$numberAsString}}</span>

@@ -327,14 +327,14 @@
             @foreach($properties as $property)
                         @php
                             $fullAddress = $property->address;
-
                             // Split the string by commas
                             $addressParts = explode(',', $fullAddress);
                             $shortAddress = implode(', ', array_slice($addressParts, 0, 3));
                         @endphp
                         <tr>
 
-                            <td style="cursor: pointer;" onclick="location.href = '{{route('dorms.posted', $property->id)}}'">
+                            <td style="cursor: pointer;"
+                                onclick="location.href = '{{route('dorms.posted', Crypt::encrypt($property->id))}}'">
                                 {{ $property->name }}
                             </td>
                             <td>{{ $property->user->name }}</td>
@@ -569,7 +569,7 @@
         fetch(`/properties/${id}/details`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById("propertyTitle").innerHTML = `<a href="javascript:void(0)"><strong><h2 onclick = 'location.href = "/dorms/${data.dorm.id}"'>${data.dorm.name}</h2></strong></a>`;
+                document.getElementById("propertyTitle").innerHTML = `<a href="javascript:void(0)"><strong><h2 onclick = 'location.href = "/dorms/${data.dorm.encrypted_id}"'>${data.dorm.name}</h2></strong></a>`;
                 document.getElementById("overlayprop").style.display = "block";
                 document.getElementById("propertyDetails").style.display = "block";
 

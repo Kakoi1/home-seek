@@ -7,9 +7,9 @@
 <script src="{{asset('js/map.js')}}"></script>
 
 <style>
-.intmap{
-    padding: 20px 0;
-}
+    .intmap {
+        padding: 20px 0;
+    }
 </style>
 <div class="container">
     <h1 class="intmap">Interactive Map</h1>
@@ -19,4 +19,5 @@
     </script>
 
 </div>
+<script src="{{ asset('js/map.js') }}"></script>
 @endsection

@@ -29,15 +29,18 @@
 
                     <tbody id="tenantsTableBody">
                         @forelse ($pastTenants as $tenant)
-                            <tr>
-                                <td> <strong><a onclick="openUserPopup({{ $tenant->user->id }})"
-                                            href="javascript: void(0)">{{ ucfirst($tenant->user->name) }}</a></strong></td>
-                                <td><strong><a
-                                            href="{{route('dorms.posted', $tenant->dorm->id)}}">{{  ucfirst($tenant->dorm->name) }}</a></strong>
-                                </td>
-                                <td>{{ $tenant->start_date }}</td>
-                                <td>{{ $tenant->end_date }}</td>
-                            </tr>
+                                                @php
+                                                    $hashedData = Crypt::encrypt($tenant->dorm->id);
+                                                @endphp
+                                                <tr>
+                                                    <td> <strong><a onclick="openUserPopup({{ $tenant->user->id }})"
+                                                                href="javascript: void(0)">{{ ucfirst($tenant->user->name) }}</a></strong></td>
+                                                    <td><strong><a
+                                                                href="{{route('dorms.posted', $hashedData)}}">{{  ucfirst($tenant->dorm->name) }}</a></strong>
+                                                    </td>
+                                                    <td>{{ $tenant->start_date }}</td>
+                                                    <td>{{ $tenant->end_date }}</td>
+                                                </tr>
                         @empty
                             <tr>
                                 <td colspan="4">No past tenants found.</td>
@@ -127,24 +130,27 @@
                 </thead>
                 <tbody id="paymentsTableBody">
                     @forelse ($payments as $payment)
-                        <tr class="payment-row" data-date="{{ \Carbon\Carbon::parse($payment->paid_at)->format('Y-m') }}"
-                            data-status="{{ $payment->status }}">
-                            <td><strong><a onclick="openUserPopup({{ $payment->rentForm->user->id }})"
-                                        href="javascript: void(0)">{{ ucfirst($payment->rentForm->user->name) }}</a></strong>
-                            </td>
-                            <td><strong><a
-                                        href="{{route('dorms.posted', $payment->rentForm->dorm->id)}}">{{  ucfirst($payment->rentForm->dorm->name) }}</a></strong>
-                            </td>
-                            <td><a target='_blank'
-                                    href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>
-                            </td>
-                            <td>${{ number_format($payment->amount, 2) }}</td>
-                            <td>{{ \Carbon\Carbon::parse($payment->billing_date)->format('F d, Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($payment->paid_at)->format('M j, Y') }}</td>
-                            <td class="{{ $payment->status == 'paid' ? 'status-paid' : 'status-unpaid' }}">
-                                {{ ucfirst($payment->status) }}
-                            </td>
-                        </tr>
+                                        @php
+                                            $hashedDatas = Crypt::encrypt($payment->rentForm->dorm->id);
+                                        @endphp
+                                        <tr class="payment-row" data-date="{{ \Carbon\Carbon::parse($payment->paid_at)->format('Y-m') }}"
+                                            data-status="{{ $payment->status }}">
+                                            <td><strong><a onclick="openUserPopup({{ $payment->rentForm->user->id }})"
+                                                        href="javascript: void(0)">{{ ucfirst($hashedDatas) }}</a></strong>
+                                            </td>
+                                            <td><strong><a
+                                                        href="{{route('dorms.posted', $payment->rentForm->dorm->id)}}">{{  ucfirst($payment->rentForm->dorm->name) }}</a></strong>
+                                            </td>
+                                            <td><a target='_blank'
+                                                    href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>
+                                            </td>
+                                            <td>${{ number_format($payment->amount, 2) }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($payment->billing_date)->format('F d, Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($payment->paid_at)->format('M j, Y') }}</td>
+                                            <td class="{{ $payment->status == 'paid' ? 'status-paid' : 'status-unpaid' }}">
+                                                {{ ucfirst($payment->status) }}
+                                            </td>
+                                        </tr>
                     @empty
                         <tr>
                             <td colspan="6">No payment history found.</td>

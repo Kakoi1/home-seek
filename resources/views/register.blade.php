@@ -368,7 +368,7 @@
 </div>
 <script>
     window.routes = {
-        emailUrl: '{{ route('send.email', ['user' => ':user', 'action' => ':verify']) }}'
+        emailUrl: '{{ route('send.email', ['id' => ':user', 'action' => ':verify']) }}'
     };
 </script>
 <script>
@@ -409,7 +409,7 @@
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = emailRedirect.replace(':user', response.data.id).replace(':verify', 'verify');
+                            window.location.href = emailRedirect.replace(':user', response.data.encrypted_id).replace(':verify', 'verify');
                         }
                     });
                 },

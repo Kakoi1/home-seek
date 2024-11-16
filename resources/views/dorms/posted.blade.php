@@ -563,7 +563,7 @@
                             {{ $dorm->created_at->format('Y F') }}
                         @endif
                     </p>
-                    @if (Auth::id() != $dorm->user_id)
+                    @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
                         <div style="float:left;">
                             <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
                                 class="bts">Report Accommodation <i class="fa-solid fa-flag"></i></button>
@@ -572,7 +572,7 @@
                 </div>
 
             </div>
-            @if (Auth::id() != $dorm->user_id)
+            @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
                 <div class="booking-form">
                     <div class="price">
                         <span>{{ $dorm->price }}</span> / day
@@ -678,7 +678,7 @@
 
 </div>
 <!-- Overlay -->
-
+<script src="{{ asset('js/map.js') }}"></script>
 
 <br><br>
 <script>
