@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMessageMail;
 use App\Models\CurseWords;
 use App\Models\Reviews;
 use Crypt;
@@ -86,7 +87,12 @@ class Controller extends BaseController
 
         $request->validate([
             'email' => !$user->email
-                ? ['required', 'email', Rule::unique('users', 'email')]
+                ? [
+                    'required',
+                    'email',
+                    Rule::unique('users', 'email'),
+                    'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'
+                ]
                 : 'nullable|email',
             'role' => 'required',
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -394,7 +400,13 @@ class Controller extends BaseController
         // Validate form data with conditional fields for owner
         $fields = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('users', 'name')],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email'),
+                'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'
+            ],
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')],
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:20',
@@ -1165,5 +1177,25 @@ class Controller extends BaseController
             'monthlyEarningsPerDorm'
         ));
     }
+    public function submitMesage(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'message' => 'required|string|max:5000',
+        ]);
+        try {
+            // Send email using Laravel Mail
+            Mail::to('lopezrolandshane@gmail.com') // Replace with the recipient's email
+                ->send(new ContactMessageMail(
+                    $validatedData['name'],
+                    $validatedData['email'],
+                    $validatedData['message']
+                ));
 
+            return response()->json(['success' => 'Message sent successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to send message. Please try again later.'], 500);
+        }
+    }
 }

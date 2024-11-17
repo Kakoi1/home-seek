@@ -31,6 +31,32 @@
         /* height:  !important; */
         height: 300px !important;
     }
+
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #progressCircle {
+        transition: stroke-dashoffset 0.4s ease;
+    }
+
+    #loadingText {
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        font-size: 18px;
+        color: #fff;
+        font-weight: bold;
+    }
 </style>
 <section class="homepage" id="home">
     <div class="content">
@@ -239,16 +265,35 @@
             </div>
         </div>
         <div class="col form">
-            <form>
-                <input type="text" placeholder="Name*" required>
-                <input type="email" placeholder="Email*" required>
-                <textarea placeholder="Message*" required></textarea>
-                <button id="submit" type="submit"><i class="fas fa-envelope"></i><span>Send Message</span></button>
+            <p id="responseMessage" style="display:none; color:green;"></p>
+            <form id="contactForm">
+                @csrf
+                <input type="text" placeholder="Name*" name="name" required>
+                <input type="email" placeholder="Email*" name="email" required>
+                <textarea placeholder="Message*" name="message" required></textarea>
+                <button id="submit" type="submit">
+                    <i class="fas fa-envelope"></i>
+                    <span>Send Message</span>
+                </button>
             </form>
         </div>
     </div>
 
 </section>
+<div id="loadingOverlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 100px; height: 100px; position: relative;">
+        <!-- Circular Progress Background -->
+        <svg width="150" height="150" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" stroke="#e0e0e0" stroke-width="8" fill="none" />
+            <circle id="progressCircle" cx="50" cy="50" r="45" stroke="#4caf50" stroke-width="8" fill="none"
+                stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)" />
+        </svg>
+        <div id="loadingText"
+            style="position: absolute; top: 60%; left: 60%; font-size: 15px; color: #fff; font-weight: bold;">1%</div>
+    </div>
+</div>
+
 @endsection
 <script>
     try {
@@ -262,4 +307,108 @@
     } catch (error) {
 
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('contactForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const progressCircle = document.getElementById('progressCircle');
+        const loadingText = document.getElementById('loadingText');
+
+        // Hide the loading overlay on page load, just in case it was shown earlier
+        loadingOverlay.style.display = 'none';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Only show the loading overlay when form is being submitted
+            loadingOverlay.style.display = 'flex';
+
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('input[name="_token"]').value;
+
+            // Initialize progress at 1%
+            let progress = 1;
+            const dasharray = 283; // Circumference of the circle (2 * PI * radius)
+            progressCircle.style.strokeDasharray = dasharray;
+            progressCircle.style.strokeDashoffset = dasharray;
+
+            // Simulate progress incrementally while the AJAX request is ongoing
+            const progressInterval = setInterval(() => {
+                if (progress < 100) {
+                    progress += Math.random() * 5; // Increment by random value to simulate loading
+                    progress = Math.min(progress, 100); // Ensure it doesn't exceed 100%
+
+                    const offset = dasharray - (progress / 100) * dasharray;
+                    progressCircle.style.strokeDashoffset = offset;
+                    loadingText.textContent = `${Math.round(progress)}%`;
+                }
+            }, 100);
+
+            try {
+                // Submit the form data using AJAX (fetch)
+                const response = await fetch("{{ route('contact.submit') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData,
+                });
+
+                // Parse response JSON
+                const data = await response.json();
+
+                // If submission is successful
+                if (response.ok && data.success) {
+                    // Stop the progress animation
+                    clearInterval(progressInterval);
+                    progressCircle.style.strokeDashoffset = 0;
+                    loadingText.textContent = 'Message Sent!';
+
+                    // Show success message using SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Message Sent!',
+                        text: data.message,
+                        timer: 3000,
+                    });
+
+                    // Reset form
+                    form.reset();
+                } else {
+                    // Stop the progress animation
+                    clearInterval(progressInterval);
+                    progressCircle.style.strokeDashoffset = 0;
+                    loadingText.textContent = 'Failed to send.';
+
+                    // Show error message using SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: data.message || 'Something went wrong.',
+                    });
+                }
+            } catch (error) {
+                // Stop the progress animation
+                clearInterval(progressInterval);
+                progressCircle.style.strokeDashoffset = 0;
+                loadingText.textContent = '100% - Error occurred.';
+
+                // Show error if AJAX fails
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred. Please try again.',
+                });
+                console.error('Error:', error);
+            } finally {
+                // Hide the loading overlay after submission (even on success or failure)
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 1000); // Delay hiding to show the final state of the progress circle
+            }
+        });
+    });
+
+
 </script>

@@ -288,8 +288,8 @@
                         </div>
 
                         <div class="input-box">
-                            <input type="email" id="email" name="email" required>
-                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" pattern="^[a-zA-Z0-9]+@gmail\.com$" required>
+                            <label for="email">Gmail Address</label>
                         </div>
 
                         <div class="input-box">

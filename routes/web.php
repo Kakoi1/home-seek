@@ -106,7 +106,7 @@ Route::get('/test-upload', [HomeController::class, 'showUploadForm'])->name('tes
 Route::post('/category/store', [HomeController::class, 'upload'])->name('test.upload');
 Route::post('/login', [Controller::class, 'login'])->name('login');
 Route::post('/register', [Controller::class, 'register'])->name('register');
-
+Route::post('/contact-submit', [Controller::class, 'submitMesage'])->name('contact.submit');
 
 Route::controller(GoogleController::class)->group(function () {
     Route::get('auth/google', 'redirectToGoogle')->name('auth.google');

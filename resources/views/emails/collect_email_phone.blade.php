@@ -257,7 +257,7 @@
 
             @if ($user->fb_id)
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">Gmail</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
             @endif
