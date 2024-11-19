@@ -817,6 +817,8 @@ class Controller extends BaseController
             SELECT 
                 rf.id as rent_form_id,
                 rf.start_date,
+                 rf.end_date,
+                  rf.total_price,
                 rf.created_at,
                  rf.user_id,
                 d.name AS dorm_name,
@@ -1106,7 +1108,7 @@ class Controller extends BaseController
             ->get();
 
         // Count the number of unique tenants
-        $totalTenants = $tenants->unique('tenant_id')->count();
+
 
         // Collect all pending rent requests for the owner's dorms
         $pendingRequests = RentForm::whereIn('dorm_id', $ownerDorms->pluck('id'))
@@ -1168,7 +1170,6 @@ class Controller extends BaseController
 
         return view('owner-home', compact(
             'totalProperties',
-            'totalTenants',
             'pendingRequests',
             'monthlyEarnings',
             'bookingRates',

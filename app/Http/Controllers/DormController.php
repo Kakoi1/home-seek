@@ -372,6 +372,11 @@ class DormController extends Controller
             // Prepare content with property details
 
             $content = "<div class='property-list'>";
+            $content .= "<div class='contacter'>";
+            $content .= "<p>Email: <a href='mailto: $user->email'>$user->email</a></p>";
+            $content .= "<p>Phone no.: $user->phone</p>
+             </div>
+            ";
             $content .= "<h4>Active Properties:</h4>";
             $content .= "<p class='owner-rating'><strong>Owner Rating:</strong> {$averageOwnerRating} / 5 ({$totalReviews} reviews)</p>";
             $content .= "<ul>";

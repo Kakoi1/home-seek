@@ -305,7 +305,7 @@ class AdminController extends Controller
         $cancellationRate = $bookingCount > 0 ? ($cancellationCount / $bookingCount) * 100 : 0;
 
         // Fetch tenant reviews and other data
-        $reviews = $dorm->reviews()->with('user')->get();
+        $reviews = $dorm->reviews()->where('rating', '>', 0)->with('user')->get();
 
         return response()->json([
             'dorm' => $dorm,

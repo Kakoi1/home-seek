@@ -71,10 +71,10 @@
                     <input type="number" name="max_price" class="form-control" placeholder="Enter max price"
                         value="{{ request('max_price') }}">
                 </div>
-                <div class="col-md-3 mb-3">
+                <!-- <div class="col-md-3 mb-3">
                     <input type="number" name="rooms_avail" class="form-control" placeholder="Enter no. of rooms"
                         value="{{ request('rooms_avail') }}">
-                </div>
+                </div> -->
             </div>
             <button onclick="location.href ='{{ route('showdorms') }}'" class="btn map-search" type="button">Map
                 Search</button>

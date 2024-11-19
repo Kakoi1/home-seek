@@ -438,6 +438,9 @@
                             <h5 class="card-title">{{ ucfirst($rentForm->dorm_name) }}</h5>
                             <p onclick="openUserPopup({{ $rentForm->user_id }})">Tenant: <strong><a
                                         href="javascript: void(0)">{{ ucfirst($rentForm->tenant_name) }}</a></strong></p>
+                            <p>Checkin date: <strong>{{ $rentForm->start_date }}</strong></p>
+                            <p>Checkout date: <strong>{{ $rentForm->end_date }}</strong></p>
+                            <p>Price: <strong>₱ {{ $rentForm->total_price }}</strong></p>
                             <p>Submitted on: {{ \Carbon\Carbon::parse($rentForm->created_at)->format('Y-m-d H:i') }}</p>
                             <div class="action-buttons">
                                 <form id="approveBook" action="{{ route('rentForm.updateStatus', $rentForm->rent_form_id) }}"

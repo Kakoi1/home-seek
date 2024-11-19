@@ -28,10 +28,6 @@ class RentForm extends Model
     {
         return $this->belongsTo(Dorm::class);
     }
-    public function extendRequests()
-    {
-        return $this->hasMany(ExtendRequest::class);
-    }
     public function tenant()
     {
         return $this->belongsTo(User::class, 'user_id');  // Assuming a tenant is a User

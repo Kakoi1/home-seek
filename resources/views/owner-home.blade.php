@@ -151,8 +151,8 @@
             <h2>{{ $totalProperties }}</h2>
             <p>Total Accommodations</p>
         </div>
-        <div class="stat-box" onclick="showPopup('totalTenants')">
-            <h2>{{ $totalTenants }}</h2>
+        <div class="stat-box" onclick="showPopup('activeTenants')">
+            <h2>{{ $tenants->count()}}</h2>
             <p>Active Tenants</p>
         </div>
         <div class="stat-box" onclick="showPopup('pendingRequests')">
@@ -186,7 +186,9 @@
     </div>
 </div>
 
+@php
 
+@endphp
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const bookingRates = @json($bookingRates);
@@ -269,7 +271,7 @@
             headers: ["Property ID", "Accommodation Name", "Location"],
             rows: [
                 @foreach($ownerDorms as $property)
-                                                                                            {
+                                                                                                                                                                                    {
                         Availability: "{{ $property->availability ? 'Occupied' : 'Available'}}",
                         Accommodation: "{{ $property->name }}",  // Accessing the 'name' property for each property
                         location: "{{ implode(', ', array_slice(explode(',', html_entity_decode($property->address)), 0, 4)) }}"  // Truncating the address in PHP
@@ -280,25 +282,25 @@
 
         activeTenants: {
             title: "Active Tenants",
-            headers: ["Tenant ID", "Tenant Name", "Email"],
+            headers: ["Tenant Name", "Email", "Status"],
             rows: [
                 @foreach($tenants as $tenant)
-                                                                                                    {
-                        id: "{{ $tenant->tenant->id }}",
-                        name: "{{ $tenant->tenant->name }}",
-                        email: "{{ $tenant->tenant->email }}"
+                                                                                                                                                                                            {
+                        id: "{{ $tenant->tenant->name }}",
+                        name: "{{ $tenant->tenant->email }}",
+                        email: "{{ $tenant->status }}"
                     },
                 @endforeach
             ]
         },
         pendingRequests: {
             title: "Pending Rent Requests",
-            headers: ["Tenant ID", "Tenant Name", "Request Status"],
+            headers: ["Tenant Name", "Email", "Request Status"],
             rows: [
                 @foreach($pendingRequests as $request)
-                                                                                             {
-                        tenant_id: "{{ $request->tenant->id }}",
-                        tenant_name: "{{ $request->tenant->name }}",
+                                                                                                                                                                                     {
+                        tenant_id: "{{ $request->tenant->name}}",
+                        tenant_name: "{{ $request->tenant->email }}",
                         status: "{{ $request->status }}"
                     },
                 @endforeach
@@ -309,7 +311,7 @@
             headers: ["Dorm ID", "Dorm Name", "Earnings"],
             rows: [
                 @foreach($monthlyEarningsPerDorm as $dorm)
-                                                                                                {
+                                                                                                                                                                                        {
                         Accommodation: "{{ $dorm->name }}",
                         dorm_name: "{{  implode(', ', array_slice(explode(',', html_entity_decode($dorm->address)), 0, 4)) }}",
                         earnings: "₱{{ number_format($dorm->total_earnings, 2) }}"  // Assuming you have earnings in $dorm->earnings

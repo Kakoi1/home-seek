@@ -136,10 +136,10 @@
                                         <tr class="payment-row" data-date="{{ \Carbon\Carbon::parse($payment->paid_at)->format('Y-m') }}"
                                             data-status="{{ $payment->status }}">
                                             <td><strong><a onclick="openUserPopup({{ $payment->rentForm->user->id }})"
-                                                        href="javascript: void(0)">{{ ucfirst($hashedDatas) }}</a></strong>
+                                                        href="javascript: void(0)">{{ ucfirst($payment->rentForm->dorm->name) }}</a></strong>
                                             </td>
                                             <td><strong><a
-                                                        href="{{route('dorms.posted', $payment->rentForm->dorm->id)}}">{{  ucfirst($payment->rentForm->dorm->name) }}</a></strong>
+                                                        href="{{route('dorms.posted', $hashedDatas)}}">{{  ucfirst($payment->rentForm->dorm->name) }}</a></strong>
                                             </td>
                                             <td><a target='_blank'
                                                     href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>

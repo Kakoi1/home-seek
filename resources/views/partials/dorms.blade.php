@@ -114,7 +114,8 @@
                                     <!-- Heart Icon for Favorites -->
                                     <span class="favorite-icon" onclick="toggleComments({{ $dorm->id }})">
                                         <i class="{{$reviewClass}} fa-comment" style="color: #ffffff;"></i>
-                                        <span id="fav-count-{{ $dorm->id }}">{{ $dorm->reviews->count() }}</span>
+                                        <span
+                                            id="fav-count-{{ $dorm->id }}">{{ $dorm->reviews->where('rating', '>', 0)->count() }}</span>
                                     </span>
                                 </div>
 
