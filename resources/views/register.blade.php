@@ -414,18 +414,23 @@
                     });
                 },
                 error: function (xhr, status, error) {
-                    let errors = xhr.responseJSON.errors;
+                    let errors = xhr.responseJSON?.errors || {};
                     let errorMessages = '';
                     $.each(errors, function (field, messages) {
                         messages.forEach(function (message) {
                             errorMessages += `<li>${message}</li>`;
                         });
                     });
+
+                    if (!errorMessages) {
+                        errorMessages = `<li>${xhr.statusText || 'Something went wrong.'}</li>`;
+                    }
+
                     Swal.fire({
                         title: 'Error!',
                         html: `<ul>${errorMessages}</ul>`,
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
                     });
                 }
             });

@@ -398,27 +398,62 @@ class Controller extends BaseController
     public function register(Request $request)
     {
         // Validate form data with conditional fields for owner
-        $fields = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('users', 'name')],
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'name'),
+            ],
             'email' => [
                 'required',
                 'email',
                 'max:255',
                 Rule::unique('users', 'email'),
-                'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'
+                'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/',
             ],
-            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')],
-            'password' => 'required|string|min:6|confirmed',
-            'phone' => 'nullable|string|max:20',
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'username'),
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[A-Z]/',       // At least one uppercase letter
+                'regex:/[0-9]/',       // At least one number
+                'confirmed',
+            ],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                'regex:/^(09|\+639)\d{9}$|^(02|\+632)\d{7}$/',
+            ],
             'role' => 'required|string',
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'address' => 'required|string',
             'valid_id' => $request->role === 'owner' ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable',
             'business_permit' => $request->role === 'owner' ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable',
+        ], [
+            'password.regex' => [
+                'The password must contain at least one uppercase letter.',
+                'The password must contain at least one number.',
+            ],
         ]);
+        $fields = $validator->validated();
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         // Hash the password
         $fields['password'] = bcrypt($fields['password']);
+
 
         // Handle profile picture upload to Google Cloud Storage
         if ($request->hasFile('profile_picture')) {
@@ -505,7 +540,7 @@ class Controller extends BaseController
             $request->session()->regenerate();
 
             if (auth()->user()->email_verified_at == null) {
-                return redirect()->route('send.email', ['user' => Crypt::encrypt(auth()->id()), 'action' => 'verify'])
+                return redirect()->route('send.email', [Crypt::encrypt(auth()->id()), 'verify'])
                     ->withErrors(['logname' => 'Please verify your email to continue.']);
 
             } else {
