@@ -302,13 +302,27 @@ class Controller extends BaseController
     }
     public function updatePassword(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'password' => 'required|string|min:8|confirmed',  // password confirmation handled
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'regex:/[A-Z]/',       // At least one uppercase letter
+                    'regex:/[0-9]/',       // At least one number
+                    'confirmed', // Ensures password confirmation matches
+                ],
+            ],
+            [
+                'password.regex' => 'The password must contain at least one uppercase letter and one number.',
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
 
         // Assuming user ID or email is passed to identify the user
         $user = User::find($request->user_id);
