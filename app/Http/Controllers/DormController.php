@@ -360,21 +360,21 @@ class DormController extends Controller
             $averageOwnerRating = $totalReviews > 0 ? round($totalRating / $totalReviews, 1) : '0';
 
             // Now paginate dorms for display
-            $dorms = Dorm::select('dorms.id', 'dorms.name', 'dorms.address', 'dorms.image', 'dorms.description', 'dorms.user_id', DB::raw('AVG(reviews.rating) as average_rating'))
+            $dorms = Dorm::select('dorms.id', 'dorms.name', 'dorms.address', 'dorms.availability', 'dorms.image', 'dorms.description', 'dorms.user_id', DB::raw('AVG(reviews.rating) as average_rating'))
                 ->where('dorms.user_id', $user->id)
                 ->where('dorms.flag', 0)
                 ->where('archive', 0)
                 ->leftJoin('reviews', 'dorms.id', '=', 'reviews.dorm_id')
-                ->groupBy('dorms.id', 'dorms.name', 'dorms.description', 'dorms.address', 'dorms.image', 'dorms.user_id')
+                ->groupBy('dorms.id', 'dorms.name', 'dorms.description', 'dorms.address', 'dorms.image', 'dorms.availability', 'dorms.user_id')
                 ->orderBy('average_rating', 'desc')
                 ->paginate(5);
 
             // Prepare content with property details
 
             $content = "<div class='property-list'>";
-            $content .= "<div class='contacter'>";
-            $content .= "<p>Email: <a href='mailto: $user->email'>$user->email</a></p>";
-            $content .= "<p>Phone no.: $user->phone</p>
+            $contacter = "<div class='contacter'>";
+            $contacter .= "<p>Email: <a href='mailto: $user->email'>$user->email</a></p>";
+            $contacter .= "<p>Phone no.: $user->phone</p>
              </div>
             ";
             $content .= "<h4>Active Properties:</h4>";
@@ -397,6 +397,7 @@ class DormController extends Controller
                 $content .= "<div class='property-details' style='cursor: pointer;' onclick='location.href=\"" . route('dorms.posted', $hashedData) . "\"'>";
                 $content .= "<h5>{$property->name}</h5>";
                 $content .= "<p><strong>Location:</strong> {$shortAddress}</p>";
+                $content .= "<p>Status: <strong class = 'text-" . ($property->availability ? 'danger' : 'success') . "'>" . ($property->availability ? 'Occupied' : 'Available') . "</strong> </p>";
                 $content .= "<p class='rating'><strong>Rating:</strong> {$propertyRating} / 5 ({$reviewCount} reviews)</p>";
                 $content .= "</div>";
                 $content .= "</li>";
@@ -412,16 +413,18 @@ class DormController extends Controller
                 'content' => $content,
                 'profile_picture' => $user->profile_picture,
                 'joined' => $user->created_at->diffForHumans(),
-                'status_acc' => $user->active_status ? 'Inactive' : 'Active',
+                'status_acc' => $user->active_status,
                 'pagination' => [
                     'total' => $dorms->total(),
                     'per_page' => $dorms->perPage(),
                     'current_page' => $dorms->currentPage(),
                     'last_page' => $dorms->lastPage(),
-                ]
+                ],
+                'contacts' => $contacter
             ]);
         } elseif ($user->role == 'tenant') {
             $content = '';
+
             if (Auth::user()->role == 'admin') {
                 // Retrieve the rented property details first
                 $rentedProperty = RentForm::where('user_id', $user->id)
@@ -430,6 +433,7 @@ class DormController extends Controller
                     ->first();
                 if ($rentedProperty) {
                     $content .= '<div class="rented-property">';
+
                     $content .= '<h4>Current Rented Property:</h4>';
                     $content .= '<p><strong>Name:</strong> ' . htmlspecialchars($rentedProperty->dorm->name) . '</p>';
                     $content .= '<p><strong>Address:</strong> ' . htmlspecialchars($rentedProperty->dorm->address) . '</p>';
@@ -481,7 +485,7 @@ class DormController extends Controller
                 foreach ($reviews as $review) {
                     $hashedDatas = Crypt::encrypt($review->dorm_id);
                     // Building each review item HTML
-                    $content .= '<div class="review-item">';
+                    $content .= '<div class="reviews-items">';
                     $content .= "<h5 onclick='location.href=\"" . route('dorms.posted', $hashedDatas) . "\"'>
                                     <strong> <a href='javascript: void(0)'>" . htmlspecialchars($review->dorm->name) . '</a></strong></h5>';
                     $content .= '<p>Located at: ' . htmlspecialchars($review->dorm->address) . '</p>';
@@ -500,14 +504,19 @@ class DormController extends Controller
                 }
             }
             $content .= '</ul>';
-
+            $contacter = "<div class='contacter'>";
+            $contacter .= "<p>Email: <a href='mailto: $user->email'>$user->email</a></p>";
+            $contacter .= "<p>Phone no.: $user->phone</p>
+             </div>
+            ";
             return response()->json([
                 'name' => $user->name,
                 'role' => ucfirst($user->role),
                 'content' => $content,
                 'profile_picture' => $user->profile_picture,
                 'joined' => $user->created_at->diffForHumans(),
-                'status_acc' => $user->active_status ? 'Inactive' : 'Active',
+                'status_acc' => $user->active_status,
+                'contacts' => $contacter
             ]);
         } else {
             $content = '<div class="review-item">';

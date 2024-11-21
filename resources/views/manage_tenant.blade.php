@@ -310,18 +310,21 @@
                                                                                             $dueDate = \Carbon\Carbon::parse($bill['billing_date']);
                                                                                             $currentDate = \Carbon\Carbon::now();
                                                                                             // Calculate the difference in days
-                                                                                            $daysRemaining = $dueDate->diffInDays($currentDate, false); // false for absolute value
+                                                                                            $daysRemaining = $dueDate->diffInDays($currentDate, false); // false for signed value
                                                                                             // Round the number of days remaining to the nearest integer
                                                                                             $roundedDaysRemaining = round($daysRemaining);
+                                                                                            // Determine if overdue
+                                                                                            $isOverdue = $roundedDaysRemaining > 0;
                                                                                         @endphp
 
                                                                                         <div style="padding: 5px;">
                                                                                             <p class="d-flex justify-content-between align-items-center mb-3">
                                                                                                 <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
                                                                                                 <!-- Display the number of days remaining -->
-                                                                                                <span><strong>Due Date:</strong>
+                                                                                                <span @if ($isOverdue) style="color: red;" @endif>
+                                                                                                    <strong>Due Date:</strong>
                                                                                                     @if ($roundedDaysRemaining > 0)
-                                                                                                        {{ $roundedDaysRemaining }} days
+                                                                                                        Over due
                                                                                                     @elseif ($roundedDaysRemaining == 0)
                                                                                                         Today
                                                                                                     @else
@@ -330,6 +333,7 @@
                                                                                                 </span>
                                                                                             </p>
                                                                                         </div>
+
                                                                                         <br>
                                                                                         <div style="display: flex; justify-content: flex-start; gap: 10px;">
                                                                                             <form method="POST" action="{{ route('notifyTenant', $bill['rent_form_id']) }}">

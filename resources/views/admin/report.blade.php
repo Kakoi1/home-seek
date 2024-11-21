@@ -203,28 +203,33 @@
         }
 
         // If there are reports, display them
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // If there are reports, display them
         reports.forEach(report => {
-            const reportType = report.dorm_id ? "Accomodation" : "User";
+            const reportType = capitalizeFirstLetter(report.dorm_id ? "accommodation" : "user"); // Capitalize
             const actionButtons = report.status === 'pending'
                 ? `
-            <button class="btn-valid" onclick="handleAction(${report.id}, 'valid')">Valid</button>
-            <button class="btn-invalid" onclick="handleAction(${report.id}, 'invalid')">Invalid</button>
-        `
+        <button class="btn-valid" onclick="handleAction(${report.id}, 'valid')">${capitalizeFirstLetter('valid')}</button>
+        <button class="btn-invalid" onclick="handleAction(${report.id}, 'invalid')">${capitalizeFirstLetter('invalid')}</button>
+    `
                 : ''; // Empty string means no buttons will be added
 
             const row = `
-            <tr>
-                <td>${report.user.name}</td>
-                <td>${report.reported.name}</td>
-                <td>${report.dorm ? report.dorm.name : 'N/A'}</td>
-                <td>${report.reason}</td>
-                <td>${report.status}</td>
-                <td>${reportType}</td>
-                <td class="actions">
-                    ${actionButtons}  <!-- Display action buttons only if status is 'pending' -->
-                </td>
-            </tr>
-        `;
+        <tr>
+            <td>${capitalizeFirstLetter(report.user.name)}</td>
+            <td>${capitalizeFirstLetter(report.reported.name)}</td>
+            <td>${report.dorm ? capitalizeFirstLetter(report.dorm.name) : 'N/A'}</td>
+            <td>${capitalizeFirstLetter(report.reason)}</td>
+            <td>${capitalizeFirstLetter(report.status)}</td>
+            <td>${reportType}</td>
+            <td class="actions">
+                ${actionButtons} <!-- Display action buttons only if status is 'pending' -->
+            </td>
+        </tr>
+    `;
             reportTableBody.insertAdjacentHTML("beforeend", row);  // Insert rows into the table body
         });
     }

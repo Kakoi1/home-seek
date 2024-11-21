@@ -476,7 +476,7 @@
                                     @if ($currentRent->note == '')
                                         <button id="cancelButton" class="btn cancel-button">Cancel Booking</button>
                                     @else
-                                        <p><strong>You requested a Canellation</strong></p>
+                                        <p><strong>You requested a Cancellation</strong></p>
                                     @endif
 
                                 </div>
@@ -662,8 +662,8 @@
                                         <td>{{ ucfirst($payment->rentForm->dorm->name) }}</td>
                                         <td>₱{{ $payment->amount }}</td>
                                         <td><strong>{{ ucfirst($payment->status) }}</strong></td>
-                                        <td><a target='_blank'
-                                                href="{{'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference}}">Image</a>
+                                        <td><a target={{$payment->reference ? '_blank' : ''}}
+                                                href="{{$payment->reference ? 'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference : ''}}">{{$payment->reference ? 'Image' : ''}}</a>
                                         </td>
                                         <td>{{ ucwords(str_replace('_', ' ', $payment->mode)) }}</td>
 

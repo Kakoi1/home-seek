@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 16, 2024 at 08:31 AM
+-- Generation Time: Nov 21, 2024 at 06:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,19 +46,10 @@ CREATE TABLE `billings` (
 --
 
 INSERT INTO `billings` (`id`, `user_id`, `rent_form_id`, `amount`, `billing_date`, `status`, `reference`, `mode`, `paid_at`, `created_at`, `updated_at`) VALUES
-(15, 9, 40, 33000.00, '2024-10-13', 'paid', NULL, NULL, '2024-11-08 04:08:52', '2024-10-20 21:21:06', '2024-11-07 20:08:52'),
-(16, 10, 41, 40000.00, '2024-11-07', 'paid', NULL, NULL, '2024-11-10 04:42:29', '2024-11-05 21:16:01', '2024-11-09 20:42:29'),
-(17, 14, 40, 1000.00, '2024-11-12', 'paid', NULL, NULL, '2024-11-10 12:41:03', '2024-11-10 04:41:03', '2024-11-10 04:41:03'),
-(18, 9, 45, 1000.00, '2024-11-19', 'paid', '213sd', 'credit_card', '2024-11-12 05:58:29', '2024-11-10 04:50:43', '2024-11-10 21:58:29'),
-(19, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(20, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(21, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(22, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(23, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(24, 9, 39, 1000.00, '2024-11-12', 'paid', NULL, NULL, NULL, '2024-11-10 07:40:15', '2024-11-10 07:40:15'),
-(25, 9, 48, 20000.00, '2024-11-16', 'paid', 'Proof_of_Payment/1qfAAKGKfKnG8iOfnycg7bAuZ.png', 'credit_card', '2024-11-04 08:31:02', '2024-11-13 00:15:01', '2024-11-15 00:31:03'),
-(26, 9, 46, 48888.00, '2024-11-17', 'pending', NULL, NULL, NULL, '2024-11-15 18:04:01', '2024-11-15 18:04:01'),
-(28, 63, 51, 7200.00, '2024-11-21', 'paid', 'Proof_of_Payment/x1kKDeK3ttMZ9hfCSmkuBnaBe.jpg', 'credit_card', '2024-11-15 02:57:40', '2024-11-15 18:49:01', '2024-11-15 18:57:41');
+(29, 69, 54, 14000.00, '2024-11-30', 'paid', 'Proof_of_Payment/aazV4wQ7yh3M4bTbA6BA0npJr.jpg', 'e_wallet', '2024-11-21 04:24:53', '2024-11-20 20:14:01', '2024-11-20 20:24:54'),
+(30, 71, 56, 6000.00, '2024-11-28', 'paid', NULL, 'cash', '2024-11-23 04:40:27', '2024-11-20 20:39:00', '2024-11-20 20:40:27'),
+(31, 71, 58, 7000.00, '2024-11-30', 'paid', 'Proof_of_Payment/9DOlJx9sakjh1c4pKCMkTCwqW.png', 'credit_card', '2024-11-20 04:59:50', '2024-11-20 20:55:51', '2024-11-20 20:59:51'),
+(32, 69, 59, 6500.00, '2024-11-28', 'paid', 'Proof_of_Payment/K8kHdX8VaQQ19rv6rmoq5L1iM.jpg', 'bank_transfer', '2024-11-20 05:07:41', '2024-11-20 21:06:00', '2024-11-20 21:07:41');
 
 -- --------------------------------------------------------
 
@@ -155,25 +146,19 @@ CREATE TABLE `dorms` (
 --
 
 INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitude`, `longitude`, `price`, `capacity`, `beds`, `bedroom`, `image`, `archive`, `availability`, `flag`, `created_at`, `updated_at`) VALUES
-(27, 8, 'roland12', 'dadssa', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25627836, 123.79611254, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732691_673824d39ec1a.jpg\\\",\\\"dorm_pictures\\\\\\/1731732692_673824d4d7438.jpg\\\",\\\"dorm_pictures\\\\\\/1731732693_673824d539d28.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:50:17', '2024-11-15 20:51:45'),
-(28, 8, 'lando', 'dasdsa', 'Pakigne-Tubod Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25610944, 123.80160570, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732531_67382433ac869.jpg\\\",\\\"dorm_pictures\\\\\\/1731732532_673824349c637.jpg\\\",\\\"dorm_pictures\\\\\\/1731732533_673824352615a.jpg\\\"]\"', 0, 0, 0, '2024-08-04 20:57:24', '2024-11-15 20:48:53'),
-(29, 8, 'oli house', 'new house', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25475809, 123.79465342, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732441_673823d965007.jpg\\\",\\\"dorm_pictures\\\\\\/1731732442_673823da45287.jpg\\\",\\\"dorm_pictures\\\\\\/1731732442_673823dab9ffb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:17', '2024-11-15 20:49:32'),
-(30, 8, 'oli house1', 'new house', 'Caballero Street, Poblacion Ward I, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24352476, 123.79688501, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732413_673823bdb2203.jpg\\\",\\\"dorm_pictures\\\\\\/1731732414_673823bec63d8.jpg\\\",\\\"dorm_pictures\\\\\\/1731732415_673823bf29a41.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:33', '2024-11-15 20:50:01'),
-(31, 8, 'oli house2', 'new house', 'Abla Street, Escala at Corona Del Mar, Pooc, Minglanilla, Cebu, Central Visayas, 6045, Pilipinas', 10.24191997, 123.81902933, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732341_67382375d4e47.jpg\\\",\\\"dorm_pictures\\\\\\/1731732343_6738237750415.jpg\\\",\\\"dorm_pictures\\\\\\/1731732343_67382377b5b93.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:08:46', '2024-11-15 20:45:44'),
-(32, 8, 'oli house4', 'new house', 'Cebu South Road, Springwoods Country Homes Subdivision, Tunghaan, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24344030, 123.79036188, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732297_673823491e21f.jpg\\\",\\\"dorm_pictures\\\\\\/1731732298_6738234a78a1b.jpg\\\",\\\"dorm_pictures\\\\\\/1731732298_6738234acf7f9.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:07', '2024-11-15 20:44:59'),
-(33, 8, 'oli house4', 'new house', 'Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas', 10.25391349, 123.80512476, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732817_673825512f7b6.jpg\\\",\\\"dorm_pictures\\\\\\/1731732818_673825527dee4.jpg\\\",\\\"dorm_pictures\\\\\\/1731732818_67382552d4114.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:38', '2024-11-15 20:53:39'),
-(34, 8, 'oli house5', 'new house', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25281551, 123.79328012, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732256_67382320065ba.jpg\\\",\\\"dorm_pictures\\\\\\/1731732257_67382321880cf.jpg\\\",\\\"dorm_pictures\\\\\\/1731732258_6738232209071.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:09:52', '2024-11-15 20:44:18'),
-(35, 8, 'oli house6', 'new house', '\"Poblacion Ward II, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas\"', 10.24296519, 123.79530813, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732202_673822ea864cf.jpg\\\",\\\"dorm_pictures\\\\\\/1731732206_673822eecb383.jpg\\\",\\\"dorm_pictures\\\\\\/1731732207_673822ef2d6c8.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:11', '2024-11-15 20:43:28'),
-(36, 8, 'oli house7', 'new house', 'Tulay, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.23761232, 123.79242182, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113706_671f70aa9a7dd.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70ab94107.jpg\\\",\\\"dorm_pictures\\\\\\/1730113707_671f70abe48dc.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:10:41', '2024-11-15 20:42:42'),
-(37, 8, 'oli house8', 'new house', 'Lower Tiber, Poblacion Ward I, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24301798, 123.79877329, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113679_671f708f975b2.jpg\\\",\\\"dorm_pictures\\\\\\/1730113680_671f7090c4483.jpg\\\",\\\"dorm_pictures\\\\\\/1730113681_671f7091262fb.jpg\\\"]\"', 0, 0, 0, '2024-08-04 21:11:21', '2024-11-15 20:42:13'),
-(38, 8, 'roland44', 'ewqewqe', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25273105, 123.80246401, 1200.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113634_671f7062789a5.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f706421aca.jpg\\\",\\\"dorm_pictures\\\\\\/1730113636_671f70646f810.jpg\\\"]\"', 0, 0, 0, '2024-08-08 01:35:26', '2024-11-15 20:41:41'),
-(42, 8, 'shane house', 'cool', 'Tres de Mayo Street, Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24546739, 123.79310846, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113609_671f704929945.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a3fac4.jpg\\\",\\\"dorm_pictures\\\\\\/1730113610_671f704a98cc3.jpg\\\"]\"', 0, 1, 0, '2024-08-14 20:22:16', '2024-11-15 20:41:19'),
-(43, 8, 'house', 'dsadsa', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25425133, 123.80263567, 10000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1730113501_671f6fdde8aba.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf142d3.jpg\\\",\\\"dorm_pictures\\\\\\/1730113503_671f6fdf62b6a.jpg\\\"]\"', 0, 0, 0, '2024-09-04 01:52:50', '2024-11-15 20:40:32'),
-(44, 8, 'inday house', 'vbeebbe', 'Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24521401, 123.79225016, 5000.00, 2, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1731732761_67382519cdeae.jpg\\\",\\\"dorm_pictures\\\\\\/1731732762_6738251ab9d2b.jpg\\\",\\\"dorm_pictures\\\\\\/1731732763_6738251b1ed07.jpg\\\"]\"', 0, 0, 0, '2024-07-31 21:26:15', '2024-11-15 20:52:43'),
-(45, 8, 'sigma house', 'dsadfsadwdfgwef', '\"Pakigne-Tubod Road, Cantibjang, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25138321, 123.80551338, 10000.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1730165435_67203abb8e6be.jpg\\\",\\\"dorm_pictures\\\\\\/1730165457_67203ad1a29db.jpg\\\",\\\"dorm_pictures\\\\\\/1730167717_672043a504546.jpg\\\",\\\"dorm_pictures\\\\\\/1730176504_672065f84f853.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_6720660230af8.jpg\\\",\\\"dorm_pictures\\\\\\/1730176514_67206602e6f49.jpg\\\"]\"', 0, 0, 1, '2024-10-19 22:46:29', '2024-11-11 18:34:02'),
-(46, 43, 'rolando house', 'dsadasdasdi;ohefgjirfgbjkl', '\"Poblacion Ward III, Pakigne, Cebu, Central Visayas, 6046, Pilipinas\"', 10.25118869, 123.80209143, 400.00, 3, 12, 12, '\"[\\\"dorm_pictures\\\\\\/1730111654_671f68a63a93c.jpg\\\",\\\"dorm_pictures\\\\\\/1730111655_671f68a7df5e3.jpg\\\",\\\"dorm_pictures\\\\\\/1730111656_671f68a856f7c.jpg\\\"]\"', 0, 0, 1, '2024-10-28 02:34:16', '2024-11-15 21:11:05'),
-(47, 8, 'tqtqtqt', 'rtioijfgjklgfgfkl', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25221373, 123.80712032, 12222.00, 12, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1731382231_6732cbd730855.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc30bdc.jpg\\\",\\\"dorm_pictures\\\\\\/1731382236_6732cbdc96a1e.jpg\\\"]\"', 1, 1, 0, '2024-11-11 19:30:36', '2024-11-15 20:54:24'),
-(48, 62, 'olis house', 'nice housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasdce housedsaddasdadadadadasdasdasdasd', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25053508, 123.80311847, 1200.00, 2, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1731719073_6737efa1200ef.jpg\\\",\\\"dorm_pictures\\\\\\/1731719074_6737efa28e7ca.jpg\\\",\\\"dorm_pictures\\\\\\/1731719075_6737efa30a314.jpg\\\"]\"', 0, 0, 0, '2024-11-15 17:04:35', '2024-11-15 19:31:57');
+(49, 68, 'Rainy Days Guesthouse', 'A cozy, family-run guesthouse with clean, comfortable private rooms. Includes breakfast and a garden space for guests to relax.', 'Unabia Street, Poblacion Ward III, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24793790, 123.79749656, 1200.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1732156681_673e9d090c29c.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09929d8.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09c8ae1.jpg\\\",\\\"dorm_pictures\\\\\\/1732156682_673e9d0a06f68.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:38:02', '2024-11-20 19:11:52'),
+(50, 68, 'Guesthouse', 'A small, family-run accommodation with private rooms, often located in quieter areas. It typically offers a more homely atmosphere than a hotel. Some guesthouses may offer breakfast included.', 'Poblacion Ward II, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24244786, 123.79470706, 1000.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732156801_673e9d81a112b.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d8233e9d.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d82627d7.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d829209a.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:40:02', '2024-11-20 21:01:01'),
+(51, 68, 'The Velvet Boutique Hotel', 'Small, stylish hotels with a unique character. They often have personalized service, artistic design, and cozy, individually designed rooms. Often located in trendy neighborhoods.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24743113, 123.80966306, 2000.00, 3, 2, 1, '\"[\\\"dorm_pictures\\\\\\/1732158370_673ea3a232e59.jpg\\\",\\\"dorm_pictures\\\\\\/1732158370_673ea3a2b1191.jpg\\\",\\\"dorm_pictures\\\\\\/1732158370_673ea3a2ded7b.jpg\\\",\\\"dorm_pictures\\\\\\/1732158371_673ea3a322507.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:05:18', '2024-11-20 20:29:01'),
+(52, 68, 'Green Haven Eco-Lodge', 'Focused on sustainability, eco-lodges often use environmentally friendly materials, renewable energy, and locally sourced goods. Located in nature-rich areas, these options offer an immersive experience in natural surroundings', 'Poblacion Ward IV, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24552018, 123.79525423, 1500.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732158564_673ea4642bb62.jpg\\\",\\\"dorm_pictures\\\\\\/1732158564_673ea464b0d70.jpg\\\",\\\"dorm_pictures\\\\\\/1732158564_673ea464e052d.jpg\\\",\\\"dorm_pictures\\\\\\/1732158565_673ea4651babc.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:09:25', '2024-11-20 19:13:45'),
+(53, 68, 'LuxTents Glamping Retreat', 'A luxurious glamping experience with king-sized beds, private decks, and en-suite bathrooms in spacious tents, nestled in a scenic national park.', 'Poblacion Ward III, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25229819, 123.80162716, 3000.00, 4, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1732158997_673ea615bf80f.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea61670693.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea6169b54d.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea616e7307.jpg\\\",\\\"dorm_pictures\\\\\\/1732158999_673ea6171b5aa.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:16:39', '2024-11-20 20:05:22'),
+(54, 68, 'Sunny Grove Cottage', 'A charming 2-bedroom cottage in a quiet neighborhood, with a garden, outdoor patio, and modern amenities. Great for short stays or weekend getaways.', 'Poblacion Ward II, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24260623, 123.79503965, 1000.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732159148_673ea6ac4567b.jpg\\\",\\\"dorm_pictures\\\\\\/1732159148_673ea6acc833f.jpg\\\",\\\"dorm_pictures\\\\\\/1732159149_673ea6ad04edf.jpg\\\",\\\"dorm_pictures\\\\\\/1732159149_673ea6ad387ed.jpg\\\",\\\"dorm_pictures\\\\\\/1732159149_673ea6ad74168.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:19:09', '2024-11-20 20:10:40'),
+(55, 68, 'Bahay sa Lungsod', 'A modern 3-bedroom townhouse located in the heart of the city. Features include a rooftop garden, fully furnished spaces, and easy access to shopping, restaurants, and public transport.', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24892504, 123.80340278, 2500.00, 5, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1732159288_673ea7380d1a5.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738906b2.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738c0471.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738eed44.jpg\\\",\\\"dorm_pictures\\\\\\/1732159289_673ea73927f75.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:21:29', '2024-11-20 19:21:29'),
+(56, 70, 'Bahay ng Pagdapo', 'A lavish 6-bedroom mansion located on a hill with stunning views of the surrounding city or beach. The house includes a gourmet kitchen, infinity pool, multiple lounges, and a garden, offering luxurious comforts for guests', 'Fonte di Versailles, Calajo-an, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.23776013, 123.79665971, 5000.00, 10, 7, 6, '\"[\\\"dorm_pictures\\\\\\/1732160894_673ead7e76d3d.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f05af3.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f355b0.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f69110.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f98ac4.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:48:15', '2024-11-20 19:48:15'),
+(57, 70, 'Bahay Luntian', 'A charming 2-bedroom house surrounded by greenery, with a tropical garden and a porch perfect for morning coffee. Ideal for short stays, the house offers a cozy atmosphere with modern amenities.', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25381847, 123.79330158, 1500.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161019_673eadfb8ee69.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc1c440.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc4bd59.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc7b61a.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfcaa3a6.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:50:20', '2024-11-20 19:50:20'),
+(58, 70, 'Bahay Alaga', 'A 3-bedroom, pet-friendly home featuring a large, fenced backyard where pets can roam freely. It also has easy access to pet-friendly parks and walking trails.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25491645, 123.80471706, 1200.00, 4, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1732161236_673eaed4c348b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed550c5b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed57f5d3.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5adfaa.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5e8f2e.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:53:58', '2024-11-20 20:50:01'),
+(59, 70, 'Bahay Bagong Buhay', 'A 2-bedroom eco-friendly home made with sustainable materials, complete with a solar power system, water conservation, and organic garden. Located in a serene environment, it\'s ideal for guests seeking a sustainable, green way of living.', 'Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24893032, 123.79273295, 1300.00, 3, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161368_673eaf5854e73.jpg\\\",\\\"dorm_pictures\\\\\\/1732161368_673eaf58d588f.jpg\\\",\\\"dorm_pictures\\\\\\/1732161369_673eaf5914ec2.jpg\\\",\\\"dorm_pictures\\\\\\/1732161369_673eaf594bce8.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:56:09', '2024-11-20 21:09:01'),
+(60, 70, 'Bahay Kanto', 'A modern 2-bedroom townhouse conveniently located near key city attractions, with easy access to public transport and local markets. Features a compact but stylish living area, a small garden, and an outdoor balcony.', 'Kingswood Village, Linao, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25542321, 123.80918026, 900.00, 3, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161454_673eafaeba1f1.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf4376b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf7a9d5.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafa85cb.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafd5ed8.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:57:36', '2024-11-20 19:57:36'),
+(61, 70, 'Bahay Bahay-nga', 'A heritage-style home with traditional Filipino architecture, beautifully preserved with antique wooden floors and classic furnishings. Located in a historical district, it offers a glimpse into Filipino culture while enjoying modern amenities.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.25113686, 123.81332159, 1700.00, 5, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1732161564_673eb01c4befd.jpg\\\",\\\"dorm_pictures\\\\\\/1732161564_673eb01cd0cbb.jpg\\\",\\\"dorm_pictures\\\\\\/1732161565_673eb01d0a557.jpg\\\",\\\"dorm_pictures\\\\\\/1732161565_673eb01d3b989.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:59:25', '2024-11-20 20:34:38');
 
 -- --------------------------------------------------------
 
@@ -210,13 +195,8 @@ CREATE TABLE `favorites` (
 --
 
 INSERT INTO `favorites` (`id`, `user_id`, `dorm_id`, `created_at`, `updated_at`) VALUES
-(19, 22, 42, '2024-09-29 23:42:09', '2024-09-29 23:42:09'),
-(31, 9, 43, '2024-10-18 00:16:28', '2024-10-18 00:16:28'),
-(32, 9, 44, '2024-10-18 00:16:31', '2024-10-18 00:16:31'),
-(33, 9, 30, '2024-10-18 00:16:34', '2024-10-18 00:16:34'),
-(34, 9, 45, '2024-10-23 01:36:17', '2024-10-23 01:36:17'),
-(37, 10, 43, '2024-11-07 00:15:57', '2024-11-07 00:15:57'),
-(38, 63, 48, '2024-11-15 19:41:26', '2024-11-15 19:41:26');
+(39, 69, 54, '2024-11-20 19:23:00', '2024-11-20 19:23:00'),
+(40, 69, 55, '2024-11-20 19:23:02', '2024-11-20 19:23:02');
 
 -- --------------------------------------------------------
 
@@ -339,189 +319,52 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `route`, `created_at`, `updated_at`, `dorm_id`, `sender_id`) VALUES
-(115, 9, 'Form Response', 'Rent Form approved', 1, '', '2024-10-20 23:00:00', '2024-10-20 23:01:45', 45, 8),
-(116, 9, 'Form Response', 'Rent Form approved', 0, '', '2024-10-20 23:02:18', '2024-10-20 23:02:18', 45, 8),
-(117, 9, 'Form Response', 'Rent Form approved', 0, '', '2024-10-20 23:04:30', '2024-10-20 23:04:30', 45, 8),
-(118, 9, 'Form Response', 'Booking Form approved', 0, '', '2024-10-20 23:09:50', '2024-10-20 23:09:50', 45, 8),
-(119, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-20 23:11:35', '2024-11-07 21:13:06', 45, 9),
-(120, 9, 'Form Response', 'Booking Form rejected', 0, '', '2024-10-20 23:13:23', '2024-10-20 23:13:23', 45, 8),
-(121, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-20 23:15:03', '2024-11-07 21:12:15', 45, 9),
-(122, 9, 'Form Response', 'Booking Form approved', 0, '', '2024-10-20 23:15:12', '2024-10-20 23:15:12', 45, 8),
-(127, 8, 'Form Submit', 'Someone Booked your Property', 1, '', '2024-10-21 20:36:43', '2024-10-21 20:36:59', 45, 9),
-(130, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, '', '2024-10-21 20:43:02', '2024-10-22 00:22:32', 45, 9),
-(131, 9, 'Form Response', 'Booking Form rejected', 0, '', '2024-10-21 23:37:48', '2024-10-21 23:37:48', 45, 8),
-(132, 9, 'Form Response', 'Booking Form approved', 1, '', '2024-10-21 23:46:00', '2024-10-23 02:32:33', 45, 8),
-(133, 9, 'Form Response', 'Booking Form approved', 1, '', '2024-10-21 23:49:09', '2024-10-23 02:32:28', 45, 8),
-(136, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-10-22 00:22:10', '2024-10-23 02:32:45', 45, 8),
-(137, 43, 'verification', 'Your Verification is Approved', 1, 'http://127.0.0.1:8000/home', '2024-10-28 02:29:07', '2024-11-09 20:32:50', NULL, 14),
-(138, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:42:08', '2024-11-07 21:02:28', NULL, 14),
-(139, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:43:28', '2024-11-01 22:45:16', NULL, 14),
-(140, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:43:41', '2024-11-01 22:45:13', NULL, 14),
-(141, 8, 'verification', 'Warning! ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:44:03', '2024-11-01 23:08:22', NULL, 14),
-(142, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:48:33', '2024-11-01 23:08:19', NULL, 14),
-(143, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:48:44', '2024-11-01 23:27:47', NULL, 14),
-(144, 8, 'warning', 'Warning issued: ', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:50:16', '2024-11-01 22:50:23', NULL, 14),
-(145, 8, 'warning', 'Warning issued: Misleading information', 1, 'http://127.0.0.1:8000/home', '2024-11-01 22:51:42', '2024-11-01 23:36:42', NULL, 14),
-(146, 8, 'warning', 'Warning issued: Inappropriate language', 1, NULL, '2024-11-01 23:10:52', '2024-11-01 23:11:35', NULL, 14),
-(147, 8, 'warning', 'Warning issued: Spam activity', 1, NULL, '2024-11-01 23:14:06', '2024-11-01 23:39:03', NULL, 14),
-(148, 8, 'warning', 'Warning issued: Misleading information', 1, NULL, '2024-11-01 23:14:42', '2024-11-01 23:40:30', NULL, 14),
-(149, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 0 remaining</strong>', 1, NULL, '2024-11-01 23:44:36', '2024-11-07 21:11:55', NULL, 14),
-(150, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 2 remaining</strong>', 1, NULL, '2024-11-01 23:48:04', '2024-11-01 23:58:23', NULL, 14),
-(151, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 1 remaining</strong>', 1, NULL, '2024-11-01 23:54:58', '2024-11-01 23:58:21', NULL, 14),
-(152, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 0 remaining</strong>', 1, NULL, '2024-11-01 23:56:16', '2024-11-01 23:58:17', NULL, 14),
-(153, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>dadasd</p> <br><strong>You have 2 remaining</strong>', 1, NULL, '2024-11-01 23:57:57', '2024-11-01 23:58:31', NULL, 14),
-(154, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>Spam activity</p> <br><strong>You have 1 remaining</strong>', 1, NULL, '2024-11-01 23:59:36', '2024-11-01 23:59:39', NULL, 14),
-(155, 43, 'warning', '<strong>Property Deactivated due to:</strong> <br> <p>Misleading information</p>', 1, NULL, '2024-11-02 00:10:44', '2024-11-09 20:32:37', 46, 14),
-(156, 8, 'warning', '<strong>Property Deactivated due to:</strong> <br> <p>Spam activity</p>', 1, NULL, '2024-11-02 00:11:06', '2024-11-02 00:11:11', 45, 14),
-(157, 8, 'Form Submit', 'Someone Booked your Property', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-04 21:54:45', '2024-11-05 21:39:47', 42, 9),
-(158, 9, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 2 remaining Strike(s)</strong>', 1, NULL, '2024-11-05 06:58:57', '2024-11-05 06:59:39', NULL, 9),
-(159, 9, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 1 remaining Strike(s)</strong>', 1, NULL, '2024-11-05 07:00:59', '2024-11-05 07:01:07', NULL, 9),
-(160, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:02', '2024-11-05 21:16:02', 45, 8),
-(161, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:02', '2024-11-05 21:16:02', 42, 8),
-(162, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:07', '2024-11-05 21:16:07', 45, 8),
-(163, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:07', '2024-11-05 21:16:07', 42, 8),
-(164, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:12', '2024-11-05 21:16:12', 45, 8),
-(165, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:12', '2024-11-05 21:16:12', 42, 8),
-(166, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:17', '2024-11-05 21:16:17', 45, 8),
-(167, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:17', '2024-11-05 21:16:17', 42, 8),
-(168, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:22', '2024-11-05 21:16:22', 45, 8),
-(169, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:22', '2024-11-05 21:16:22', 42, 8),
-(170, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:28', '2024-11-05 21:16:28', 45, 8),
-(171, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:28', '2024-11-05 21:16:28', 42, 8),
-(172, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:33', '2024-11-05 21:16:33', 45, 8),
-(173, 9, 'check-in', 'Your check-in starts in 2 days!', 0, NULL, '2024-11-05 21:16:33', '2024-11-05 21:16:33', 42, 8),
-(174, 8, 'warning', '<strong>Warning issued:</strong> <br> <p>no bill bayad</p> <br><strong>You have 0 remaining Strike</strong>', 0, NULL, '2024-11-05 21:52:16', '2024-11-05 21:52:16', NULL, 14),
-(175, 8, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong></strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-06 02:15:02', '2024-11-06 02:15:12', NULL, 14),
-(176, 9, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong></strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p>', 1, NULL, '2024-11-06 02:15:03', '2024-11-06 02:15:28', NULL, 14),
-(177, 9, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>dasdsadaddada</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-06 02:24:10', '2024-11-06 23:41:50', NULL, 14),
-(179, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 02:27:05', '2024-11-06 02:27:05', NULL, 14),
-(180, 9, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>dsadasd</strong></p>', 1, NULL, '2024-11-06 02:27:05', '2024-11-06 23:41:40', NULL, 14),
-(181, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 04:08:33', '2024-11-06 04:08:33', NULL, 14),
-(182, 8, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>dsadasd</strong></p>', 0, NULL, '2024-11-06 04:08:34', '2024-11-06 04:08:34', NULL, 14),
-(183, 51, 'verification', 'Your Verification is Approved', 1, 'http://localhost:8000/home', '2024-11-06 20:26:44', '2024-11-06 20:27:13', NULL, 14),
-(184, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your complaint and, after careful consideration, we have determined that it is invalid. However, the reported user will be placed under observation for further monitoring. No immediate action has been taken, but we will continue to monitor the situation.</p>', 1, NULL, '2024-11-06 23:53:53', '2024-11-06 23:54:01', NULL, 14),
-(185, 8, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report, and after careful consideration, we have determined that the complaint is invalid. The property remains active.</p>', 1, NULL, '2024-11-06 23:54:11', '2024-11-06 23:56:27', NULL, 14),
-(186, 9, 'Bills', 'Owner is Notifying you for payment', 0, 'http://localhost:8000/user/rent-forms', '2024-11-06 23:57:18', '2024-11-06 23:57:18', 42, 8),
-(187, 8, 'Form Submit', 'Someone Booked your Property', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:29:06', '2024-11-07 21:13:16', 43, 9),
-(188, 8, 'Booking Cancellation', 'Booking Cancelled', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:29:52', '2024-11-07 00:35:46', 43, 9),
-(189, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 00:44:44', '2024-11-07 19:34:51', 43, 8),
-(190, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-07 08:50:27</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 00:50:27', '2024-11-07 21:04:39', 43, 10),
-(191, 14, 'upcoming_stay', 'Your stay at sigma house starts in 1 days! Please be prepared for your check-in.', 0, NULL, '2024-11-07 19:31:11', '2024-11-07 19:31:11', 45, 8),
-(192, 9, 'upcoming_stay', 'Your stay at house starts in 1 days! Please be prepared for your check-in.', 1, NULL, '2024-11-07 19:33:39', '2024-11-07 20:27:12', 43, 8),
-(193, 8, 'warning', '<p>dsads paid you 40,000.00</p>', 1, NULL, '2024-11-07 20:18:03', '2024-11-07 21:12:03', NULL, 9),
-(195, 9, 'review', '<strong>Your rent has ended</strong> <br> <p>Please leave a review for the property.</p>', 1, 'http://localhost/my-reviews', '2024-11-07 20:45:01', '2024-11-07 21:20:45', 43, 14),
-(196, 10, 'review', '<strong>Your rent has ended</strong> <br> <p>Please leave a review for the property.</p>', 1, 'http://localhost/my-reviews', '2024-11-07 20:45:01', '2024-11-09 20:31:22', 43, 14),
-(197, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-08 05:18:23</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:18:23', '2024-11-07 21:20:25', 42, 9),
-(198, 9, 'Form Response', 'Booking Form rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:20:36', '2024-11-07 21:20:49', 42, 8),
-(199, 9, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:23:53', '2024-11-07 21:24:05', 42, 8),
-(200, 8, 'Booking Cancellation', 'Booking Cancellation request', 0, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:24:11', '2024-11-07 21:24:11', 42, 9),
-(201, 14, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:27:07', '2024-11-14 22:37:51', 45, 8),
-(202, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-08 05:30:06</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:30:06', '2024-11-07 21:30:14', 43, 9),
-(203, 9, 'Form Response', 'Booking Form rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:30:28', '2024-11-07 21:30:32', 43, 8),
-(204, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:31:17', '2024-11-07 21:31:22', 43, 9),
-(205, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:31:31', '2024-11-07 21:31:41', 43, 8),
-(206, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:32:26', '2024-11-07 21:32:41', 43, 9),
-(207, 9, 'Cancel Response', 'Booking Cancellation Rejected', 0, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:32:51', '2024-11-07 21:32:51', 43, 8),
-(208, 8, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-07 21:33:06', '2024-11-07 21:33:08', 43, 9),
-(209, 9, 'Cancel Response', 'Booking Cancellation Approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-07 21:33:15', '2024-11-07 21:33:28', 43, 8),
-(210, 43, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-10 04:30:18</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:30:18', '2024-11-09 20:32:30', 46, 10),
-(211, 10, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:30:34', '2024-11-09 20:30:39', 46, 43),
-(212, 43, 'Booking Cancellation', 'Booking Cancellation request', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:33:03', '2024-11-09 20:33:07', 46, 10),
-(213, 10, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:33:13', '2024-11-09 20:33:27', 46, 43),
-(214, 43, 'Booking Cancellation', 'Booking Cancellation request', 0, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:34:08', '2024-11-09 20:34:08', 46, 10),
-(215, 10, 'Cancel Response', 'Booking Cancellation Approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:35:21', '2024-11-09 20:35:43', 46, 43),
-(216, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-10 04:36:44</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-09 20:36:44', '2024-11-09 20:47:42', 42, 9),
-(217, 9, 'Form Response', 'Booking Form approved', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-09 20:36:58', '2024-11-09 20:37:01', 42, 8),
-(218, 8, 'warning', '<p>dsads paid you 40,000.00</p>', 0, NULL, '2024-11-09 20:42:29', '2024-11-09 20:42:29', NULL, 9),
-(219, 9, 'upcoming_stay', '<p>Your stay at shane house starts in 6 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-09 20:49:33', '2024-11-09 20:49:41', 42, 8),
-(220, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-12 06:42:13</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:42:13', '2024-11-11 22:42:22', 47, 9),
-(221, 8, 'Booking Cancellation', 'Booking Cancelled', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:44:53', '2024-11-11 22:45:06', 47, 9),
-(222, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <pSomeone Booked your Property</p><br> <p>Date: 2024-11-12 06:52:12</p>', 1, 'http://127.0.0.1:8000/managetenant', '2024-11-11 22:52:12', '2024-11-13 00:09:07', 47, 9),
-(223, 14, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:07:06', '2024-11-14 22:38:54', 43, 8),
-(224, 9, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: bogo ka on tqtqtqt</p><br><p>Date: 2024-11-12 07:07:35</p>', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:07:35', '2024-11-11 23:07:41', 47, 8),
-(225, 9, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at tqtqtqt has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-12 07:08:38</p><p>We look forward to hosting you!</p>', 1, 'http://127.0.0.1:8000/user/rent-forms', '2024-11-11 23:08:38', '2024-11-11 23:08:48', 47, 8),
-(226, 9, 'upcoming_stay', '<p>Your stay at tqtqtqt starts in 1 days! Please be prepared for your check-in.</p>', 0, NULL, '2024-11-11 23:09:06', '2024-11-11 23:09:06', 47, 8),
-(228, 8, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation house</p><br> <p>Date: 2024-11-13 08:08:57</p>', 1, 'http://localhost:8000/managetenant', '2024-11-13 00:08:57', '2024-11-14 18:10:41', 43, 9),
-(229, 9, 'upcoming_stay', '<p>Your stay at tqtqtqt starts in 1 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-13 00:12:37', '2024-11-13 00:13:40', 47, 8),
-(230, 9, 'upcoming_stay', '<p>Your stay at house starts in 1 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-13 00:13:18', '2024-11-13 00:13:25', 43, 8),
-(232, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-15 02:43:54</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 18:43:54', '2024-11-14 18:44:17', 43, 8),
-(233, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-15 02:46:42</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 18:46:42', '2024-11-14 18:46:42', 43, 8),
-(234, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-15 02:49:00</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 18:49:00', '2024-11-14 18:49:00', 43, 8),
-(235, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-15 02:52:08</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 18:52:08', '2024-11-14 18:52:11', 43, 8),
-(236, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-15 02:55:56</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 18:55:56', '2024-11-14 18:56:05', 43, 8),
-(237, 9, 'Cancel Response', 'Booking Cancellation Rejected', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 19:00:24', '2024-11-14 19:00:36', 47, 8),
-(238, 9, 'upcoming_stay', '<p>Your stay at tqtqtqt starts in -1 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-14 19:00:52', '2024-11-14 19:01:00', 47, 8),
-(239, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Found a better place on house</p><br><p>Date: 2024-11-15 03:27:22</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 19:27:22', '2024-11-14 19:27:50', 43, 9),
-(240, 9, 'Cancel Response', '<strong>Booking Cancellation Rejected</strong> - Unfortunately, your request to cancel has been declined.<br>\n                            <small>Sent on 2024-11-15 03:28:11</small> <span style=\"color: gray;\">[Booking Update]</span>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 19:28:11', '2024-11-14 19:28:26', 43, 8),
-(241, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: dili ko ani on house</p><br><p>Date: 2024-11-15 03:31:57</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 19:31:57', '2024-11-14 19:32:05', 43, 9),
-(242, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong> - Unfortunately, your request to cancel has been declined.<br>\n                            <small>Sent on 2024-11-15 03:34:04', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 19:34:04', '2024-11-14 19:34:35', 43, 8),
-(243, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on house</p><br><p>Date: 2024-11-15 03:34:19</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 19:34:19', '2024-11-14 19:34:23', 43, 9),
-(244, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong> - Unfortunately, your request to cancel has been declined.<br>\n                            <small>Sent on 2024-11-15 03:34:47', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 19:34:47', '2024-11-14 19:34:47', 43, 8),
-(245, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on house</p><br><p>Date: 2024-11-15 03:36:47</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 19:36:47', '2024-11-14 19:36:50', 43, 9),
-(246, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong> <p> - Unfortunately, your request to cancel has been declined.<p/> <br>\n                            <small>Sent on 2024-11-15 03:37:04', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 19:37:04', '2024-11-14 19:37:04', 43, 8),
-(247, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on house</p><br><p>Date: 2024-11-15 03:39:05</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 19:39:05', '2024-11-14 19:39:10', 43, 9),
-(255, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on house</p><br><p>Date: 2024-11-15 04:26:34</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:26:34', '2024-11-14 20:26:39', 43, 9),
-(256, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><p>Unfortunately, your request to cancel has been declined.</p><br>\n                           <small>Sent on 2024-11-15 04:26:44</small>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:26:44', '2024-11-14 20:26:44', 43, 8),
-(257, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on house</p><br><p>Sent on 2024-11-15 04:28:17</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:28:17', '2024-11-14 20:28:24', 43, 9),
-(258, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><p>Unfortunately, your request to cancel has been declined.</p><br>\n                           <p>Sent on 2024-11-15 04:28:30</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:28:30', '2024-11-14 20:28:30', 43, 8),
-(259, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on house</p><br><p>Sent on 2024-11-15 04:31:44</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:31:44', '2024-11-14 20:31:49', 43, 9),
-(260, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request to cancel has been declined.</p><br>\n                           <p>Sent on 2024-11-15 04:31:58</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:31:58', '2024-11-14 23:26:59', 43, 8),
-(261, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on house</p><br><p>Sent on 2024-11-15 04:33:47</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:33:47', '2024-11-14 20:33:52', 43, 9),
-(262, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request to cancel has been declined.</p><br>\n                           <p>Sent on 2024-11-15 04:33:57</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:33:57', '2024-11-14 23:22:59', 43, 8),
-(263, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Found a better place on house</p><br><p>Sent on 2024-11-15 04:36:42</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:36:42', '2024-11-14 20:36:47', 43, 9),
-(264, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request to cancel has been declined.</p><br><p>Sent on2024-11-15 04:36:51</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:36:51', '2024-11-14 20:36:57', 43, 8),
-(265, 8, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on house</p><br><p>Sent on 2024-11-15 04:38:00</p>', 1, 'http://localhost:8000/managetenant', '2024-11-14 20:38:00', '2024-11-14 20:38:06', 43, 9),
-(266, 9, 'Cancellation Response', '<strong>Booking Cancellation Approved</strong><br><p>Your request to cancel has been processed successfully.</p><br><p>Sent on2024-11-15 04:38:17</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-14 20:38:17', '2024-11-14 23:22:50', 43, 8),
-(269, 9, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report, and after careful consideration, we have determined that the complaint is invalid. The property remains active.</p>', 1, NULL, '2024-11-14 23:23:19', '2024-11-14 23:23:45', NULL, 14),
-(270, 9, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>bayut ang user</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-14 23:24:11', '2024-11-14 23:27:13', NULL, 14),
-(271, 8, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>bayut ang user</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p>', 1, NULL, '2024-11-14 23:24:11', '2024-11-14 23:27:36', NULL, 14),
-(272, 9, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>gago ang tag iya</strong></p>', 0, NULL, '2024-11-14 23:34:43', '2024-11-14 23:34:43', NULL, 14),
-(273, 8, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>gago ang tag iya</strong></p>', 1, NULL, '2024-11-14 23:34:45', '2024-11-14 23:34:54', NULL, 14),
-(274, 9, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>bayut ang user</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 0, NULL, '2024-11-14 23:37:50', '2024-11-14 23:37:50', NULL, 14),
-(275, 8, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>bayut ang user</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p> <br><strong>You have 1 remaining Strike</strong>', 1, NULL, '2024-11-14 23:37:51', '2024-11-14 23:38:03', NULL, 14),
-(276, 9, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>tqtqtqt</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-15 08:01:14</p><p>We look forward to hosting you!</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-15 00:01:14', '2024-11-15 00:01:14', 47, 8),
-(277, 9, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request to cancel has been declined.</p><br><p>Sent on2024-11-15 08:02:55</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 00:02:55', '2024-11-15 00:26:45', 47, 8),
-(278, 9, 'Bills', '<strong>Payment Reminder</strong><br>\n           <p>Your Payment has been marked paid. You paid <strong>₱0.00</strong> \n           on <strong>house</strong></p><br>\n           <p>Paid on: <strong>2024-11-16 08:28:11</strong></p>\n           <p>Mode of Payment: <strong>e_wallet</strong></p>\n           <br><p>Sent on: 2024-11-15 08:28:15</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 00:28:15', '2024-11-15 00:29:34', 43, 8),
-(279, 9, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱20,000.00</strong> on <strong>house</strong></p><br><p>Paid on: <strong>2024-11-04 08:31:02</strong></p><p>Mode of Payment: <strong>credit_card</strong></p><br><p>Sent on: 2024-11-15 08:31:03</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 00:31:03', '2024-11-15 00:31:10', 43, 8),
-(287, 14, 'Bills', '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> shane lopez</p><p><strong>Email:</strong> nokielopez@gmail.com</p><p><strong>Registered on:</strong> 2024-11-16 00:59:11</p><br><p>Sent on: 2024-11-16 01:01:03</p>', 1, 'http://localhost:8000/managepage/user', '2024-11-15 17:01:03', '2024-11-15 17:01:13', NULL, 62),
-(288, 62, 'verification', '<strong>Account Verified</strong><br><p>Your account has been verified. You can now proceed to post or list accommodations for rent.</p><br><p>Sent on 2024-11-16 01:01:53</p>', 1, NULL, '2024-11-15 17:01:53', '2024-11-15 17:02:09', NULL, 14),
-(289, 62, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>olis house</strong></p><br> <p>Date: 2024-11-16 01:09:42</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 17:09:42', '2024-11-15 17:09:46', 48, 63),
-(290, 62, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Personal reasons on <strong>olis house</strong></p><br><p>Sent on2024-11-16 01:10:20</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 17:10:20', '2024-11-15 17:10:25', 48, 63),
-(291, 62, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>olis house</strong></p><br> <p>Date: 2024-11-16 01:11:38</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 17:11:38', '2024-11-15 17:11:43', 48, 63),
-(292, 63, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: youre a dirty little nigger on olis house</p><br><p>Date: 2024-11-16 01:12:49</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 17:12:49', '2024-11-15 17:12:53', 48, 62),
-(293, 62, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>olis house</strong></p><br> <p>Date: 2024-11-16 01:13:18</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 17:13:18', '2024-11-15 17:13:23', 48, 63),
-(294, 63, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>olis house</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-16 01:13:50</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 17:13:50', '2024-11-15 17:13:53', 48, 62),
-(295, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 1 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 17:16:29', '2024-11-15 17:16:34', 48, 62),
-(296, 62, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on <strong>olis house</strong></p><br><p>Sent on 2024-11-16 02:03:30</p>', 1, 'http://localhost:8000/managetenant', '2024-11-15 18:03:30', '2024-11-15 18:03:37', 48, 63),
-(297, 63, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request for cancellation has been declined.</p><br><p>Sent on2024-11-16 02:03:44</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:03:44', '2024-11-15 18:03:49', 48, 62),
-(298, 9, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>tqtqtqt</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱0.00</strong></p><p>Billing Date: <strong>2024-11-17</strong></p><br><p>Date: 2024-11-16 02:04:01</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:04:01', '2024-11-15 22:38:00', 47, 14),
-(299, 63, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>olis house</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱0.00</strong></p><p>Billing Date: <strong>2024-11-23</strong></p><br><p>Date: 2024-11-16 02:04:02</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:04:02', '2024-11-15 18:05:22', 48, 14),
-(300, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 2 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:32:14', '2024-11-15 18:32:17', 48, 62),
-(301, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 2 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:35:56', '2024-11-15 18:36:03', 48, 62),
-(302, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 2 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:38:05', '2024-11-15 18:38:34', 48, 62),
-(303, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 1.8898022762153 days! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:38:41', '2024-11-15 18:41:50', 48, 62),
-(304, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 1 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:41:59', '2024-11-15 18:42:07', 48, 62),
-(305, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 0 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:42:21', '2024-11-15 18:44:24', 48, 62),
-(306, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 0 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:44:33', '2024-11-15 18:44:40', 48, 62),
-(307, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 21 hours! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:45:13', '2024-11-15 18:45:19', 48, 62),
-(308, 63, 'upcoming_stay', '<p>Your stay at olis house starts in 1 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:45:41', '2024-11-15 18:45:44', 48, 62),
-(309, 63, 'upcoming_stay', '<p>Your stay at olis house starts today! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-15 18:47:56', '2024-11-15 18:48:02', 48, 62),
-(310, 63, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>olis house</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱7,200.00</strong></p><p>Billing Date: <strong>2024-11-21</strong></p><br><p>Sent on: 2024-11-16 02:49:01</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:49:01', '2024-11-15 18:49:06', 48, 14),
-(311, 63, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱7,200.00</strong> on <strong>olis house</strong></p><br><p>Paid on: <strong>2024-11-15 02:57:40</strong></p><p>Mode of Payment: <strong>credit_card</strong></p><br><p>Sent on: 2024-11-16 02:57:41</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-15 18:57:41', '2024-11-15 18:57:44', 48, 62),
-(312, 63, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on Olis housePlease leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-16 03:03:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-15 19:03:01', '2024-11-15 19:04:04', 48, 14),
-(313, 63, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 2 remaining Strike(s)</strong>', 1, NULL, '2024-11-15 19:05:11', '2024-11-15 19:05:19', NULL, 63),
-(314, 63, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report, and after careful consideration, we have determined that the complaint is invalid. The property remains active.</p>', 1, NULL, '2024-11-15 19:07:49', '2024-11-15 19:08:01', NULL, 14),
-(315, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding the accommodation: <strong>olis house</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports/fetch', '2024-11-15 19:17:10', '2024-11-15 19:17:16', NULL, 63),
-(316, 63, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report, and after careful consideration, we have determined that the complaint is invalid. The property remains active.</p>', 1, NULL, '2024-11-15 19:18:38', '2024-11-15 19:18:41', NULL, 14),
-(317, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding the accommodation: <strong>olis house</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-11-15 19:18:51', '2024-11-15 19:19:24', NULL, 63),
-(318, 63, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your report and have deactivated the property due to the following reason: <strong>Illegal Activities</strong></p>', 1, NULL, '2024-11-15 19:24:33', '2024-11-15 19:24:38', NULL, 14),
-(319, 62, 'warning', '<strong>Action Taken on Your Property:</strong> <br> <p> Your property has been deactivated due to the following reason: <strong>Illegal Activities</strong></p>', 1, NULL, '2024-11-15 19:24:34', '2024-11-15 19:25:08', NULL, 14),
-(320, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding a user: <strong>shane lopez</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-11-15 19:33:45', '2024-11-15 19:33:48', NULL, 63),
-(321, 63, 'warning', '<strong>Complaint Response:</strong> <br> <p> We have reviewed your complaint and, after careful consideration, we have determined that it is invalid. However, the reported user will be placed under observation for further monitoring. No immediate action has been taken, but we will continue to monitor the situation.</p>', 1, NULL, '2024-11-15 19:34:04', '2024-11-15 19:34:13', NULL, 14),
-(322, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding a user: <strong>shane lopez</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-11-15 19:34:39', '2024-11-15 19:34:43', NULL, 63),
-(323, 63, 'warning', '<strong>Complaint Review - Action Taken:</strong> <br> <p> Your report has been reviewed, and a warning has been issued to the user for the following reason: <strong>Inappropriate Content</strong></p> <p>Please monitor the situation to ensure compliance.</p>', 1, NULL, '2024-11-15 19:34:50', '2024-11-15 19:34:55', NULL, 14),
-(324, 62, 'warning', '<strong>Warning Notification:</strong> <br> <p> You have been issued a warning due to the following reason: <strong>Inappropriate Content</strong></p> <p>Please take immediate action to rectify the situation. Continued violations may lead to further actions.</p> <br><strong>You have 2 remaining Strike</strong>', 1, NULL, '2024-11-15 19:34:51', '2024-11-15 19:35:06', NULL, 14),
-(325, 43, 'warning', '<strong>Accomodation Deactivated</strong> <br> <p> Your Accomodation has been Deactivated due to:Misleading information</p>', 1, NULL, '2024-11-15 21:11:04', '2024-11-15 21:12:11', 46, 14);
+(326, 14, 'Bills', '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> Roland Shane Lopez</p><p><strong>Email:</strong> rshan0418@gmail.com</p><p><strong>Registered on:</strong> 2024-11-21 02:15:59</p><br><p>Sent on: 2024-11-21 02:16:00</p>', 0, 'http://localhost:8000/managepage/user', '2024-11-20 18:16:00', '2024-11-20 18:16:00', NULL, 68),
+(327, 68, 'verification', '<strong>Account Verified</strong><br><p>Your account has been verified. You can now proceed to post or list accommodations for rent.</p><br><p>Sent on 2024-11-21 02:26:11</p>', 1, NULL, '2024-11-20 18:26:11', '2024-11-20 19:21:46', NULL, 14),
+(328, 14, 'Bills', '<strong>User Verification Pending</strong><br><p>A user has registered as an owner and is awaiting verification. Please review their application.</p><p><strong>User:</strong> Degam Jhonry</p><p><strong>Email:</strong> jhonrydegamo@gmail.com</p><p><strong>Registered on:</strong> 2024-11-21 03:34:52</p><br><p>Sent on: 2024-11-21 03:34:52</p>', 1, 'http://localhost:8000/managepage/user', '2024-11-20 19:34:52', '2024-11-20 19:35:05', NULL, 70),
+(329, 70, 'verification', '<strong>Account Verified</strong><br><p>Your account has been verified. You can now proceed to post or list accommodations for rent.</p><br><p>Sent on 2024-11-21 03:35:49</p>', 1, NULL, '2024-11-20 19:35:49', '2024-11-20 20:39:57', NULL, 14),
+(330, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>LuxTents Glamping Retreat</strong></p><br> <p>Date: 2024-11-21 04:04:24</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:04:24', '2024-11-20 20:04:30', 53, 69),
+(331, 69, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: we are not available on LuxTents Glamping Retreat</p><br><p>Date: 2024-11-21 04:05:22</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:05:22', '2024-11-20 20:05:29', 53, 68),
+(332, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Sunny Grove Cottage</strong></p><br> <p>Date: 2024-11-21 04:06:51</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:06:51', '2024-11-20 20:07:27', 54, 69),
+(333, 69, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Sunny Grove Cottage</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 04:07:54</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:07:54', '2024-11-20 20:07:59', 54, 68),
+(334, 68, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Financial reasons on <strong>Sunny Grove Cottage</strong></p><br><p>Sent on 2024-11-21 04:08:19</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:08:19', '2024-11-20 20:10:00', 54, 69),
+(335, 69, 'Cancellation Response', '<strong>Booking Cancellation Rejected</strong><br><p>Unfortunately, your request for cancellation has been declined.</p><br><p>Sent on2024-11-21 04:10:08</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:10:08', '2024-11-20 20:10:13', 54, 68),
+(336, 68, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Issue with booking process on <strong>Sunny Grove Cottage</strong></p><br><p>Sent on 2024-11-21 04:10:27</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:10:27', '2024-11-20 20:10:33', 54, 69),
+(337, 69, 'Cancellation Response', '<strong>Booking Cancellation Approved</strong><br><p>Your request for cancellation has been processed successfully.</p><br><p>Sent on2024-11-21 04:10:40</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:10:40', '2024-11-20 20:10:47', 54, 68),
+(338, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>The Velvet Boutique Hotel</strong></p><br> <p>Date: 2024-11-21 04:11:37</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:11:37', '2024-11-20 20:11:41', 51, 69),
+(339, 69, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>The Velvet Boutique Hotel</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 04:12:05</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:12:05', '2024-11-20 20:12:09', 51, 68),
+(340, 69, 'upcoming_stay', '<p>Your stay at The Velvet Boutique Hotel starts in 1 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-20 20:12:19', '2024-11-20 20:12:23', 51, 68),
+(341, 69, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>The Velvet Boutique Hotel</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱14,000.00</strong></p><p>Billing Date: <strong>2024-11-30</strong></p><br><p>Sent on: 2024-11-21 04:14:01</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:14:01', '2024-11-20 20:14:10', 51, 14),
+(342, 69, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱14,000.00</strong> on <strong>The Velvet Boutique Hotel</strong></p><br><p>Paid on: <strong>2024-11-21 04:24:53</strong></p><p>Mode of Payment: <strong>e_wallet</strong></p><br><p>Sent on: 2024-11-21 04:24:54</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:24:54', '2024-11-20 20:25:29', 51, 68),
+(343, 69, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>The Velvet Boutique Hotel</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 04:29:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 20:29:01', '2024-11-20 20:29:10', 51, 14),
+(344, 69, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 2 remaining Strike(s)</strong>', 1, NULL, '2024-11-20 20:30:04', '2024-11-20 20:30:12', NULL, 69),
+(345, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Bahay Bahay-nga</strong></p><br> <p>Date: 2024-11-21 04:34:16</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:34:16', '2024-11-20 20:34:21', 61, 71),
+(346, 70, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Found a better place on <strong>Bahay Bahay-nga</strong></p><br><p>Sent on2024-11-21 04:34:38</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:34:38', '2024-11-20 20:34:44', 61, 71),
+(347, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Bahay Alaga</strong></p><br> <p>Date: 2024-11-21 04:36:51</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:36:51', '2024-11-20 20:39:54', 58, 71),
+(348, 71, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Bahay Alaga</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 04:37:03</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:37:03', '2024-11-20 20:37:27', 58, 70),
+(349, 71, 'upcoming_stay', '<p>Your stay at Bahay Alaga starts in 1 day! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-20 20:37:12', '2024-11-20 20:37:18', 58, 70),
+(350, 71, 'upcoming_stay', '<p>Your stay at Bahay Alaga starts today! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-20 20:38:01', '2024-11-20 20:38:04', 58, 70),
+(351, 71, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>Bahay Alaga</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱6,000.00</strong></p><p>Billing Date: <strong>2024-11-28</strong></p><br><p>Sent on: 2024-11-21 04:39:00</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:39:00', '2024-11-20 20:39:13', 58, 14),
+(352, 71, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-21 04:39:23</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:39:23', '2024-11-20 20:39:33', 58, 70),
+(353, 71, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱6,000.00</strong> on <strong>Bahay Alaga</strong></p><br><p>Paid on: <strong>2024-11-23 04:40:27</strong></p><p>Mode of Payment: <strong>cash</strong></p><br><p>Sent on: 2024-11-21 04:40:27</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:40:27', '2024-11-20 20:40:32', 58, 70),
+(354, 71, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Bahay Alaga</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 04:50:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 20:50:01', '2024-11-20 20:50:09', 58, 14),
+(355, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Bahay Bagong Buhay</strong></p><br> <p>Date: 2024-11-21 04:52:28</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:52:28', '2024-11-20 20:52:35', 59, 71),
+(356, 71, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Bahay Bagong Buhay</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 04:52:46</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:52:46', '2024-11-20 20:53:14', 59, 70),
+(357, 70, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Personal reasons on <strong>Bahay Bagong Buhay</strong></p><br><p>Sent on 2024-11-21 04:53:24</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:53:24', '2024-11-20 20:53:30', 59, 71),
+(358, 71, 'Cancellation Response', '<strong>Booking Cancellation Approved</strong><br><p>Your request for cancellation has been processed successfully.</p><br><p>Sent on2024-11-21 04:53:41</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:53:41', '2024-11-20 20:53:47', 59, 70),
+(359, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Guesthouse</strong></p><br> <p>Date: 2024-11-21 04:55:11</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 20:55:11', '2024-11-20 20:55:19', 50, 71),
+(360, 71, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Guesthouse</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 04:55:29</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:55:29', '2024-11-20 20:55:36', 50, 68),
+(361, 71, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>Guesthouse</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱7,000.00</strong></p><p>Billing Date: <strong>2024-11-30</strong></p><br><p>Sent on: 2024-11-21 04:55:51</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:55:51', '2024-11-20 20:56:04', 50, 14),
+(362, 71, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-21 04:56:24</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:56:24', '2024-11-20 20:56:49', 50, 68),
+(363, 71, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱7,000.00</strong> on <strong>Guesthouse</strong></p><br><p>Paid on: <strong>2024-11-20 04:59:50</strong></p><p>Mode of Payment: <strong>credit_card</strong></p><br><p>Sent on: 2024-11-21 04:59:51</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 20:59:51', '2024-11-20 20:59:55', 50, 68),
+(364, 71, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Guesthouse</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 05:01:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 21:01:01', '2024-11-20 21:01:08', 50, 14),
+(365, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Bahay Bagong Buhay</strong></p><br> <p>Date: 2024-11-21 05:04:26</p>', 1, 'http://localhost:8000/managetenant', '2024-11-20 21:04:26', '2024-11-20 21:04:31', 59, 69),
+(366, 69, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Bahay Bagong Buhay</strong> has been successfully approved.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-21 05:04:43</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:04:43', '2024-11-20 21:04:51', 59, 70),
+(367, 69, 'upcoming_stay', '<p>Your stay at Bahay Bagong Buhay starts today! Please be prepared for your check-in.</p>', 1, NULL, '2024-11-20 21:05:27', '2024-11-20 21:05:32', 59, 70),
+(368, 69, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>Bahay Bagong Buhay</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱6,500.00</strong></p><p>Billing Date: <strong>2024-11-28</strong></p><br><p>Sent on: 2024-11-21 05:06:00</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:06:00', '2024-11-20 21:06:09', 59, 14),
+(369, 69, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-21 05:07:04</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:07:04', '2024-11-20 21:07:10', 59, 70),
+(370, 69, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱6,500.00</strong> on <strong>Bahay Bagong Buhay</strong></p><br><p>Paid on: <strong>2024-11-20 05:07:41</strong></p><p>Mode of Payment: <strong>bank_transfer</strong></p><br><p>Sent on: 2024-11-21 05:07:41</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:07:41', '2024-11-20 21:07:48', 59, 70),
+(371, 69, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Bahay Bagong Buhay</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 05:09:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 21:09:01', '2024-11-20 21:09:12', 59, 14);
 
 -- --------------------------------------------------------
 
@@ -554,31 +397,18 @@ CREATE TABLE `property_views` (
 --
 
 INSERT INTO `property_views` (`id`, `user_id`, `dorm_id`, `created_at`, `updated_at`) VALUES
-(1, 9, 43, '2024-09-30 00:30:10', '2024-09-30 00:30:10'),
-(2, 9, 43, '2024-09-30 00:30:29', '2024-09-30 00:30:29'),
-(3, 9, 42, '2024-09-30 00:33:51', '2024-09-30 00:33:51'),
-(4, 8, 38, '2024-09-30 18:19:45', '2024-09-30 18:19:45'),
-(5, 22, 43, '2024-09-30 18:38:14', '2024-09-30 18:38:14'),
-(6, 8, 43, '2024-09-30 18:53:57', '2024-09-30 18:53:57'),
-(7, 22, 34, '2024-10-03 00:25:40', '2024-10-03 00:25:40'),
-(8, 8, 34, '2024-10-03 00:31:02', '2024-10-03 00:31:02'),
-(9, 9, 34, '2024-10-03 00:36:31', '2024-10-03 00:36:31'),
-(10, 9, 37, '2024-10-03 00:42:37', '2024-10-03 00:42:37'),
-(11, 8, 27, '2024-10-03 21:09:45', '2024-10-03 21:09:45'),
-(12, 8, 44, '2024-10-03 21:26:24', '2024-10-03 21:26:24'),
-(13, 10, 44, '2024-10-03 21:35:31', '2024-10-03 21:35:31'),
-(14, 9, 44, '2024-10-05 18:04:53', '2024-10-05 18:04:53'),
-(15, 9, 38, '2024-10-17 01:42:28', '2024-10-17 01:42:28'),
-(16, 8, 42, '2024-10-19 21:55:32', '2024-10-19 21:55:32'),
-(17, 8, 45, '2024-10-19 22:51:40', '2024-10-19 22:51:40'),
-(18, 9, 45, '2024-10-19 23:25:28', '2024-10-19 23:25:28'),
-(19, 9, 36, '2024-11-12 18:07:39', '2024-11-12 18:07:39'),
-(20, 9, 46, '2024-11-12 18:50:08', '2024-11-12 18:50:08'),
-(21, 63, 48, '2024-11-15 17:09:16', '2024-11-15 17:09:16'),
-(22, 63, 43, '2024-11-15 19:41:40', '2024-11-15 19:41:40'),
-(23, 9, 48, '2024-11-15 21:59:06', '2024-11-15 21:59:06'),
-(24, 9, 31, '2024-11-15 22:34:05', '2024-11-15 22:34:05'),
-(25, 46, 48, '2024-11-15 23:14:00', '2024-11-15 23:14:00');
+(27, 69, 55, '2024-11-20 19:22:09', '2024-11-20 19:22:09'),
+(28, 69, 54, '2024-11-20 19:23:04', '2024-11-20 19:23:04'),
+(29, 69, 58, '2024-11-20 20:01:39', '2024-11-20 20:01:39'),
+(30, 69, 56, '2024-11-20 20:02:31', '2024-11-20 20:02:31'),
+(31, 69, 53, '2024-11-20 20:02:40', '2024-11-20 20:02:40'),
+(32, 69, 51, '2024-11-20 20:11:29', '2024-11-20 20:11:29'),
+(33, 69, 61, '2024-11-20 20:23:16', '2024-11-20 20:23:16'),
+(34, 71, 61, '2024-11-20 20:33:26', '2024-11-20 20:33:26'),
+(35, 71, 58, '2024-11-20 20:36:37', '2024-11-20 20:36:37'),
+(36, 71, 59, '2024-11-20 20:51:56', '2024-11-20 20:51:56'),
+(37, 71, 50, '2024-11-20 20:54:07', '2024-11-20 20:54:07'),
+(38, 69, 59, '2024-11-20 21:03:52', '2024-11-20 21:03:52');
 
 -- --------------------------------------------------------
 
@@ -605,20 +435,14 @@ CREATE TABLE `rent_forms` (
 --
 
 INSERT INTO `rent_forms` (`id`, `user_id`, `dorm_id`, `start_date`, `end_date`, `guest`, `total_price`, `status`, `note`, `created_at`, `updated_at`) VALUES
-(34, 9, 45, '2024-11-08', '2024-11-30', 2, 30000.00, 'cancelled', 'dsada', '2024-10-20 00:08:36', '2024-10-22 00:22:11'),
-(38, 9, 42, '2024-11-06', '2024-11-11', 1, 40000.00, 'completed', NULL, '2024-11-04 21:54:45', '2024-11-05 21:16:01'),
-(39, 14, 45, '2024-11-09', '2024-11-16', 2, 3000.00, 'completed', NULL, '2024-11-07 07:30:55', '2024-11-07 21:27:08'),
-(40, 14, 43, '2024-11-09', '2024-11-08', 2, 40000.00, 'completed', NULL, '2024-11-07 00:29:06', '2024-11-11 23:07:07'),
-(41, 10, 43, '2024-11-09', '2024-11-07', 2, 20000.00, 'cancelled', NULL, '2024-11-07 00:50:27', '2024-11-07 20:45:01'),
-(43, 9, 43, '2024-11-10', '2024-11-12', 2, 20000.00, 'cancelled', 'Issue with booking process', '2024-11-07 21:30:06', '2024-11-07 21:33:15'),
-(44, 10, 46, '2024-11-12', '2024-11-16', 2, 1600.00, 'cancelled', 'Change of plans', '2024-11-09 20:30:18', '2024-11-09 20:35:22'),
-(45, 9, 42, '2024-11-16', '2024-11-17', 2, 10000.00, 'pending', NULL, '2024-11-09 20:36:44', '2024-11-09 20:36:59'),
-(46, 9, 47, '2024-11-13', '2024-11-17', 6, 48888.00, 'active', 'dsadasd', '2024-11-11 22:42:13', '2024-11-15 18:04:01'),
-(47, 9, 47, '2024-11-14', '2024-11-18', 5, 61110.00, 'cancelled', NULL, '2024-11-11 22:52:12', '2024-11-14 19:00:25'),
-(48, 9, 43, '2024-11-20', '2024-11-20', 2, 20000.00, 'active', 'Personal reasons', '2024-11-13 00:08:57', '2024-11-14 20:38:18'),
-(49, 63, 48, '2024-11-18', '2024-11-22', 2, 4800.00, 'cancelled', 'Personal reasons', '2024-11-15 17:09:42', '2024-11-15 17:10:21'),
-(50, 63, 48, '2024-11-18', '2024-11-23', 1, 7200.00, 'rejected', 'youre a dirty little nigger', '2024-11-15 17:11:38', '2024-11-15 17:12:49'),
-(51, 63, 48, '2024-11-16', '2024-11-16', 2, 7200.00, 'completed', NULL, '2024-11-15 17:13:18', '2024-11-15 19:03:01');
+(52, 69, 53, '2024-11-23', '2024-11-29', 3, 18000.00, 'rejected', 'we are not available', '2024-11-20 20:04:24', '2024-11-20 20:05:22'),
+(53, 69, 54, '2024-11-23', '2024-11-26', 4, 4000.00, 'cancelled', 'Issue with booking process', '2024-11-20 20:06:51', '2024-11-20 20:10:40'),
+(54, 69, 51, '2024-11-20', '2024-11-29', 3, 14000.00, 'completed', NULL, '2024-11-20 20:11:37', '2024-11-20 20:29:01'),
+(55, 71, 61, '2024-11-23', '2024-11-30', 4, 11900.00, 'cancelled', 'Found a better place', '2024-11-20 20:34:16', '2024-11-20 20:34:39'),
+(56, 71, 58, '2024-11-21', '2024-11-29', 3, 6000.00, 'completed', NULL, '2024-11-20 20:36:51', '2024-11-20 20:50:01'),
+(57, 71, 59, '2024-11-23', '2024-11-29', 3, 7800.00, 'cancelled', 'Personal reasons', '2024-11-20 20:52:28', '2024-11-20 20:53:41'),
+(58, 71, 50, '2024-11-21', '2024-11-29', 4, 7000.00, 'completed', NULL, '2024-11-20 20:55:11', '2024-11-20 21:01:01'),
+(59, 69, 59, '2024-11-21', '2024-11-21', 3, 6500.00, 'completed', NULL, '2024-11-20 21:04:26', '2024-11-20 21:09:01');
 
 -- --------------------------------------------------------
 
@@ -637,25 +461,6 @@ CREATE TABLE `reports` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`id`, `user_id`, `reported_id`, `reported_type`, `dorm_id`, `reason`, `status`, `created_at`, `updated_at`) VALUES
-(1, 8, 9, 'user', 28, 'dsadasd', 'valid', '2024-11-02 23:00:07', '2024-11-06 02:27:05'),
-(2, 8, 9, 'user', NULL, 'dsad', 'valid', '2024-11-02 23:03:45', '2024-11-06 02:15:04'),
-(3, 8, 9, 'user', NULL, 'Inappropriate Content', 'valid', '2024-11-02 23:04:01', '2024-11-06 01:19:25'),
-(4, 8, 9, 'user', NULL, 'Harassment', 'invalid', '2024-11-02 23:05:05', '2024-11-06 23:53:56'),
-(14, 8, 8, 'property', 45, 'Unsafe Conditions', 'invalid', '2024-11-06 03:24:55', '2024-11-06 23:54:11'),
-(15, 8, 8, 'property', 45, 'dsadasd', 'valid', '2024-11-06 04:07:40', '2024-11-06 04:08:34'),
-(16, 9, 8, 'user', NULL, 'bayut ang user', 'valid', '2024-11-14 23:18:53', '2024-11-14 23:37:51'),
-(17, 9, 8, 'property', 43, 'gago ang tag iya', 'valid', '2024-11-14 23:19:23', '2024-11-14 23:34:45'),
-(18, 63, 62, 'property', 48, 'dili ko ani', 'invalid', '2024-11-15 19:07:18', '2024-11-15 19:07:49'),
-(19, 63, 62, 'property', 48, 'Unsafe Conditions', 'invalid', '2024-11-15 19:17:10', '2024-11-15 19:18:38'),
-(20, 63, 62, 'property', 48, 'Illegal Activities', 'valid', '2024-11-15 19:18:51', '2024-11-15 19:24:34'),
-(21, 63, 62, 'user', NULL, 'bakla', 'invalid', '2024-11-15 19:33:45', '2024-11-15 19:34:05'),
-(22, 63, 62, 'user', NULL, 'Inappropriate Content', 'valid', '2024-11-15 19:34:39', '2024-11-15 19:34:51');
 
 -- --------------------------------------------------------
 
@@ -678,13 +483,10 @@ CREATE TABLE `reviews` (
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `dorm_id`, `rating`, `comments`, `created_at`, `updated_at`) VALUES
-(1, 9, 44, 2, 'hoy boks', '2024-10-16 23:52:41', '2024-11-13 01:38:50'),
-(3, 9, 44, 4, 'bogo', '2024-10-17 20:26:45', '2024-10-17 20:28:52'),
-(4, 9, 43, 5, 'dasdasdasd', '2024-10-20 05:56:29', '2024-10-20 05:56:35'),
-(5, 9, 34, 5, 'ghnthnfng', '2024-10-24 10:13:53', '2024-10-24 10:13:53'),
-(8, 9, 43, NULL, NULL, '2024-11-07 20:45:01', '2024-11-07 20:45:01'),
-(9, 10, 43, NULL, NULL, '2024-11-07 20:45:01', '2024-11-07 20:45:01'),
-(10, 63, 48, 5, 'sorry man', '2024-11-15 19:03:01', '2024-11-15 19:05:33');
+(11, 69, 51, 4, 'nice house', '2024-11-20 20:29:01', '2024-11-20 20:30:34'),
+(12, 71, 58, 5, 'very good house', '2024-11-20 20:50:01', '2024-11-20 20:50:49'),
+(13, 71, 50, 1, 'this house is horrible', '2024-11-20 21:01:01', '2024-11-20 21:01:28'),
+(14, 69, 59, 2, 'bad Accomodation', '2024-11-20 21:09:01', '2024-11-20 21:09:27');
 
 -- --------------------------------------------------------
 
@@ -706,9 +508,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('43wLgidpKJfyHRije9bSRcIO6SH3u1YGh06bKnou', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicUVPeWFmejdVcVVNM25oUnYwUG5RYlRYMTJsdFlNUmZSb3puSjh6RiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9fQ==', 1731742268),
-('gVkrZQZx8c0q5ibWkPFOM5ociZ3d8hXLQIVcXn60', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNjJnTmN3clhOQ2lRNmZNZjRCOWQ2QUZscGVUVXRRaHh2WVlWamc2ViI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NToic3RhdGUiO3M6NDA6Im9vWkpYc3FKbkREYjd2aDNpSUdUSHFZRlZHNVZSNElKT0t1UlZTWm8iO30=', 1731733943),
-('n29iDINssBYu2cUXsyvPDmiLYcOEXiHaSWe3Vb02', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ0RWSFlraG5rZ3R2d2FBN0dGR2RtM0Z1WDFDdG1NVWhRMzZXTHBZZSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1731740570);
+('5Ksv9uIqCWIEUWACPcEHowH8sGVN3FXHRsrTJ3Sv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUzlIdUpUZHJtcjc5QmJkSjRDd3U5Y2U5QUxEaDkyQlRuazB4UzlzMyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1732165824),
+('VfylJnKNLzkbKETgnQkqSaFLpoRFBwDU5puC7i2H', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiR2FtSlVlemlvcXJ6NXV2aVFsUE9IWWpHd3hWMFNMZ1lkV0RVTGY0aSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NToic3RhdGUiO3M6NDA6ImlJaVdwcTdmajBtZWZOOXAxOXNtVEVEd0psd3Y2UWJxQU5SOG5FRVYiO30=', 1732165804);
 
 -- --------------------------------------------------------
 
@@ -744,25 +545,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `google_id`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `verify_status`, `role`, `strike`, `note`, `email_verification_code`, `email_verified_at`) VALUES
-(8, 'roland', 'rshan0418@gmail.com1', 'roland', '$2y$12$KAoWHQSf1WZlzzR9rz5mYuNJEUMifBnkXIG4E8oGzi5kHzP4uenvG', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', 'dasda12', NULL, '2024-07-18 23:37:48', '2024-11-15 21:11:24', 0, 1, 'owner', 3, NULL, NULL, '2024-11-06 03:33:15'),
-(9, 'dsads', 'russellcandilasa@gmail.com', 'rolando', '$2y$12$qJHoOqgn0jsnSk0QcV1qr.B/qc6Fnv7F2q.FsOMyfgUF5DHWHQcSK', '12314134', 0, NULL, 'profile-pictures/oPswQC2EERKWtfY7WXfz3QkrmMVhy0NptwkcyliS.jpg', NULL, NULL, '2024-07-28 03:30:53', '2024-11-15 22:38:31', 0, 0, 'tenant', 1, NULL, NULL, '2024-10-04 04:28:19'),
-(10, 'rolanda', 'dsa@f.vo', 'dsadsa', '$2y$12$r0hZYWws2BeT2pzsNlwaAOHufzxu/t7vxho7AJMGfnbbSV3k27GPm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-07-28 20:25:03', '2024-10-31 04:49:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-04 05:35:18'),
-(11, 'shane', 'dsa@f.vos', 'shane', '$2y$12$pfMTqwcBEoo7aXzeCe6HKeLT6vhdM4Bi0Xzqbpm0Y84flDKHNwxkm', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 21:04:44', '2024-09-15 21:14:21', 1, 0, 'tenant', 3, NULL, 0, NULL),
-(13, 'rolands', 'rshan0418@gmail.coms', 'rolands', '$2y$12$4AL119LT4Dvr6TOP.4Euy.2ZR/nx0KVUPGuSV76JoHjAH9drGRSzS', '12314134', 0, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-08-09 22:30:36', '2024-11-01 20:19:59', 1, 0, 'tenant', 3, NULL, 730137, NULL),
 (14, 'Lopez Roland Shane', 'lopezrolandshane@gmail.com', 'shaner', '$2y$12$KWBaHsB1eLFlGJ.2D.LF2O8u4qpNORuowbKP1xj0zcedchtSRZ81a', '12314134', 0, '107236937285983559710', 'profile-pictures/NsqtYbR4bm9qTg7FvyIID8MApPz7MhofeBfoJ5WS.jpg', 'dsadsadad', NULL, '2024-08-11 19:56:43', '2024-11-15 06:09:28', 0, 0, 'admin', 3, NULL, 796437, '2024-11-07 04:19:18'),
-(22, 'Roland Shane Lopez', NULL, NULL, NULL, '090909090909', 1037565838296943, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-09-24 21:46:08', '2024-10-03 20:05:49', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-04 04:05:49'),
-(39, 'Roland  Lopez', 'rshan0418@gmail.com3', 'roland3', '$2y$12$hjICAtBMCq5irLmPaoVTW.G3TTUMG0wfLyM64D1VlbmEQVGrfKUFe', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-27 20:43:48', '2024-10-27 20:45:43', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-28 04:45:43'),
-(42, 'shane lopez', 'rshan0418@gmail.com4', 'roland4', '$2y$12$fEgxFdQZneJ/TRzyafjlx.kgYZXU7HXbkHLQug5P5vepPrrixuWx2', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-27 22:29:17', '2024-10-27 22:29:27', 0, 0, 'owner', 3, NULL, NULL, '2024-10-28 06:29:27'),
-(43, 'Roland 1 Lopez', 'rshan0418@gmail.com13', 'roland13', '$2y$12$EAFOVb2bXUDBFt/U68D30uJpUllirWCQb1.Oc.4Y.P8bNYfLTZHYa', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:19:17', '2024-10-28 01:46:02', 0, 1, 'owner', 3, NULL, NULL, '2024-10-28 09:46:02'),
-(44, 'shane123', 'russellcandilasa@gmail.com3', 'dsa123', '$2y$12$2.tr.8.H7mEitAEFjQxTfONReN0Y3RTUefBkRjE2nRoAb1F6Es.l6', '12314134', NULL, NULL, 'profile-pictures/01w6PArURzOfWpw70McAuGauQ9NejVsvudYkZy4S.jpg', NULL, NULL, '2024-10-28 01:22:09', '2024-10-28 01:22:33', 0, 0, 'tenant', 3, NULL, NULL, '2024-10-28 09:22:33'),
-(46, 'Roland Shane Lopez123', 'rshan0418@gmail.com123', 'roland123', '$2y$12$jKhK6Wog27HePLSvpU9mNOXzK6p0ZHpofVTkEwj5mTdjZrSr25E66', '12314134', NULL, NULL, 'profile-pictures/9vwqyU7bvRHMR6GyCMt3LghKLgOAuINYu5fjR3jV.jpg', 'Tres De Mayo', NULL, '2024-11-03 23:01:11', '2024-11-15 23:14:20', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-16 07:13:18'),
-(51, 'Ro Shan', 'rshan0418@gmail.com', NULL, NULL, '090909090909', NULL, '107895499310321282475', 'profile_picture/0RUVxlvDG8p1m4EcyW2LlW1fG.jpg', 'Tres De Mayo', NULL, '2024-11-06 20:25:44', '2024-11-06 20:26:12', 0, 0, 'owner', 3, NULL, NULL, '2024-11-07 04:25:44'),
-(53, 'Roland Shane Lopez65', 'rshan0418@gmail.com41', 'roland41', '$2y$12$4jL5CcPlmIDa8veDnyGDe.jZq9sLz.9KFyPY0vltqlKzh/AO9FK7S', '12314134', NULL, NULL, 'profile_picture/atIIuo2wOwszhr1zlgGsAge5u.png', 'purok 3 tres de mayo', NULL, '2024-11-06 22:13:53', '2024-11-06 22:14:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-07 06:14:15'),
-(60, 'Suzette Villareal', 'suzettevillareal5@gmail.com', NULL, NULL, NULL, NULL, '106474133351444271009', NULL, NULL, NULL, '2024-11-15 01:51:18', '2024-11-15 01:51:18', 0, 0, NULL, 3, NULL, NULL, '2024-11-15 09:51:18'),
-(62, 'shane lopez', 'nokielopez@gmail.com', NULL, NULL, '090909090909', NULL, '106648757521862198329', 'profile_picture/BK1dAV20OhbN4iy2L0N5OyvLT.jpg', 'Tres De Mayo', NULL, '2024-11-15 16:59:11', '2024-11-15 19:39:05', 0, 0, 'owner', 3, NULL, NULL, '2024-11-16 00:59:11'),
-(63, 'Roland Shane Lopez12355', NULL, NULL, NULL, '090909090909', NULL, NULL, 'profile_picture/eFirTtA3ht7ck0qvmIhngBSV0.jpg', 'Tres De Mayo', NULL, '2024-11-15 17:07:28', '2024-11-15 19:05:11', 0, 0, 'tenant', 2, NULL, NULL, '2024-11-16 01:08:57'),
-(64, 'deagmo', 'degamo@gmail.com', 'degamo', '$2y$12$5THbLAMpvk07m80Q0la2xuCOncotIHj0WMkheHgIVN3KcaOEgwDCa', '2131321', NULL, NULL, 'profile_picture/F6tEF12asN9e5kD0EKF8ogm9b.jpg', 'Tres De Mayo', NULL, '2024-11-15 23:24:48', '2024-11-15 23:25:20', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-16 07:25:20'),
-(65, 'Roland Shane Lopez', 'rshan0418@gmail.com6666', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/AvQj0P4CW3LcULMmj1uQ0wpZc.jpg', 'Tres De Mayo', NULL, '2024-11-15 23:28:06', '2024-11-15 23:30:51', 0, 0, 'tenant', 3, NULL, 542861, NULL);
+(68, 'Roland Shane Lopez', 'rshan0418@gmail.com', 'roland', '$2y$12$M9.0fLzVbEpg5m3lYEzPcuMg5u28fVIyWZjmqIGOLcTA8KfWW80.O', '09661805821', NULL, NULL, 'profile_picture/kEDKEjA3jRNNPztmQNrveSXYF.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:15:59', '2024-11-20 20:32:21', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 02:16:40'),
+(69, 'Roland Shane Lopez', 'rshan04122@gmail.com', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/17P7uknT1nLNN3tJZEDWeodhu.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:23:38', '2024-11-20 20:30:04', 0, 0, 'tenant', 2, NULL, NULL, '2024-11-21 02:24:38'),
+(70, 'Degam Jhonry', 'jhonrydegamo@gmail.com', 'degads', '$2y$12$h32SRh2VdQg1duaLDQnMq.AEbTF1c4e0PRJsp/ahe6XQZ/5eRh4sK', '09090909090', NULL, NULL, 'profile_picture/FurI715A5UrGqPiKsbWG1svii.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 19:34:52', '2024-11-20 19:35:49', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 03:35:42'),
+(71, 'shane lopez', 'nokielopez@gmail.com', NULL, NULL, '090909090909', NULL, '106648757521862198329', 'profile_picture/A53NKFOPfoZAZxDuuTlWf5sZc.jpg', 'Tres De Mayo', NULL, '2024-11-20 20:32:53', '2024-11-20 20:33:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-21 04:32:53');
 
 -- --------------------------------------------------------
 
@@ -786,14 +573,8 @@ CREATE TABLE `verifications` (
 --
 
 INSERT INTO `verifications` (`id`, `user_id`, `id_document`, `business_permit`, `status`, `note`, `created_at`, `updated_at`) VALUES
-(2, 10, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsada', '2024-09-12 02:19:00', '2024-09-15 21:20:16'),
-(4, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsada', '2024-09-15 00:34:08', '2024-09-15 21:19:39'),
-(6, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'approved', NULL, '2024-09-15 21:58:58', '2024-09-15 22:14:00'),
-(7, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'pending', NULL, '2024-09-15 22:00:13', '2024-09-15 22:35:54'),
-(8, 9, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'rejected', 'dsadsadsadsdaddsadsadsadsadsdihifweuirhweuiruiweeruiwefuidufbjwadfjfuiwfuweuirweuifwuifuiwefhsfsd', '2024-09-15 22:01:43', '2024-09-15 23:02:09'),
-(9, 43, 'owner_documents/valid_id/MMGf5nVJLsw2RdLcYeArMwyX6.jpg', 'owner_documents/business_permit/bJim9r1KYHlXN0J4Th5zpglrl.jpg', 'approved', NULL, '2024-10-28 01:19:17', '2024-10-28 02:29:07'),
-(10, 51, 'owner_documents/valid_id/8FogOHXdtOiviiSJYoCyRmSta.jpg', 'owner_documents/business_permit/YF1YNcITFeMsHw0fcA26tC7IC.jpg', 'approved', NULL, '2024-11-06 20:26:13', '2024-11-06 20:26:44'),
-(20, 62, 'owner_documents/valid_id/JsVJXuGo5q4sB5VfXjvIzeMhB.jpg', 'owner_documents/business_permit/mEtw3EjTgsnkd0PtU9o6Wop5e.jpg', 'approved', NULL, '2024-11-15 17:01:03', '2024-11-15 17:01:53');
+(21, 68, 'owner_documents/valid_id/sjtdbFROgSWGlIznJ8e9Sj3CF.jpg', 'owner_documents/business_permit/pq05sithBgblMnkqdqh4vpvEC.png', 'approved', NULL, '2024-11-20 18:16:00', '2024-11-20 18:26:11'),
+(22, 70, 'owner_documents/valid_id/8TXOZgyE7GUugLEYez0MyK2t3.jpg', 'owner_documents/business_permit/MhiNgYLjiblc00K38CMJoqhNz.jpg', 'approved', NULL, '2024-11-20 19:34:52', '2024-11-20 19:35:49');
 
 --
 -- Indexes for dumped tables
@@ -940,7 +721,7 @@ ALTER TABLE `verifications`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `curse_words`
@@ -952,7 +733,7 @@ ALTER TABLE `curse_words`
 -- AUTO_INCREMENT for table `dorms`
 --
 ALTER TABLE `dorms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -964,7 +745,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -982,19 +763,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=326;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=372;
 
 --
 -- AUTO_INCREMENT for table `property_views`
 --
 ALTER TABLE `property_views`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `rent_forms`
 --
 ALTER TABLE `rent_forms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -1006,19 +787,19 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `verifications`
 --
 ALTER TABLE `verifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables

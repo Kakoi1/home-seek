@@ -121,11 +121,12 @@
         gap: 15px;
     }
 
-    .review-item {
-        padding: 15px;
+    .reviews-items {
         background-color: #f9f9f9;
         border: 1px solid #eee;
         border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 15px;
     }
 
     .review-item h5 {
@@ -584,13 +585,20 @@
             <div class="profile-header">
                 <img id="userProfilePicture" src="" alt="User Profile Picture" class="profile-img">
 
-                <div>
+                <div style="width: 100%; padding: 10px;">
                     <h3 style="color: black;" id="userName"></h3>
                     <p id="userRole"></p>
-                    <span>
-                        <p id="joined"></p>
-                        <p id="status_acc"></p>
-                    </span>
+                    <div style="display: flex;width: 100%;flex-direction: row;justify-content: flex-start;gap: 250px;">
+                        <span>
+
+                            <p id="status_acc"></p>
+                            <p id="joined"></p>
+
+                        </span>
+                        <span id="contacter">
+
+                        </span>
+                    </div>
                 </div>
                 <div class="userButton" id="userButton"></div>
             </div>
@@ -603,7 +611,7 @@
     <div id="userNot" class="user-popup" style="display: none;">
         <div id="notificationOverlay" class="overlaynot"></div>
         <div id="notificationPopup" class="popupnot">
-            <h3>Notification</h3>
+            <h3 style="color: black !important;">Notification</h3>
             <p id="popupMessage"></p>
             <button id="closeButton" onclick="closePopup()">Close</button>
         </div>
@@ -642,9 +650,9 @@
                     errorList += '</ul>';
 
                     Swal.fire({
-                        title: 'Validation Errors',
+                        title: 'Error',
                         html: errorList,
-                        icon: 'error',
+                        icon: 'warning',
                         confirmButtonText: 'OK'
                     });
                 });
@@ -724,282 +732,283 @@
     @if (Auth::user())
 
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    let currentPage = 1;
-                    let currentUserId = null;
-                    const userid = {{Auth::id()}};
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let currentPage = 1;
+                let currentUserId = null;
+                const userid = {{Auth::id()}};
 
-                    window.openUserPopup = async function (userId) {
-                        currentUserId = userId;
+                window.openUserPopup = async function (userId) {
+                    currentUserId = userId;
 
-                        try {
-                            const response = await fetch(`/user-data/${userId}?page=${currentPage}`);
-                            const data = await response.json();
+                    try {
+                        const response = await fetch(`/user-data/${userId}?page=${currentPage}`);
+                        const data = await response.json();
 
-                            document.getElementById('userName').innerText = data.name;
-                            document.getElementById('userRole').innerText = data.role;
-                            document.getElementById('joined').innerHTML = `</p><strong>Joined: ${data.joined}</strong>`;
-                            document.getElementById('status_acc').innerText = data.status_acc;
-                            document.getElementById('userProfilePicture').src =
-                                data.profile_picture
-                                    ? `https://storage.googleapis.com/homeseek-profile-image/${data.profile_picture}`
-                                    : 'https://via.placeholder.com/80x80';
+                        document.getElementById('userName').innerText = data.name;
+                        document.getElementById('userRole').innerText = data.role;
+                        document.getElementById('contacter').innerHTML = data.contacts;
+                        document.getElementById('joined').innerHTML = `<strong>Joined: ${data.joined}</strong>`;
+                        document.getElementById('status_acc').innerHTML = data.status_acc ? `<strong class = 'text-danger'>Inactive</strong>` : `<strong class = 'text-success'>Active</strong>`;
+                        document.getElementById('userProfilePicture').src =
+                            data.profile_picture
+                                ? `https://storage.googleapis.com/homeseek-profile-image/${data.profile_picture}`
+                                : 'https://via.placeholder.com/80x80';
 
-                            const userButton = document.getElementById('userButton');
-                            userButton.innerHTML = ''; // Clear previous buttons
-                            if (data.role !== 'Admin') {
-                                console.log(data.role);
+                        const userButton = document.getElementById('userButton');
+                        userButton.innerHTML = ''; // Clear previous buttons
+                        if (data.role !== 'Admin') {
+                            console.log(data.role);
 
-                                if (userid === currentUserId) {
-                                    // Create 'Edit Profile' button
-                                    const editButton = document.createElement('button');
-                                    editButton.innerText = 'Edit Profile';
+                            if (userid === currentUserId) {
+                                // Create 'Edit Profile' button
+                                const editButton = document.createElement('button');
+                                editButton.innerText = 'Edit Profile';
 
-                                    // Bind event to the 'editButton', not 'reportButton'
-                                    editButton.addEventListener('click', () => {
-                                        // Make sure to use the actual URL or dynamically inject it from server-side
-                                        const editProfileUrl = '{{ route('profile.edit') }}';  // Make sure this is rendered correctly from Blade
-                                        location.href = editProfileUrl;
-                                    });
+                                // Bind event to the 'editButton', not 'reportButton'
+                                editButton.addEventListener('click', () => {
+                                    // Make sure to use the actual URL or dynamically inject it from server-side
+                                    const editProfileUrl = '{{ route('profile.edit') }}';  // Make sure this is rendered correctly from Blade
+                                    location.href = editProfileUrl;
+                                });
 
-                                    // Add the button to the userButton container
-                                    userButton.appendChild(editButton);
-                                }
-                                else {
-                                    @if(Auth::check() && Auth::user()->role !== 'admin')
-                                        const reportButton = document.createElement('button');
-                                        reportButton.innerText = 'Report User';
-                                        reportButton.addEventListener('click', () => showReportPopup(currentUserId, null, 'user'));
-                                        userButton.appendChild(reportButton);
-                                    @endif
-
-                                }
+                                // Add the button to the userButton container
+                                userButton.appendChild(editButton);
                             }
+                            else {
+                                @if(Auth::check() && Auth::user()->role !== 'admin')
+                                    const reportButton = document.createElement('button');
+                                    reportButton.innerText = 'Report User';
+                                    reportButton.addEventListener('click', () => showReportPopup(currentUserId, null, 'user'));
+                                    userButton.appendChild(reportButton);
+                                @endif
 
-                            document.getElementById('userData').innerHTML = data.content;
-
-                            if (data.pagination) {
-                                updatePaginationControls(data.pagination);
-                                document.getElementById('paginationControls').style.display = 'block';
-                            } else {
-                                document.getElementById('paginationControls').style.display = 'none';
                             }
-
-                            document.getElementById('userPopup').style.display = 'flex';
-                        } catch (error) {
-                            console.error('Error fetching user data:', error);
-                            alert('Failed to load user data. Please try again later.');
                         }
-                    };
 
-                    function updatePaginationControls(pagination) {
-                        const paginationControls = document.getElementById('paginationControls');
-                        paginationControls.innerHTML = `
-            <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
-                            }>Previous</button>
-            <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-            <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
-                                ? 'disabled' : ''}>Next</button>
-            `;
+                        document.getElementById('userData').innerHTML = data.content;
+
+                        if (data.pagination) {
+                            updatePaginationControls(data.pagination);
+                            document.getElementById('paginationControls').style.display = 'block';
+                        } else {
+                            document.getElementById('paginationControls').style.display = 'none';
+                        }
+
+                        document.getElementById('userPopup').style.display = 'flex';
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                        alert('Failed to load user data. Please try again later.');
                     }
-
-                    window.changePage = function (page) {
-                        currentPage = page;
-                        openUserPopup(currentUserId);
-                    };
-
-                    window.closeUserPopup = function () {
-                        document.getElementById('userPopup').style.display = 'none';
-                    };
-                });
-
-                window.updatePaginationControls = function (pagination) {
-                    const paginationControls = document.getElementById('paginationControls');
-                    paginationControls.innerHTML = `
-            <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
-                        }>Previous</button>
-            <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-            <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
-                            ? 'disabled' : ''}>Next</button>
-            `;
                 };
 
-                function showReportPopup(userId, dormId, typeRep) {
-                    // Set the hidden inputs with the passed values
-                    document.getElementById('reported_id').value = userId;
-                    document.getElementById('dorm_id').value = dormId;
-                    document.getElementById('type').value = typeRep;
-
-                    // Show the popup
-                    document.getElementById("reportPopup").style.display = "block";
-
-                    // Close any other popups if necessary
-                    closeUserPopup();
-
-                    // Change the report reason options based on the report type
-                    updateReportReasonOptions(typeRep);
+                function updatePaginationControls(pagination) {
+                    const paginationControls = document.getElementById('paginationControls');
+                    paginationControls.innerHTML = `
+                                                                                        <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+                        }>Previous</button>
+                                                                                        <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+                                                                                        <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+                            ? 'disabled' : ''}>Next</button>
+                                                                                        `;
                 }
 
-                // Close the popup
-                function closeReportPopup() {
-                    document.getElementById("reportPopup").style.display = "none";
-                }
+                window.changePage = function (page) {
+                    currentPage = page;
+                    openUserPopup(currentUserId);
+                };
 
-                // Handle form submission
-                function submitReport() {
-                    const formData = new FormData(document.getElementById('reportForm'));
-                    fetch('/report', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: formData,
+                window.closeUserPopup = function () {
+                    document.getElementById('userPopup').style.display = 'none';
+                };
+            });
+
+            window.updatePaginationControls = function (pagination) {
+                const paginationControls = document.getElementById('paginationControls');
+                paginationControls.innerHTML = `
+                                                                                        <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+                    }>Previous</button>
+                                                                                        <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+                                                                                        <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+                        ? 'disabled' : ''}>Next</button>
+                                                                                        `;
+            };
+
+            function showReportPopup(userId, dormId, typeRep) {
+                // Set the hidden inputs with the passed values
+                document.getElementById('reported_id').value = userId;
+                document.getElementById('dorm_id').value = dormId;
+                document.getElementById('type').value = typeRep;
+
+                // Show the popup
+                document.getElementById("reportPopup").style.display = "block";
+
+                // Close any other popups if necessary
+                closeUserPopup();
+
+                // Change the report reason options based on the report type
+                updateReportReasonOptions(typeRep);
+            }
+
+            // Close the popup
+            function closeReportPopup() {
+                document.getElementById("reportPopup").style.display = "none";
+            }
+
+            // Handle form submission
+            function submitReport() {
+                const formData = new FormData(document.getElementById('reportForm'));
+                fetch('/report', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        closeReportPopup();
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            alert(data.message);
-                            closeReportPopup();
-                        })
-                        .catch(error => console.error('Error:', error));
+                    .catch(error => console.error('Error:', error));
+            }
+
+            // Function to toggle the visibility of the "Other" input field
+            function toggleOtherInput(show) {
+                const otherReasonInputDiv = document.getElementById('otherReasonInput');
+                if (show) {
+                    otherReasonInputDiv.style.display = 'block'; // Show the input field
+                } else {
+                    otherReasonInputDiv.style.display = 'none'; // Hide the input field
+                }
+            }
+
+            // Function to update report reason options based on the report type (user or property)
+            function updateReportReasonOptions(typeRep) {
+                const reasonContainer = document.getElementById('reasonPop');
+
+                // Clear existing radio buttons
+                reasonContainer.querySelectorAll('div.custom-check').forEach(div => div.remove());
+
+                // Define the reason options based on the report type
+                let reasonOptions = [];
+
+                if (typeRep === 'property') {
+                    reasonOptions = [
+                        'Property Violation',
+                        'Damage to Property',
+                        'Unsafe Conditions',
+                        'Illegal Activities'
+                    ];
+                } else {
+                    reasonOptions = [
+                        'Spam',
+                        'Inappropriate Content',
+                        'Harassment'
+                    ];
                 }
 
-                // Function to toggle the visibility of the "Other" input field
-                function toggleOtherInput(show) {
-                    const otherReasonInputDiv = document.getElementById('otherReasonInput');
-                    if (show) {
-                        otherReasonInputDiv.style.display = 'block'; // Show the input field
-                    } else {
-                        otherReasonInputDiv.style.display = 'none'; // Hide the input field
-                    }
-                }
+                // Insert custom CSS styles into the document head
+                const style = document.createElement('style');
+                style.innerHTML = `
+                                                                                            .custom-check {
+                                                                                                margin-bottom: 10px; /* Space between each radio button */
+                                                                                                display: flex; /* Align radio and label horizontally */
 
-                // Function to update report reason options based on the report type (user or property)
-                function updateReportReasonOptions(typeRep) {
-                    const reasonContainer = document.getElementById('reasonPop');
+                                                                                                align-items: center; /* Aligns radio button and label vertically */
+                                                                                            } .custom-check input{
+                                                                                     width: 50px;
+                                                                                            }
 
-                    // Clear existing radio buttons
-                    reasonContainer.querySelectorAll('div.custom-check').forEach(div => div.remove());
+                                                                                            .custom-check label {
+                                                                                                margin-left: 10px;
+                                                                                                cursor: pointer; /* Cursor changes to pointer on hover */
+                                                                                            }
+                                                                                        `;
+                document.head.appendChild(style);
 
-                    // Define the reason options based on the report type
-                    let reasonOptions = [];
+                // Add the reason options dynamically
+                reasonOptions.forEach(reason => {
+                    // Create radio button container
+                    const div = document.createElement('div');
+                    div.classList.add('custom-check'); // Custom class for radio button container
 
-                    if (typeRep === 'property') {
-                        reasonOptions = [
-                            'Property Violation',
-                            'Damage to Property',
-                            'Unsafe Conditions',
-                            'Illegal Activities'
-                        ];
-                    } else {
-                        reasonOptions = [
-                            'Spam',
-                            'Inappropriate Content',
-                            'Harassment'
-                        ];
-                    }
+                    // Create the radio button input
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.classList.add('custom-check-input'); // Custom class for radio button
+                    radio.name = 'Repreason'; // Same name to group them
+                    radio.value = reason;
+                    radio.id = `reason-${reason}`; // Give a unique ID for each radio button
 
-                    // Insert custom CSS styles into the document head
-                    const style = document.createElement('style');
-                    style.innerHTML = `
-                .custom-check {
-                    margin-bottom: 10px; /* Space between each radio button */
-                    display: flex; /* Align radio and label horizontally */
+                    // Create the label for the radio button
+                    const label = document.createElement('label');
+                    label.setAttribute('for', radio.id); // Set the "for" attribute for accessibility
+                    label.innerHTML = reason;
 
-                    align-items: center; /* Aligns radio button and label vertically */
-                } .custom-check input{
-         width: 50px;
-                }
+                    // Append radio inside the label (radio button comes before the text)
+                    label.insertBefore(radio, label.firstChild); // Insert radio input at the beginning
 
-                .custom-check label {
-                    margin-left: 10px;
-                    cursor: pointer; /* Cursor changes to pointer on hover */
-                }
-            `;
-                    document.head.appendChild(style);
+                    // Append the label to the div container
+                    div.appendChild(label);
 
-                    // Add the reason options dynamically
-                    reasonOptions.forEach(reason => {
-                        // Create radio button container
-                        const div = document.createElement('div');
-                        div.classList.add('custom-check'); // Custom class for radio button container
-
-                        // Create the radio button input
-                        const radio = document.createElement('input');
-                        radio.type = 'radio';
-                        radio.classList.add('custom-check-input'); // Custom class for radio button
-                        radio.name = 'Repreason'; // Same name to group them
-                        radio.value = reason;
-                        radio.id = `reason-${reason}`; // Give a unique ID for each radio button
-
-                        // Create the label for the radio button
-                        const label = document.createElement('label');
-                        label.setAttribute('for', radio.id); // Set the "for" attribute for accessibility
-                        label.innerHTML = reason;
-
-                        // Append radio inside the label (radio button comes before the text)
-                        label.insertBefore(radio, label.firstChild); // Insert radio input at the beginning
-
-                        // Append the label to the div container
-                        div.appendChild(label);
-
-                        // Append the div container to the reasonContainer
-                        reasonContainer.appendChild(div);
-                    });
-
-                    // Add "Other" option with a radio button
-                    const otherDiv = document.createElement('div');
-                    otherDiv.classList.add('custom-check');
-
-                    const otherRadio = document.createElement('input');
-                    otherRadio.type = 'radio';
-                    otherRadio.classList.add('custom-check-input');
-                    otherRadio.name = 'Repreason'; // Same name to group with other radio buttons
-                    otherRadio.value = 'Other';
-                    otherRadio.id = 'reason-Other';
-
-                    const otherLabel = document.createElement('label');
-                    otherLabel.setAttribute('for', otherRadio.id);
-                    otherLabel.innerHTML = 'Other';
-
-                    // Insert the radio input before the label text
-                    otherLabel.insertBefore(otherRadio, otherLabel.firstChild);
-
-                    otherDiv.appendChild(otherLabel);
-                    reasonContainer.appendChild(otherDiv);
-
-                    // Add the "Other" input field (hidden by default)
-                    const otherInputDiv = document.getElementById('otherReasonInput');
-                    otherInputDiv.style.display = 'none'; // Hide the input field by default
-
-                    // Add event listener to the "Other" radio button to toggle the input field visibility
-                    otherRadio.addEventListener('change', () => {
-                        if (otherRadio.checked) {
-                            otherInputDiv.style.display = 'block'; // Show input field when "Other" is selected
-                        } else {
-                            otherInputDiv.style.display = 'none'; // Hide input field when "Other" is not selected
-                        }
-                    });
-                }
-
-
-                // Event delegation: Listen for changes on the "Repreason" radio buttons
-                document.getElementById('reasonPop').addEventListener('change', function (e) {
-                    if (e.target.name === 'Repreason') {
-                        if (e.target.value === "Other") {
-                            toggleOtherInput(true); // Show the "Other" input when "Other" is selected
-                        } else {
-                            toggleOtherInput(false); // Hide the "Other" input when any other option is selected
-                        }
-                    }
+                    // Append the div container to the reasonContainer
+                    reasonContainer.appendChild(div);
                 });
 
+                // Add "Other" option with a radio button
+                const otherDiv = document.createElement('div');
+                otherDiv.classList.add('custom-check');
 
-                updateReportReasonOptions('user');
+                const otherRadio = document.createElement('input');
+                otherRadio.type = 'radio';
+                otherRadio.classList.add('custom-check-input');
+                otherRadio.name = 'Repreason'; // Same name to group with other radio buttons
+                otherRadio.value = 'Other';
+                otherRadio.id = 'reason-Other';
+
+                const otherLabel = document.createElement('label');
+                otherLabel.setAttribute('for', otherRadio.id);
+                otherLabel.innerHTML = 'Other';
+
+                // Insert the radio input before the label text
+                otherLabel.insertBefore(otherRadio, otherLabel.firstChild);
+
+                otherDiv.appendChild(otherLabel);
+                reasonContainer.appendChild(otherDiv);
+
+                // Add the "Other" input field (hidden by default)
+                const otherInputDiv = document.getElementById('otherReasonInput');
+                otherInputDiv.style.display = 'none'; // Hide the input field by default
+
+                // Add event listener to the "Other" radio button to toggle the input field visibility
+                otherRadio.addEventListener('change', () => {
+                    if (otherRadio.checked) {
+                        otherInputDiv.style.display = 'block'; // Show input field when "Other" is selected
+                    } else {
+                        otherInputDiv.style.display = 'none'; // Hide input field when "Other" is not selected
+                    }
+                });
+            }
+
+
+            // Event delegation: Listen for changes on the "Repreason" radio buttons
+            document.getElementById('reasonPop').addEventListener('change', function (e) {
+                if (e.target.name === 'Repreason') {
+                    if (e.target.value === "Other") {
+                        toggleOtherInput(true); // Show the "Other" input when "Other" is selected
+                    } else {
+                        toggleOtherInput(false); // Hide the "Other" input when any other option is selected
+                    }
+                }
+            });
+
+
+            updateReportReasonOptions('user');
 
 
 
-            </script>
+        </script>
     @endif
 </body>
 

@@ -19,8 +19,11 @@ class AdminController extends Controller
     public function index()
     {
         // User Metrics
-        $usersCount = User::all();
-        $ownersCount = User::where('role', 'owner')->get();
+        $usersCount = User::where(function ($query) {
+            $query->where('role', '!=', 'owner') // Include non-owners
+                ->orWhere('verify_status', '!=', 0); // Or include owners with verify_status not 0
+        })->get();
+        $ownersCount = User::where('role', 'owner')->where('verify_status', 1)->get();
         $tenantsCount = User::where('role', 'tenant')->count();
         $activeUsersCount = User::where('active_status', 0)->count();
         $inactiveUsersCount = User::where('active_status', 1)->count();
@@ -101,10 +104,13 @@ class AdminController extends Controller
     {
         // Find the verification request by ID
         $verification = Verifications::find($id);
+        $user = User::find($verification->user_id);
 
         if ($verification) {
             // Update the status to 'approved'
             $verification->status = 'approved';
+            $user->verify_status = true;
+            $user->save();
             $verification->save();
 
             $notification = Notification::create([
