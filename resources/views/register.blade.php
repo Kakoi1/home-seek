@@ -266,7 +266,7 @@
     <div class="containers register">
         <div class="logreg-box">
             <h2>Sign Up</h2>
-            <form id="register-form" enctype="multipart/form-data">
+            <form id="register-form" action="{{ route("register") }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Profile Picture Preview -->
@@ -381,60 +381,60 @@
         reader.readAsDataURL(e.target.files[0]);
     });
 
-    $(document).ready(function () {
-        $('#tenant').on('click', function (e) {
-            e.preventDefault(); // Prevent form submission
-            submitForm($('#register-form')); // Pass the correct form ID
-        });
+    // $(document).ready(function () {
+    //     $('#tenant').on('click', function (e) {
+    //         e.preventDefault(); // Prevent form submission
+    //         submitForm($('#register-form')); // Pass the correct form ID
+    //     });
 
 
 
-        function submitForm(form) {
-            emailRedirect = window.routes.emailUrl;
-            $.ajax({
-                url: '{{ route("register") }}',
-                method: 'POST',
-                data: new FormData(form[0]),
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    console.log(response.data);
-                    Swal.fire({
-                        title: 'Success!',
-                        text: response.message || 'Registration successful',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = emailRedirect.replace(':user', response.data.encrypted_id).replace(':verify', 'verify');
-                        }
-                    });
-                },
-                error: function (xhr, status, error) {
-                    let errors = xhr.responseJSON?.errors || {};
-                    let errorMessages = '';
-                    $.each(errors, function (field, messages) {
-                        messages.forEach(function (message) {
-                            errorMessages += `<li>${message}</li>`;
-                        });
-                    });
-
-                    if (!errorMessages) {
-                        errorMessages = `<li>${xhr.statusText || 'Something went wrong.'}</li>`;
+    function submitForm(form) {
+        emailRedirect = window.routes.emailUrl;
+        $.ajax({
+            url: '',
+            method: 'POST',
+            data: new FormData(form[0]),
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                console.log(response.data);
+                Swal.fire({
+                    title: 'Success!',
+                    text: response.message || 'Registration successful',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = emailRedirect.replace(':user', response.data.encrypted_id).replace(':verify', 'verify');
                     }
-
-                    Swal.fire({
-                        title: 'Error!',
-                        html: `<ul>${errorMessages}</ul>`,
-                        icon: 'error',
-                        confirmButtonText: 'OK',
+                });
+            },
+            error: function (xhr, status, error) {
+                let errors = xhr.responseJSON?.errors || {};
+                let errorMessages = '';
+                $.each(errors, function (field, messages) {
+                    messages.forEach(function (message) {
+                        errorMessages += `<li>${message}</li>`;
                     });
+                });
+
+                if (!errorMessages) {
+                    errorMessages = `<li>${xhr.statusText || 'Something went wrong.'}</li>`;
                 }
-            });
-        }
+
+                Swal.fire({
+                    title: 'Error!',
+                    html: `<ul>${errorMessages}</ul>`,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+            }
+        });
+    }
     });
 </script>
 <script>

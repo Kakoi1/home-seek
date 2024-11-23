@@ -24,6 +24,7 @@ class User extends Authenticatable
         'address',
         'email_verification_code',
         'email_verified_at',
+        'stripe_account_id',
     ];
 
     protected $hidden = [

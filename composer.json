@@ -11,8 +11,10 @@
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
+        "paymongo/paymongo-php": "*",
         "pusher/pusher-php-server": "^7.2",
-        "spatie/laravel-google-cloud-storage": "^2.3"
+        "spatie/laravel-google-cloud-storage": "^2.3",
+        "srmklive/paypal": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

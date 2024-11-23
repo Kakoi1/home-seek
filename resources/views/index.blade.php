@@ -57,6 +57,16 @@
         color: #fff;
         font-weight: bold;
     }
+
+    .carousel-item {
+        transition: transform 0.7s ease-in-out, opacity 5s ease-in-out;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        filter: invert(1);
+        /* Optional: Makes the controls white for better visibility */
+    }
 </style>
 <section class="homepage" id="home">
     <div class="content">
@@ -65,7 +75,7 @@
             <p>
                 Discover Your Ideal Dorm or Apartment in Minglanilla.</p>
         </div>
-        <a href="#services">Our Services</a>
+        <a href="{{route('home')}}">Browse Listing</a>
     </div>
 
 </section>
@@ -198,7 +208,8 @@
                                 </a>
                             </div>
 
-                            <div class="overlay">
+                            <div class="overlay" style="cursor: pointer;"
+                                onclick="location.href = '{{route('dorms.posted', Crypt::encrypt($dorm->id))}}'">
                                 <div class="text">
                                     <h4>{{ $dorm->name }}</h4>
                                     <p>{{ $shortAddress }}</p>
@@ -210,6 +221,7 @@
         </ul>
     </div>
 </section>
+
 >
 
 

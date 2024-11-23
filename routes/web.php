@@ -16,7 +16,10 @@ use App\Http\Controllers\NotifyController;
 use App\Http\Controllers\MessageController;
 use Illuminate\Support\Carbon;
 
-
+Route::get('/home', [DormController::class, 'index'])->name('home');
+Route::get('/dorms', [DormController::class, 'index'])->name('dorm');
+Route::get('/showdorms', [DormController::class, 'showDorms'])->name('showdorms');
+Route::get('/user-data/{id}', [DormController::class, 'getUserData']);
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/managepage/user', [AdminController::class, 'manageUsers'])->name('admin.manageuser');
@@ -100,7 +103,8 @@ Route::get('/', function () {
 
 
 })->name('index');
-
+Route::get('/dorms/{data}', [DormController::class, 'show'])->name('dorms.posted');
+Route::get('/home', [DormController::class, 'index'])->name('home');
 Auth::routes();
 Route::get('/test-upload', [HomeController::class, 'showUploadForm'])->name('test.upload.form');
 Route::post('/category/store', [HomeController::class, 'upload'])->name('test.upload');
@@ -126,7 +130,6 @@ Route::post('/verify-email', [Controller::class, 'verifyEmail'])->name('verify.e
 
 
 
-
 Route::get('/send-email/{id}/{action}', [Controller::class, 'redirectEmail'])->name('send.email');
 Route::get('/resend/{user}', [Controller::class, 'reSend'])->name('resend.code');
 Route::get('/upload', function () {
@@ -136,19 +139,16 @@ Route::get('/upload', function () {
 Route::group(['middleware' => ['auth', 'email.verified']], function () {
 
     Route::group(['middleware' => ['auth', 'owner.verified']], function () {
-        Route::get('/user-data/{id}', [DormController::class, 'getUserData']);
+
         Route::get('/profile', [Controller::class, 'showProfile'])->name('profile.edit');
         Route::put('/profile/update', [Controller::class, 'updateProfile'])->name('profile.update');
-        Route::get('/dorms/{data}', [DormController::class, 'show'])->name('dorms.posted');
+
         Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
         Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
         // tenant here---------------------------------------------------
 
         Route::middleware(['auth', 'tenant'])->group(function () {
-            Route::get('/home', [DormController::class, 'index'])->name('home');
-            Route::get('/dorms', [DormController::class, 'index'])->name('dorm');
-            Route::get('/showdorms', [DormController::class, 'showDorms'])->name('showdorms');
             Route::post('/dorm/{dorm}/favorite', [DormController::class, 'toggleFavorite'])->name('dorm.favorite');
             Route::post('/dorm/{dorm}/views', [DormController::class, 'trackView'])->name('dorm.view');
             Route::put('/rentForms/update/{id}', [RoomController::class, 'updateBook'])->name('rentForm.update');

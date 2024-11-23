@@ -172,10 +172,13 @@ class DormController extends Controller
         }
 
         // Check if the user has pending or active rent forms
-        $hasPendingOrActiveRentForm = RentForm::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'active', 'approved'])
-            ->exists();
-
+        if ($user) {
+            $hasPendingOrActiveRentForm = RentForm::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'active', 'approved'])
+                ->exists();
+        } else {
+            $hasPendingOrActiveRentForm = null;
+        }
         if ($dorm->availability || $dorm->flag) {
             return back()->withErrors('Accommodation not available');
         }
@@ -189,25 +192,25 @@ class DormController extends Controller
                 $query->where('rating', '>', 0); // Only include reviews with a rating greater than 0
             }
         ])->findOrFail($id);
-
-        // Set up breadcrumbs based on user role
-        if ($user->role == 'owner') {
-            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
-                $trail->parent('owner.Property');
-                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
-            });
-        } elseif ($user->role == 'tenant') {
-            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
-                $trail->parent('home');
-                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
-            });
-        } elseif ($user->role == 'admin') {
-            Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
-                $trail->parent('admin.manageProp');
-                $trail->push($dorm->name, route('dorms.posted', $dorm->id));
-            });
+        if ($user) {
+            // Set up breadcrumbs based on user role
+            if ($user->role == 'owner') {
+                Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                    $trail->parent('owner.Property');
+                    $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+                });
+            } elseif ($user->role == 'tenant') {
+                Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                    $trail->parent('home');
+                    $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+                });
+            } elseif ($user->role == 'admin') {
+                Breadcrumbs::for('dorms.posted', function (BreadcrumbTrail $trail) use ($dorm) {
+                    $trail->parent('admin.manageProp');
+                    $trail->push($dorm->name, route('dorms.posted', $dorm->id));
+                });
+            }
         }
-
         return view('dorms.posted', compact('dorm', 'propertyReview', 'hasPendingOrActiveRentForm'));
     }
 

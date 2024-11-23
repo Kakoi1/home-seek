@@ -48,7 +48,7 @@
                             </div>
                             <p><strong>Comments:</strong> {{ $review->comments }}</p>
                             <p><small>Reviewed on: {{ $review->updated_at->format('Y-m-d H:i') }}</small></p>
-                            <a href="{{ route('reviews.store', $review->id) }}" class="btn">Edit Review</a>
+                            <a href="{{ route('reviews.store', Crypt::encrypt($review->id)) }}" class="btn">Edit Review</a>
                         </div>
                     @endforeach
                 </div>

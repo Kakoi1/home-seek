@@ -190,11 +190,12 @@
                     </ul>
                 </div>
 
-                <div class="authentic form-inline my-2 my-lg-0">
-                    <button onclick="window.location.href='{{ route('login') }}'">Login</button>
-                    <button onclick="window.location.href='{{ route('register') }}'">Register</button>
-                </div>
+
             @endif
+            <div class="authentic form-inline my-2 my-lg-0">
+                <button onclick="window.location.href='{{ route('login') }}'">Login</button>
+                <button onclick="window.location.href='{{ route('register') }}'">Register</button>
+            </div>
         @else
             </div>
 

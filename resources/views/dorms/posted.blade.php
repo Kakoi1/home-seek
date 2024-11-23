@@ -563,61 +563,72 @@
                             {{ $dorm->created_at->format('Y F') }}
                         @endif
                     </p>
-                    @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
-                        <div style="float:left;">
-                            <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
-                                class="bts">Report Accommodation <i class="fa-solid fa-flag"></i></button>
-                        </div>
+                    @if (Auth::check())
+                        @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
+                            <div style="float:left;">
+                                <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
+                                    class="bts">Report Accommodation <i class="fa-solid fa-flag"></i></button>
+                            </div>
+                        @endif
+
                     @endif
+
                 </div>
 
             </div>
-            @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
+            @if (Auth::id() != $dorm->user_id && Auth::user()?->role !== 'admin')
                 <div class="booking-form">
                     <div class="price">
                         <span>{{ $dorm->price }}</span> / day
                     </div>
 
-                    <form id="bookingForm" action="{{route('rentForm.store')}}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="checkin">Check-in</label>
-                            <input type="date" id="checkin" name="start_date">
+                    @auth
+                        <form id="bookingForm" action="{{ route('rentForm.store') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="checkin">Check-in</label>
+                                <input type="date" id="checkin" name="start_date">
+                            </div>
+                            <input type="hidden" name="dorm_id" value="{{ $dorm->id }}">
+                            <input type="hidden" name="total_price" id="tprice">
+                            <div class="form-group">
+                                <label for="checkout">Check-out</label>
+                                <input type="date" id="checkout" name="end_date">
+                            </div>
+                            <div class="form-group">
+                                <label for="guests">Guests</label>
+                                <select id="guests" name="guests">
+                                    @for ($i = 1; $i <= $dorm->capacity; $i++)
+                                        <option value="{{ $i }}">{{ $i }} guest{{ $i > 1 ? 's' : '' }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+
+                            @if (!$hasPendingOrActiveRentForm)
+                                <button type="submit" id="Book" class="btn-reserve">Book now</button>
+                            @else
+                                <p class="text-danger">You already have booked an accommodation. You cannot book at this moment.</p>
+                            @endif
+                        </form>
+
+                        <!-- Pricing Details -->
+                        <div class="price-details">
+                            <p>₱{{ $dorm->price }} x <span id="nights">0</span> nights</p>
+                            <hr>
+                            <p>Total <span id="total-price">₱0</span></p>
                         </div>
-                        <input type="hidden" name="dorm_id" id="" value="{{$dorm->id}}">
-                        <input type="hidden" name="total_price" id="tprice">
-                        <div class="form-group">
-                            <label for="checkout">Check-out</label>
-                            <input type="date" id="checkout" name="end_date">
+                    @endauth
+
+                    @guest
+                        <div style="height: 70%;display: flex;align-items: center;">
+                            <p class="text-danger text-center">You need to <a href="{{ route('login') }}">log in</a> to book
+                                this
+                                accommodation.</p>
                         </div>
-                        <div class="form-group">
-                            <label for="guests">Guests</label>
-                            <select id="guests" name="guests">
-                                @for ($i = 1; $i <= $dorm->capacity; $i++)
-                                    <option value="{{ $i }}">{{ $i }} guest{{ $i > 1 ? 's' : '' }}</option>
-                                @endfor
-
-
-                                <!-- Add more options -->
-                            </select>
-                        </div>
-
-                        @if (!$hasPendingOrActiveRentForm)
-                            <button type="submit" id="Book" class="btn-reserve">Book now</button>
-                        @else
-                            <p class="text-danger">You already have Booked a Accommodation. You cannot book at this moment.</p>
-                        @endif
-
-                    </form>
-
-                    <!-- Pricing Details -->
-                    <div class="price-details">
-                        <p>₱{{ $dorm->price }} x <span id="nights">0</span> nights</p>
-                        <hr>
-                        <p>Total <span id="total-price">₱0</span></p>
-                    </div>
+                    @endguest
                 </div>
             @endif
+
 
         </div>
         <!-- Room Display Button -->
@@ -682,7 +693,7 @@
 
 <br><br>
 <script>
-    @if (Auth::id() != $dorm->user_id)
+    @if (Auth::check() && Auth::id() != $dorm->user_id)
         document.addEventListener("DOMContentLoaded", function () {
             const checkinInput = document.getElementById("checkin");
             const checkoutInput = document.getElementById("checkout");
