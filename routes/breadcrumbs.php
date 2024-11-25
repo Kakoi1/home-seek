@@ -61,6 +61,14 @@ Breadcrumbs::for('favourites', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('My Favourites', route('favourites'));
 });
+Breadcrumbs::for('wallet.cashIn', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Cash In', route('wallet.cashIn'));
+});
+Breadcrumbs::for('wallet.cashOutForm', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Cash out', route('wallet.cashOutForm'));
+});
 Breadcrumbs::for('user.rentForms', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Bookings', route('user.rentForms'));

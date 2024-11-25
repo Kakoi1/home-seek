@@ -45,6 +45,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Dorm::class, 'favorites')->withTimestamps();
     }
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 
 
 }

@@ -600,7 +600,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="userButton" id="userButton"></div>
+                <div class="userButton" id="userButton" style="display: flex;width: 250px;"></div>
             </div>
             <hr>
             <div id="userData"></div>
@@ -616,6 +616,7 @@
             <button id="closeButton" onclick="closePopup()">Close</button>
         </div>
     </div>
+
 
     @if (Auth::user() && !request()->routeIs('index') && !request()->routeIs('dds') && !Auth::user()->email_verified_at == null && !request()->routeIs('privacy'))
         @include('partials.pusher')
@@ -636,6 +637,37 @@
         </style>
     @endif
 
+    <div id="walletOverlay" class="overli" style="display:none;">
+        <div class="overli-content">
+            <h2>My Wallet</h2>
+            <p><strong>Wallet Balance:</strong> ₱<span id="walletBalance">0.00</span></p>
+
+            <h4>Transaction History</h4>
+            <div id="walletTransactions" class="transaction-list">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        <!-- Transactions will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="wallet-buttons">
+                <button id="cashInButton" class="btn btn-primary">Cash In</button>
+                <button id="cashOutButton" class="btn btn-secondary">Cash Out</button>
+            </div>
+
+            <!-- Close Button -->
+            <button id="closeWalletOverlay" class="btn btn-danger mt-3">Close</button>
+        </div>
+    </div>
 
 
     <div class="" style="overflow: auto">
@@ -650,7 +682,7 @@
                     errorList += '</ul>';
 
                     Swal.fire({
-                        title: 'Error',
+                        title: '',
                         html: errorList,
                         icon: 'warning',
                         confirmButtonText: 'OK'
@@ -703,7 +735,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
-                    title: 'Success!',
+                    title: '',
                     text: "{{ session('success') }}",
                     icon: 'success',
                     confirmButtonText: 'OK'
@@ -766,16 +798,65 @@
                             const editButton = document.createElement('button');
                             editButton.innerText = 'Edit Profile';
 
-                            // Bind event to the 'editButton', not 'reportButton'
                             editButton.addEventListener('click', () => {
-                                // Make sure to use the actual URL or dynamically inject it from server-side
-                                const editProfileUrl = '{{ route('profile.edit') }}';  // Make sure this is rendered correctly from Blade
+                                const editProfileUrl = '{{ route('profile.edit') }}';  // Blade route rendering
                                 location.href = editProfileUrl;
                             });
 
-                            // Add the button to the userButton container
+                            // Create 'My Wallet' button
+                            const walletButton = document.createElement('button');
+                            walletButton.innerText = 'My Wallet';
+
+                            // Wallet overlay functionality
+                            walletButton.addEventListener('click', async () => {
+                                const overlay = document.getElementById('walletOverlay');
+                                const transactionTableBody = document.getElementById('transactionTableBody');
+                                const walletBalance = document.getElementById('walletBalance');
+
+                                overlay.style.display = 'flex'; // Show overlay
+                                transactionTableBody.innerHTML = ''; // Clear previous data
+
+                                try {
+                                    // Fetch wallet details
+                                    const response = await fetch("{{ route('wallet.details') }}");
+                                    const data = await response.json();
+
+                                    // Update wallet balance
+                                    walletBalance.innerText = data.balance;
+
+                                    // Populate transactions table
+                                    if (data.transactions.length > 0) {
+                                        data.transactions.forEach(transaction => {
+                                            const row = document.createElement('tr');
+
+                                            row.innerHTML = `
+                            <td>${transaction.date}</td>
+                            <td>${transaction.type}</td>
+                            <td>₱${transaction.amount}</td>
+                        `;
+
+                                            transactionTableBody.appendChild(row);
+                                        });
+                                    } else {
+                                        const noDataRow = document.createElement('tr');
+                                        noDataRow.innerHTML = `
+                        <td colspan="3" style="text-align: center;">No transactions available.</td>
+                    `;
+                                        transactionTableBody.appendChild(noDataRow);
+                                    }
+                                } catch (error) {
+                                    console.error('Error fetching wallet details:', error);
+                                }
+                            });
+
+                            // Add the buttons to the userButton container
                             userButton.appendChild(editButton);
+                            userButton.appendChild(walletButton);
                         }
+
+                        // Close overlay when the close button is clicked
+
+
                         else {
                             @if(Auth::check() && Auth::user()->role !== 'admin')
                                 const reportButton = document.createElement('button');
@@ -785,7 +866,18 @@
                             @endif
 
                         }
+                        document.getElementById('closeWalletOverlay').addEventListener('click', () => {
+                            const overlay = document.getElementById('walletOverlay');
+                            overlay.style.display = 'none'; // Hide overlay
+                        });
                     }
+                    document.getElementById('cashInButton').addEventListener('click', () => {
+                        location.href = "{{ route('wallet.cashIn') }}"; // Route for Cash In
+                    });
+
+                    document.getElementById('cashOutButton').addEventListener('click', () => {
+                        location.href = "{{ route('wallet.cashOutForm') }}"; // Route for Cash Out
+                    });
 
                     document.getElementById('userData').innerHTML = data.content;
 
@@ -806,12 +898,12 @@
             function updatePaginationControls(pagination) {
                 const paginationControls = document.getElementById('paginationControls');
                 paginationControls.innerHTML = `
-                                                                                                <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+<button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
                     }>Previous</button>
-                                                                                                <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-                                                                                                <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+<span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+<button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
                         ? 'disabled' : ''}>Next</button>
-                                                                                                `;
+`;
             }
 
             window.changePage = function (page) {
@@ -827,12 +919,12 @@
         window.updatePaginationControls = function (pagination) {
             const paginationControls = document.getElementById('paginationControls');
             paginationControls.innerHTML = `
-                                                                                                <button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
+<button onclick="changePage(${pagination.current_page - 1})" ${pagination.current_page === 1 ? 'disabled' : ''
                 }>Previous</button>
-                                                                                                <span>Page ${pagination.current_page} of ${pagination.last_page}</span>
-                                                                                                <button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
+<span>Page ${pagination.current_page} of ${pagination.last_page}</span>
+<button onclick="changePage(${pagination.current_page + 1})" ${pagination.current_page === pagination.last_page
                     ? 'disabled' : ''}>Next</button>
-                                                                                                `;
+`;
         };
 
         function showReportPopup(userId, dormId, typeRep) {
@@ -912,20 +1004,20 @@
             // Insert custom CSS styles into the document head
             const style = document.createElement('style');
             style.innerHTML = `
-                                                                                                    .custom-check {
-                                                                                                        margin-bottom: 10px; /* Space between each radio button */
-                                                                                                        display: flex; /* Align radio and label horizontally */
+.custom-check {
+margin-bottom: 10px; /* Space between each radio button */
+display: flex; /* Align radio and label horizontally */
 
-                                                                                                        align-items: center; /* Aligns radio button and label vertically */
-                                                                                                    } .custom-check input{
-                                                                                             width: 50px;
-                                                                                                    }
+align-items: center; /* Aligns radio button and label vertically */
+} .custom-check input{
+width: 50px;
+}
 
-                                                                                                    .custom-check label {
-                                                                                                        margin-left: 10px;
-                                                                                                        cursor: pointer; /* Cursor changes to pointer on hover */
-                                                                                                    }
-                                                                                                `;
+.custom-check label {
+margin-left: 10px;
+cursor: pointer; /* Cursor changes to pointer on hover */
+}
+`;
             document.head.appendChild(style);
 
             // Add the reason options dynamically

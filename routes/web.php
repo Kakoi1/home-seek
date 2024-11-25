@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\WalletController;
 use App\Models\Dorm;
 use App\Models\User;
 use Chatify\ChatifyMessenger;
@@ -146,6 +147,24 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
         Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
         Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
+        Route::get('/wallet/dashboard', [WalletController::class, 'dashboard'])->name('wallet.dashboard');
+        Route::get('/wallet/cash-in', function () {
+            return view('cash_in');
+        })->name('wallet.cashIn');
+        Route::post('/wallet/cash-in', [WalletController::class, 'cashIn'])->name('wallet.cashInProcess');
+        Route::post('/wallet/cash-in/confirm', [WalletController::class, 'confirmCashIn'])->name('wallet.cashInConfirm');
+        Route::get('/wallet/details', [WalletController::class, 'getDetails'])->name('wallet.details');
+
+        Route::get('/wallet/cash-out', function () {
+            $user = auth()->user();
+            $walletBalance = $user->wallet->balance;
+
+            return view('cash_out', compact('walletBalance'));
+
+        })->name('wallet.cashOutForm');
+
+        Route::post('/wallet/cash-out', [WalletController::class, 'processCashOut'])->name('wallet.processCashOut');
+
         // tenant here---------------------------------------------------
 
         Route::middleware(['auth', 'tenant'])->group(function () {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ContactMessageMail;
 use App\Models\CurseWords;
 use App\Models\Reviews;
+use App\Models\Wallet;
 use Crypt;
 use DB;
 use Carbon\Carbon;
@@ -524,6 +525,10 @@ class Controller extends BaseController
             ]));
         }
         $user->encrypted_id = Crypt::encrypt($user->id);
+        Wallet::create([
+            'user_id' => $user->id,
+            'balance' => 0,
+        ]);
         // Redirect the user to a verification page
         return response()->json([
             'data' => $user,
