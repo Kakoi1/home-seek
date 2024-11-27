@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\PayMongoWebhookController;
 use App\Http\Controllers\WalletController;
 use App\Models\Dorm;
 use App\Models\User;
@@ -154,6 +155,11 @@ Route::group(['middleware' => ['auth', 'email.verified']], function () {
         Route::post('/wallet/cash-in', [WalletController::class, 'cashIn'])->name('wallet.cashInProcess');
         Route::post('/wallet/cash-in/confirm', [WalletController::class, 'confirmCashIn'])->name('wallet.cashInConfirm');
         Route::get('/wallet/details', [WalletController::class, 'getDetails'])->name('wallet.details');
+        Route::post('/webhooks/paymongo', [PayMongoWebhookController::class, 'handleWebhook'])->name('webhooks.paymongo');
+        // In routes/web.php
+        Route::get('/payment-success', [WalletController::class, 'paymentSuccess'])->name('payment.success');
+        Route::get('/payment-cancel', [WalletController::class, 'paymentCancel'])->name('payment.cancel');
+        Route::get('/payments/status/{id}', [WalletController::class, 'checkPaymentStatus'])->name('payments.status');
 
         Route::get('/wallet/cash-out', function () {
             $user = auth()->user();

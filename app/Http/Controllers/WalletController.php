@@ -12,7 +12,7 @@ use Stripe\PaymentIntent;
 use Illuminate\Http\Request;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
-
+use Illuminate\Support\Facades\Http;
 class WalletController extends Controller
 {
     public function cashIn(Request $request)
@@ -54,12 +54,14 @@ class WalletController extends Controller
         $transaction = WalletTransaction::create([
             'user_id' => $user->id,
             'wallet_id' => $user->wallet->id,
+            'payment_id' => $request->payment_id,  // Save the payment_id here
             'type' => 'cash_in',
             'amount' => $request->amount,
             'balance_after' => $user->wallet->balance,
             'status' => 'completed',
             'details' => 'Cash-in via Stripe',
         ]);
+
         $notification = Notification::create([
             'user_id' => $user->id, // Assuming the owner is linked to the room
             'type' => 'Bills',
@@ -95,6 +97,9 @@ class WalletController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Funds added to wallet!']);
     }
+
+
+
     public function getDetails()
     {
         $user = auth()->user();
