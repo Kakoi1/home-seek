@@ -67,6 +67,13 @@
                         <span class="links_name">User Complaints</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{route('admin.cashout.requests')}}" class="link-item"
+                        class="{{ request()->routeIs('admin.cashout.requests') ? 'active' : '' }}">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <span class="links_name">Cashout Request</span>
+                    </a>
+                </li>
 
 
             @else

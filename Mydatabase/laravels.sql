@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 21, 2024 at 06:11 AM
+-- Generation Time: Dec 03, 2024 at 07:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,8 @@ INSERT INTO `billings` (`id`, `user_id`, `rent_form_id`, `amount`, `billing_date
 (29, 69, 54, 14000.00, '2024-11-30', 'paid', 'Proof_of_Payment/aazV4wQ7yh3M4bTbA6BA0npJr.jpg', 'e_wallet', '2024-11-21 04:24:53', '2024-11-20 20:14:01', '2024-11-20 20:24:54'),
 (30, 71, 56, 6000.00, '2024-11-28', 'paid', NULL, 'cash', '2024-11-23 04:40:27', '2024-11-20 20:39:00', '2024-11-20 20:40:27'),
 (31, 71, 58, 7000.00, '2024-11-30', 'paid', 'Proof_of_Payment/9DOlJx9sakjh1c4pKCMkTCwqW.png', 'credit_card', '2024-11-20 04:59:50', '2024-11-20 20:55:51', '2024-11-20 20:59:51'),
-(32, 69, 59, 6500.00, '2024-11-28', 'paid', 'Proof_of_Payment/K8kHdX8VaQQ19rv6rmoq5L1iM.jpg', 'bank_transfer', '2024-11-20 05:07:41', '2024-11-20 21:06:00', '2024-11-20 21:07:41');
+(32, 69, 59, 6500.00, '2024-11-28', 'paid', 'Proof_of_Payment/K8kHdX8VaQQ19rv6rmoq5L1iM.jpg', 'bank_transfer', '2024-11-20 05:07:41', '2024-11-20 21:06:00', '2024-11-20 21:07:41'),
+(34, 71, 70, 8000.00, '2024-12-07', 'paid', NULL, NULL, NULL, '2024-11-27 20:58:00', '2024-11-27 20:58:00');
 
 -- --------------------------------------------------------
 
@@ -146,8 +147,8 @@ CREATE TABLE `dorms` (
 --
 
 INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitude`, `longitude`, `price`, `capacity`, `beds`, `bedroom`, `image`, `archive`, `availability`, `flag`, `created_at`, `updated_at`) VALUES
-(49, 68, 'Rainy Days Guesthouse', 'A cozy, family-run guesthouse with clean, comfortable private rooms. Includes breakfast and a garden space for guests to relax.', 'Unabia Street, Poblacion Ward III, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24793790, 123.79749656, 1200.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1732156681_673e9d090c29c.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09929d8.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09c8ae1.jpg\\\",\\\"dorm_pictures\\\\\\/1732156682_673e9d0a06f68.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:38:02', '2024-11-20 19:11:52'),
-(50, 68, 'Guesthouse', 'A small, family-run accommodation with private rooms, often located in quieter areas. It typically offers a more homely atmosphere than a hotel. Some guesthouses may offer breakfast included.', 'Poblacion Ward II, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24244786, 123.79470706, 1000.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732156801_673e9d81a112b.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d8233e9d.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d82627d7.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d829209a.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:40:02', '2024-11-20 21:01:01'),
+(49, 68, 'Rainy Days Guesthouse', 'A cozy, family-run guesthouse with clean, comfortable private rooms. Includes breakfast and a garden space for guests to relax.', 'Unabia Street, Poblacion Ward III, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24793790, 123.79749656, 1200.00, 3, 4, 2, '\"[\\\"dorm_pictures\\\\\\/1732156681_673e9d090c29c.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09929d8.jpg\\\",\\\"dorm_pictures\\\\\\/1732156681_673e9d09c8ae1.jpg\\\",\\\"dorm_pictures\\\\\\/1732156682_673e9d0a06f68.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:38:02', '2024-11-27 19:54:41'),
+(50, 68, 'Guesthouse', 'A small, family-run accommodation with private rooms, often located in quieter areas. It typically offers a more homely atmosphere than a hotel. Some guesthouses may offer breakfast included.', 'Poblacion Ward II, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24244786, 123.79470706, 1000.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732156801_673e9d81a112b.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d8233e9d.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d82627d7.jpg\\\",\\\"dorm_pictures\\\\\\/1732156802_673e9d829209a.jpg\\\"]\"', 0, 0, 0, '2024-11-20 18:40:02', '2024-11-27 21:15:01'),
 (51, 68, 'The Velvet Boutique Hotel', 'Small, stylish hotels with a unique character. They often have personalized service, artistic design, and cozy, individually designed rooms. Often located in trendy neighborhoods.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24743113, 123.80966306, 2000.00, 3, 2, 1, '\"[\\\"dorm_pictures\\\\\\/1732158370_673ea3a232e59.jpg\\\",\\\"dorm_pictures\\\\\\/1732158370_673ea3a2b1191.jpg\\\",\\\"dorm_pictures\\\\\\/1732158370_673ea3a2ded7b.jpg\\\",\\\"dorm_pictures\\\\\\/1732158371_673ea3a322507.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:05:18', '2024-11-20 20:29:01'),
 (52, 68, 'Green Haven Eco-Lodge', 'Focused on sustainability, eco-lodges often use environmentally friendly materials, renewable energy, and locally sourced goods. Located in nature-rich areas, these options offer an immersive experience in natural surroundings', 'Poblacion Ward IV, Calajo-an, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.24552018, 123.79525423, 1500.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732158564_673ea4642bb62.jpg\\\",\\\"dorm_pictures\\\\\\/1732158564_673ea464b0d70.jpg\\\",\\\"dorm_pictures\\\\\\/1732158564_673ea464e052d.jpg\\\",\\\"dorm_pictures\\\\\\/1732158565_673ea4651babc.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:09:25', '2024-11-20 19:13:45'),
 (53, 68, 'LuxTents Glamping Retreat', 'A luxurious glamping experience with king-sized beds, private decks, and en-suite bathrooms in spacious tents, nestled in a scenic national park.', 'Poblacion Ward III, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25229819, 123.80162716, 3000.00, 4, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1732158997_673ea615bf80f.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea61670693.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea6169b54d.jpg\\\",\\\"dorm_pictures\\\\\\/1732158998_673ea616e7307.jpg\\\",\\\"dorm_pictures\\\\\\/1732158999_673ea6171b5aa.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:16:39', '2024-11-20 20:05:22'),
@@ -155,10 +156,10 @@ INSERT INTO `dorms` (`id`, `user_id`, `name`, `description`, `address`, `latitud
 (55, 68, 'Bahay sa Lungsod', 'A modern 3-bedroom townhouse located in the heart of the city. Features include a rooftop garden, fully furnished spaces, and easy access to shopping, restaurants, and public transport.', 'Cebu South Road, Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24892504, 123.80340278, 2500.00, 5, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1732159288_673ea7380d1a5.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738906b2.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738c0471.jpg\\\",\\\"dorm_pictures\\\\\\/1732159288_673ea738eed44.jpg\\\",\\\"dorm_pictures\\\\\\/1732159289_673ea73927f75.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:21:29', '2024-11-20 19:21:29'),
 (56, 70, 'Bahay ng Pagdapo', 'A lavish 6-bedroom mansion located on a hill with stunning views of the surrounding city or beach. The house includes a gourmet kitchen, infinity pool, multiple lounges, and a garden, offering luxurious comforts for guests', 'Fonte di Versailles, Calajo-an, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.23776013, 123.79665971, 5000.00, 10, 7, 6, '\"[\\\"dorm_pictures\\\\\\/1732160894_673ead7e76d3d.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f05af3.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f355b0.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f69110.jpg\\\",\\\"dorm_pictures\\\\\\/1732160895_673ead7f98ac4.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:48:15', '2024-11-20 19:48:15'),
 (57, 70, 'Bahay Luntian', 'A charming 2-bedroom house surrounded by greenery, with a tropical garden and a porch perfect for morning coffee. Ideal for short stays, the house offers a cozy atmosphere with modern amenities.', 'Teves, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25381847, 123.79330158, 1500.00, 4, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161019_673eadfb8ee69.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc1c440.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc4bd59.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfc7b61a.jpg\\\",\\\"dorm_pictures\\\\\\/1732161020_673eadfcaa3a6.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:50:20', '2024-11-20 19:50:20'),
-(58, 70, 'Bahay Alaga', 'A 3-bedroom, pet-friendly home featuring a large, fenced backyard where pets can roam freely. It also has easy access to pet-friendly parks and walking trails.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25491645, 123.80471706, 1200.00, 4, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1732161236_673eaed4c348b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed550c5b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed57f5d3.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5adfaa.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5e8f2e.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:53:58', '2024-11-20 20:50:01'),
+(58, 70, 'Bahay Alaga', 'A 3-bedroom, pet-friendly home featuring a large, fenced backyard where pets can roam freely. It also has easy access to pet-friendly parks and walking trails.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25491645, 123.80471706, 1200.00, 4, 4, 3, '\"[\\\"dorm_pictures\\\\\\/1732161236_673eaed4c348b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed550c5b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed57f5d3.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5adfaa.jpg\\\",\\\"dorm_pictures\\\\\\/1732161237_673eaed5e8f2e.jpg\\\"]\"', 0, 1, 0, '2024-11-20 19:53:58', '2024-11-20 20:50:01'),
 (59, 70, 'Bahay Bagong Buhay', 'A 2-bedroom eco-friendly home made with sustainable materials, complete with a solar power system, water conservation, and organic garden. Located in a serene environment, it\'s ideal for guests seeking a sustainable, green way of living.', 'Poblacion Ward IV, Vito, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.24893032, 123.79273295, 1300.00, 3, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161368_673eaf5854e73.jpg\\\",\\\"dorm_pictures\\\\\\/1732161368_673eaf58d588f.jpg\\\",\\\"dorm_pictures\\\\\\/1732161369_673eaf5914ec2.jpg\\\",\\\"dorm_pictures\\\\\\/1732161369_673eaf594bce8.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:56:09', '2024-11-20 21:09:01'),
-(60, 70, 'Bahay Kanto', 'A modern 2-bedroom townhouse conveniently located near key city attractions, with easy access to public transport and local markets. Features a compact but stylish living area, a small garden, and an outdoor balcony.', 'Kingswood Village, Linao, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25542321, 123.80918026, 900.00, 3, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161454_673eafaeba1f1.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf4376b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf7a9d5.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafa85cb.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafd5ed8.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:57:36', '2024-11-20 19:57:36'),
-(61, 70, 'Bahay Bahay-nga', 'A heritage-style home with traditional Filipino architecture, beautifully preserved with antique wooden floors and classic furnishings. Located in a historical district, it offers a glimpse into Filipino culture while enjoying modern amenities.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.25113686, 123.81332159, 1700.00, 5, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1732161564_673eb01c4befd.jpg\\\",\\\"dorm_pictures\\\\\\/1732161564_673eb01cd0cbb.jpg\\\",\\\"dorm_pictures\\\\\\/1732161565_673eb01d0a557.jpg\\\",\\\"dorm_pictures\\\\\\/1732161565_673eb01d3b989.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:59:25', '2024-11-20 20:34:38');
+(60, 70, 'Bahay Kanto', 'A modern 2-bedroom townhouse conveniently located near key city attractions, with easy access to public transport and local markets. Features a compact but stylish living area, a small garden, and an outdoor balcony.', 'Kingswood Village, Linao, Pakigne, Minglanilla, Cebu, Central Visayas, 6046, Pilipinas', 10.25542321, 123.80918026, 900.00, 3, 2, 2, '\"[\\\"dorm_pictures\\\\\\/1732161454_673eafaeba1f1.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf4376b.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafaf7a9d5.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafa85cb.jpg\\\",\\\"dorm_pictures\\\\\\/1732161455_673eafafd5ed8.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:57:36', '2024-11-26 19:51:31'),
+(61, 70, 'Bahay Bahay-nga', 'A heritage-style home with traditional Filipino architecture, beautifully preserved with antique wooden floors and classic furnishings. Located in a historical district, it offers a glimpse into Filipino culture while enjoying modern amenities.', 'Cantibjang, Pakigne, Minglanilla, Cebu, Central Visayas, 6064, Pilipinas', 10.25113686, 123.81332159, 1700.00, 5, 3, 2, '\"[\\\"dorm_pictures\\\\\\/1732161565_673eb01d0a557.jpg\\\",\\\"dorm_pictures\\\\\\/1732590337_67453b01aecfc.jpg\\\",\\\"dorm_pictures\\\\\\/1732590338_67453b02442f1.jpg\\\",\\\"dorm_pictures\\\\\\/1732590338_67453b027638c.jpg\\\"]\"', 0, 0, 0, '2024-11-20 19:59:25', '2024-11-25 19:05:39');
 
 -- --------------------------------------------------------
 
@@ -293,7 +294,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (36, '2024_10_17_072602_create_reviews_table', 25),
 (37, '2024_10_23_060222_remove_room_from_reviews_table', 26),
 (38, '2024_11_03_051518_create_reports_table', 27),
-(39, '2024_11_05_141932_create_curse_words_table', 28);
+(39, '2024_11_05_141932_create_curse_words_table', 28),
+(40, '2024_11_23_062120_add_stripe_account_id_to_users_table', 29),
+(41, '2024_11_24_012747_create_wallets_table', 30),
+(42, '2024_11_24_013058_create_wallet_transactions_table', 30);
 
 -- --------------------------------------------------------
 
@@ -364,7 +368,62 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `data`, `read`, `route`, `
 (368, 69, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>Bahay Bagong Buhay</strong> has started successfully.</p><br><p>Bill Amount: <strong>₱6,500.00</strong></p><p>Billing Date: <strong>2024-11-28</strong></p><br><p>Sent on: 2024-11-21 05:06:00</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:06:00', '2024-11-20 21:06:09', 59, 14),
 (369, 69, 'Bills', '<strong>Payment Reminder</strong><br><p>The owner has sent a notification regarding your upcoming payment.</p><br><p>Date: 2024-11-21 05:07:04</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:07:04', '2024-11-20 21:07:10', 59, 70),
 (370, 69, 'Bills', '<strong>Payment Reminder</strong><br><p>Your Payment has been marked paid. You paid <strong>₱6,500.00</strong> on <strong>Bahay Bagong Buhay</strong></p><br><p>Paid on: <strong>2024-11-20 05:07:41</strong></p><p>Mode of Payment: <strong>bank_transfer</strong></p><br><p>Sent on: 2024-11-21 05:07:41</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-20 21:07:41', '2024-11-20 21:07:48', 59, 70),
-(371, 69, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Bahay Bagong Buhay</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 05:09:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 21:09:01', '2024-11-20 21:09:12', 59, 14);
+(371, 69, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Bahay Bagong Buhay</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-21 05:09:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-20 21:09:01', '2024-11-20 21:09:12', 59, 14),
+(372, 69, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 1 remaining Strike(s)</strong>', 1, NULL, '2024-11-22 19:30:24', '2024-11-22 19:30:45', NULL, 69),
+(373, 69, 'warning', '<strong>Warning issued:</strong> <p>Your review contains inappropriate words.</p>', 1, NULL, '2024-11-22 19:35:55', '2024-11-23 23:43:03', NULL, 70),
+(374, 69, 'warning', '<strong>Warning issued:</strong> <br> <p>Your review contains inappropriate words.</p> <br><strong>You have 2 remaining Strike(s)</strong>', 1, NULL, '2024-11-22 19:40:26', '2024-11-22 19:40:33', NULL, 14),
+(375, 14, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Roland Shane Lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱100.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-25 01:39:37</p>', 0, NULL, '2024-11-24 17:39:37', '2024-11-24 17:39:37', NULL, 14),
+(376, 69, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Roland Shane Lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱1,000.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-25 01:40:50</p>', 1, NULL, '2024-11-24 17:40:50', '2024-11-24 17:41:01', NULL, 14),
+(377, 69, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Roland Shane Lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱1,000.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-25 03:05:21</p>', 1, NULL, '2024-11-24 19:05:22', '2024-11-24 19:05:31', NULL, 14),
+(378, 69, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Roland Shane Lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱200.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-26 02:12:47</p>', 0, NULL, '2024-11-25 18:12:47', '2024-11-25 18:12:47', NULL, 14),
+(379, 70, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Degam Jhonry</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱700.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-26 05:19:27</p>', 0, NULL, '2024-11-25 21:19:27', '2024-11-25 21:19:27', NULL, 14),
+(380, 70, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Degam Jhonry</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱700.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-26 05:35:40</p>', 0, NULL, '2024-11-25 21:35:40', '2024-11-25 21:35:40', NULL, 14),
+(381, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>Bahay Kanto</strong></p><br> <p>Date: 2024-11-27 02:30:41</p>', 0, 'http://localhost:8000/managetenant', '2024-11-26 18:30:41', '2024-11-26 18:30:41', 60, 69),
+(382, 70, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Financial reasons on <strong>Bahay Kanto</strong></p><br><p>Sent on2024-11-27 02:32:02</p>', 0, 'http://localhost:8000/managetenant', '2024-11-26 18:32:02', '2024-11-26 18:32:02', 60, 69),
+(383, 70, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Personal reasons on <strong>Bahay Kanto</strong></p><br><p>Sent on2024-11-27 02:45:01</p>', 0, 'http://localhost:8000/managetenant', '2024-11-26 18:45:01', '2024-11-26 18:45:01', 60, 69),
+(384, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Bahay Kanto</strong></p><br> <p>Date: 2024-11-27 02:45:23</p>', 1, 'http://localhost:8000/managetenant', '2024-11-26 18:45:23', '2024-11-26 18:45:42', 60, 69),
+(385, 69, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsadad on Bahay Kanto</p><br><p>Date: 2024-11-27 02:48:13</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-26 18:48:13', '2024-11-26 18:55:29', 60, 70),
+(386, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Bahay Kanto</strong></p><br> <p>Start Date: 2024-11-28 | End Date: 2024-11-29 | Guests: 1</p><br><p>Date: 2024-11-27 02:52:57</p>', 1, 'http://localhost:8000/managetenant', '2024-11-26 18:52:57', '2024-11-26 19:55:17', 60, 69),
+(387, 70, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Bahay Kanto</strong></p><br> <p>Start Date: 2024-11-28 | End Date: 2024-11-29 | Guests: 3</p><br><p>Date: 2024-11-27 02:55:20</p>', 1, 'http://localhost:8000/managetenant', '2024-11-26 18:55:20', '2024-11-26 18:55:32', 60, 69),
+(388, 69, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Bahay Kanto</strong> has been successfully approved.</p><p>And a ₱900.00 has deducted to your wallet for payment.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-27 03:43:56</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-26 19:43:56', '2024-11-26 19:44:02', 60, 70),
+(389, 70, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Found a better place on <strong>Bahay Kanto</strong></p><br><p>Sent on 2024-11-27 03:51:03</p>', 1, 'http://localhost:8000/managetenant', '2024-11-26 19:51:03', '2024-11-26 19:51:09', 60, 69),
+(390, 69, 'Cancellation Response', '<strong>Booking Cancellation Approved</strong><br><p>Your request for cancellation has been processed successfully.</p><br><p>And a ₱900.00 has been added to your wallet for Refund.</p><br><p>Sent on2024-11-27 03:51:31</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-26 19:51:31', '2024-11-26 19:51:36', 60, 70),
+(391, 69, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Roland Shane Lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱1,000.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-27 03:53:59</p>', 1, NULL, '2024-11-26 19:53:59', '2024-11-27 19:21:02', NULL, 14),
+(392, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Guesthouse</strong></p><br> <p>Date: 2024-11-27 05:14:22</p>', 1, 'http://localhost:8000/managetenant', '2024-11-26 21:14:22', '2024-11-27 19:19:48', 50, 69),
+(393, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: oh no on Guesthouse</p><br><p>Date: 2024-11-28 03:22:53</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 19:22:53', '2024-11-27 19:23:25', 50, 68),
+(394, 71, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>shane lopez</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱10,000.00</p>\r\n                    <p><strong>Date:</strong> 2024-11-28 03:29:12</p>', 1, NULL, '2024-11-27 19:29:12', '2024-11-27 19:29:22', NULL, 14),
+(395, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Guesthouse</strong></p><br> <p>Date: 2024-11-28 03:38:36</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 19:38:36', '2024-11-27 19:38:41', 50, 71),
+(396, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dadad on Guesthouse</p><br><p>Date: 2024-11-28 03:40:16</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 19:40:16', '2024-11-27 19:40:20', 50, 68),
+(397, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Guesthouse</strong></p><br> <p>Date: 2024-11-28 03:50:33</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 19:50:33', '2024-11-27 19:50:42', 50, 71),
+(398, 71, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Guesthouse</strong> has been successfully approved.</p><p>And a ₱8,000.00 has deducted to your wallet for payment.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-28 03:52:38</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 19:52:38', '2024-11-27 20:47:25', 50, 68),
+(399, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Rainy Days Guesthouse</strong></p><br> <p>Date: 2024-11-28 03:53:09</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 19:53:09', '2024-11-27 19:53:26', 49, 69),
+(400, 68, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Found a better place on <strong>Rainy Days Guesthouse</strong></p><br><p>Sent on2024-11-28 03:54:41</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 19:54:41', '2024-11-27 19:54:49', 49, 69),
+(401, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsad on Guesthouse</p><br><p>Date: 2024-11-28 04:18:26</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:18:26', '2024-11-27 20:18:26', 50, 68),
+(402, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsada on Guesthouse</p><br><p>Date: 2024-11-28 04:18:55</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:18:55', '2024-11-27 20:18:55', 50, 68),
+(403, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsa on Guesthouse</p><br><p>Date: 2024-11-28 04:22:25</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:22:25', '2024-11-27 20:22:25', 50, 68),
+(404, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dasd on Guesthouse</p><br><p>Date: 2024-11-28 04:22:35</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:22:35', '2024-11-27 20:22:35', 50, 68),
+(405, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: 6 on Guesthouse</p><br><p>Date: 2024-11-28 04:38:20</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:38:20', '2024-11-27 20:38:20', 50, 68),
+(406, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: 254 on Guesthouse</p><br><p>Date: 2024-11-28 04:38:30</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:38:30', '2024-11-27 20:38:30', 50, 68),
+(407, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsad on Guesthouse</p><br><p>Date: 2024-11-28 04:42:23</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:42:23', '2024-11-27 20:42:23', 50, 68),
+(408, 71, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: dsa on Guesthouse</p><br><p>Date: 2024-11-28 04:42:32</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:42:32', '2024-11-27 20:47:15', 50, 68),
+(409, 68, 'Booking Cancellation', '<strong>Booking Cancellation</strong><br><p>Booking Cancelled due to: Found a better place on <strong>Guesthouse</strong></p><br><p>Sent on2024-11-28 04:48:30</p>', 0, 'http://localhost:8000/managetenant', '2024-11-27 20:48:30', '2024-11-27 20:48:30', 50, 71),
+(410, 68, 'Booking Cancellation', '<strong>Booking Cancellation request</strong><br><p>Cancellation request: Found a better place on <strong>Guesthouse</strong></p><br><p>Sent on 2024-11-28 04:49:37</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 20:49:37', '2024-11-27 20:49:42', 50, 71),
+(411, 69, 'Form Response', '<strong>Booking rejected</strong><br><p>Booking rejected: 42 on Guesthouse</p><br><p>Date: 2024-11-28 04:50:52</p>', 0, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:50:52', '2024-11-27 20:50:52', 50, 68),
+(412, 71, 'Cancellation Response', '<strong>Booking Cancellation Approved</strong><br><p>Your request for cancellation has been processed successfully.</p><br><p>And a ₱8,000.00 has been added to your wallet for Refund.</p><br><p>Sent on2024-11-28 04:51:03</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:51:03', '2024-11-27 20:51:07', 50, 68),
+(413, 68, 'Form Submit', '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>Guesthouse</strong></p><br> <p>Date: 2024-11-28 04:51:53</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 20:51:53', '2024-11-27 20:54:31', 50, 71),
+(414, 71, 'Form Response', '<strong>Booking Approved</strong><br><p>Congratulations! Your booking at <strong>Guesthouse</strong> has been successfully approved.</p><p>And a ₱8,000.00 has deducted to your wallet for payment.</p><p>Please prepare for your stay and let us know if you have any questions.</p><p>Date Approved: 2024-11-28 04:52:24</p><p>We look forward to hosting you!</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:52:24', '2024-11-27 20:52:27', 50, 68),
+(415, 71, 'Booking Start', '<strong>Booking started</strong><br><p>Your booking for <strong>Guesthouse</strong> has started successfully.</p><br><p>Check-in Date: <strong>2024-11-28</strong></p><p>Check-out Date: <strong>2024-12-07</strong></p><br><p>Sent on: 2024-11-28 04:58:00</p>', 1, 'http://localhost:8000/user/rent-forms', '2024-11-27 20:58:00', '2024-11-27 20:58:17', 50, 14),
+(416, 68, 'Earning Received', '<strong>Money Received</strong><br><p>You have received a payment of <strong>₱8,000.00</strong> for the booking of <strong>Guesthouse</strong>.</p><br><p>Booking has started.</p><br><p>Sent on: 2024-11-28 04:58:01</p>', 1, 'http://localhost:8000/managetenant', '2024-11-27 20:58:01', '2024-11-27 21:00:21', 50, 71),
+(417, 71, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Guesthouse</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-28 05:12:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-27 21:12:01', '2024-11-27 21:12:10', 50, 14),
+(418, 71, 'review', '<strong>Your rent has ended</strong> <br> <p>Your rent has ended on <strong>Guesthouse</strong> Please leave a review for the Accomodation.</p><br><p>Sent on: 2024-11-28 05:15:01</p>', 1, 'http://localhost:8000/my-reviews', '2024-11-27 21:15:01', '2024-11-27 21:15:14', 50, 14),
+(419, 68, 'booking_ended', '<strong>Booking Ended</strong> <br><p>The booking for your accommodation <strong>Guesthouse</strong> has ended.</p><br><p>Tenant: shane lopez</p><p>End Date: 2024-11-28</p><br><p>Sent on: 2024-11-28 05:15:01</p>', 1, NULL, '2024-11-27 21:15:01', '2024-11-27 21:15:07', 50, 14),
+(420, 70, 'Bills', '<strong>Cash-In Transaction</strong><br>\r\n                    <p>User <strong>Degam Jhonry</strong> has successfully added funds to their wallet.</p>\r\n                    <p><strong>Amount:</strong> ₱1,000.00</p>\r\n                    <p><strong>Date:</strong> 2024-12-02 04:28:42</p>', 0, NULL, '2024-12-01 20:28:42', '2024-12-01 20:28:42', NULL, 14),
+(421, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding a user: <strong>shane lopez</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-12-02 19:58:40', '2024-12-02 19:58:45', NULL, 70),
+(422, 14, 'Reported', '<strong>Report Complaint</strong><p>A user has reported a complaint regarding a user: <strong>Roland Shane Lopez</strong>. Please review the report and take the necessary actions.</p>', 1, 'http://localhost:8000/reports', '2024-12-02 19:59:20', '2024-12-02 19:59:23', NULL, 70),
+(423, 69, 'rejection', 'Your cash-out request of ₱-100.00 has been rejected. Reason: Insufficient information', 1, 'http://localhost:8000/wallet/cashout', '2024-12-02 21:49:57', '2024-12-02 21:50:12', NULL, 14),
+(424, 69, 'approval', 'Your cash-out request of ₱-100.00 has been approved.', 1, 'http://localhost:8000/wallet/cashout', '2024-12-02 21:50:59', '2024-12-02 21:51:03', NULL, 14),
+(425, 69, 'approval', 'Your cash-out request of ₱-100.00 has been approved.', 1, 'http://localhost:8000/wallet/cashout', '2024-12-02 21:51:53', '2024-12-02 21:52:05', NULL, 14),
+(426, 69, 'warning', 'Your booking for <strong>Guesthouse</strong> has been automatically cancelled due to no response within 24 hours.', 1, 'http://localhost:8000/user/rent-forms', '2024-12-02 22:28:00', '2024-12-02 22:28:06', 50, 14);
 
 -- --------------------------------------------------------
 
@@ -408,7 +467,12 @@ INSERT INTO `property_views` (`id`, `user_id`, `dorm_id`, `created_at`, `updated
 (35, 71, 58, '2024-11-20 20:36:37', '2024-11-20 20:36:37'),
 (36, 71, 59, '2024-11-20 20:51:56', '2024-11-20 20:51:56'),
 (37, 71, 50, '2024-11-20 20:54:07', '2024-11-20 20:54:07'),
-(38, 69, 59, '2024-11-20 21:03:52', '2024-11-20 21:03:52');
+(38, 69, 59, '2024-11-20 21:03:52', '2024-11-20 21:03:52'),
+(39, 69, 60, '2024-11-22 17:58:09', '2024-11-22 17:58:09'),
+(40, 69, 50, '2024-11-26 20:20:58', '2024-11-26 20:20:58'),
+(41, 69, 57, '2024-11-26 20:38:29', '2024-11-26 20:38:29'),
+(42, 71, 60, '2024-11-27 19:29:49', '2024-11-27 19:29:49'),
+(43, 69, 49, '2024-11-27 19:53:01', '2024-11-27 19:53:01');
 
 -- --------------------------------------------------------
 
@@ -441,8 +505,16 @@ INSERT INTO `rent_forms` (`id`, `user_id`, `dorm_id`, `start_date`, `end_date`, 
 (55, 71, 61, '2024-11-23', '2024-11-30', 4, 11900.00, 'cancelled', 'Found a better place', '2024-11-20 20:34:16', '2024-11-20 20:34:39'),
 (56, 71, 58, '2024-11-21', '2024-11-29', 3, 6000.00, 'completed', NULL, '2024-11-20 20:36:51', '2024-11-20 20:50:01'),
 (57, 71, 59, '2024-11-23', '2024-11-29', 3, 7800.00, 'cancelled', 'Personal reasons', '2024-11-20 20:52:28', '2024-11-20 20:53:41'),
-(58, 71, 50, '2024-11-21', '2024-11-29', 4, 7000.00, 'completed', NULL, '2024-11-20 20:55:11', '2024-11-20 21:01:01'),
-(59, 69, 59, '2024-11-21', '2024-11-21', 3, 6500.00, 'completed', NULL, '2024-11-20 21:04:26', '2024-11-20 21:09:01');
+(58, 69, 50, '2024-11-27', '2024-12-07', 4, 7000.00, 'rejected', '42', '2024-11-20 20:55:11', '2024-11-27 20:50:52'),
+(59, 69, 59, '2024-11-21', '2024-11-21', 3, 6500.00, 'completed', NULL, '2024-11-20 21:04:26', '2024-11-20 21:09:01'),
+(60, 69, 60, '2024-11-28', '2024-11-29', 1, 900.00, 'cancelled', 'Financial reasons', '2024-11-26 18:30:41', '2024-11-26 18:32:03'),
+(61, 69, 60, '2024-11-28', '2024-11-29', 1, 900.00, 'cancelled', 'Personal reasons', '2024-11-26 18:43:02', '2024-11-26 18:45:02'),
+(62, 69, 60, '2024-11-28', '2024-11-29', 1, 900.00, 'rejected', 'dsadad', '2024-11-26 18:45:23', '2024-11-26 18:48:14'),
+(65, 69, 60, '2024-11-28', '2024-11-29', 3, 900.00, 'cancelled', 'Found a better place', '2024-11-26 18:55:20', '2024-11-26 19:51:31'),
+(66, 69, 50, '2024-12-08', '2024-12-11', 3, 3000.00, 'cancelled', NULL, '2024-11-26 21:14:22', '2024-11-26 21:14:22'),
+(68, 71, 50, '2024-11-29', '2024-12-07', 2, 8000.00, 'cancelled', 'Found a better place', '2024-11-27 19:50:33', '2024-11-27 20:51:03'),
+(69, 69, 49, '2024-11-30', '2024-12-07', 1, 8400.00, 'cancelled', 'Found a better place', '2024-11-27 19:53:09', '2024-11-27 19:54:42'),
+(70, 69, 50, '2024-11-28', '2024-11-28', 1, 8000.00, 'cancelled', 'Automatically cancelled due to no response for more than 1 day.', '2024-12-01 20:51:53', '2024-12-02 22:28:00');
 
 -- --------------------------------------------------------
 
@@ -461,6 +533,14 @@ CREATE TABLE `reports` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`id`, `user_id`, `reported_id`, `reported_type`, `dorm_id`, `reason`, `status`, `created_at`, `updated_at`) VALUES
+(23, 70, 71, 'user', NULL, 'Inappropriate Content', 'pending', '2024-12-02 19:58:40', '2024-12-02 19:58:40'),
+(24, 70, 69, 'user', NULL, 'gwapo man', 'pending', '2024-12-02 19:59:20', '2024-12-02 19:59:20');
 
 -- --------------------------------------------------------
 
@@ -483,10 +563,11 @@ CREATE TABLE `reviews` (
 --
 
 INSERT INTO `reviews` (`id`, `user_id`, `dorm_id`, `rating`, `comments`, `created_at`, `updated_at`) VALUES
-(11, 69, 51, 4, 'nice house', '2024-11-20 20:29:01', '2024-11-20 20:30:34'),
+(11, 69, 51, 5, 'nice', '2024-11-20 20:29:01', '2024-11-22 19:40:48'),
 (12, 71, 58, 5, 'very good house', '2024-11-20 20:50:01', '2024-11-20 20:50:49'),
 (13, 71, 50, 1, 'this house is horrible', '2024-11-20 21:01:01', '2024-11-20 21:01:28'),
-(14, 69, 59, 2, 'bad Accomodation', '2024-11-20 21:09:01', '2024-11-20 21:09:27');
+(14, 69, 59, 2, 'bad Accomodation', '2024-11-20 21:09:01', '2024-11-20 21:09:27'),
+(16, 71, 50, NULL, NULL, '2024-11-27 21:15:01', '2024-11-27 21:15:01');
 
 -- --------------------------------------------------------
 
@@ -508,8 +589,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('5Ksv9uIqCWIEUWACPcEHowH8sGVN3FXHRsrTJ3Sv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUzlIdUpUZHJtcjc5QmJkSjRDd3U5Y2U5QUxEaDkyQlRuazB4UzlzMyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1732165824),
-('VfylJnKNLzkbKETgnQkqSaFLpoRFBwDU5puC7i2H', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiR2FtSlVlemlvcXJ6NXV2aVFsUE9IWWpHd3hWMFNMZ1lkV0RVTGY0aSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NToic3RhdGUiO3M6NDA6ImlJaVdwcTdmajBtZWZOOXAxOXNtVEVEd0psd3Y2UWJxQU5SOG5FRVYiO30=', 1732165804);
+('3Xhd6shRPxXrdQhtfOrell85ZikWKzr7oJuwL8vV', 14, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiejZKYWk1SktYdEw5S1FRWXBZM1VYNWs1YnFkZmxSRmp1RHkxb01DRyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNjoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL3dhbGxldC9jYXNob3V0Ijt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTQ7fQ==', 1733205133),
+('riTVFp35UmJ8DkraMxxDrvPWLta6k35EJtH3gE7o', 14, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidXVnYkt2VGtsVldoTkhPcU5aVWtBQ2VTQWViTXRMeW53bkxIY2ZrMCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ub3RpZmljYXRpb25zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTQ7fQ==', 1733207710);
 
 -- --------------------------------------------------------
 
@@ -537,19 +618,20 @@ CREATE TABLE `users` (
   `strike` tinyint(4) NOT NULL DEFAULT 3,
   `note` longtext DEFAULT NULL,
   `email_verification_code` int(15) DEFAULT NULL,
-  `email_verified_at` datetime DEFAULT NULL
+  `email_verified_at` datetime DEFAULT NULL,
+  `stripe_account_id` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `google_id`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `verify_status`, `role`, `strike`, `note`, `email_verification_code`, `email_verified_at`) VALUES
-(14, 'Lopez Roland Shane', 'lopezrolandshane@gmail.com', 'shaner', '$2y$12$KWBaHsB1eLFlGJ.2D.LF2O8u4qpNORuowbKP1xj0zcedchtSRZ81a', '12314134', 0, '107236937285983559710', 'profile-pictures/NsqtYbR4bm9qTg7FvyIID8MApPz7MhofeBfoJ5WS.jpg', 'dsadsadad', NULL, '2024-08-11 19:56:43', '2024-11-15 06:09:28', 0, 0, 'admin', 3, NULL, 796437, '2024-11-07 04:19:18'),
-(68, 'Roland Shane Lopez', 'rshan0418@gmail.com', 'roland', '$2y$12$M9.0fLzVbEpg5m3lYEzPcuMg5u28fVIyWZjmqIGOLcTA8KfWW80.O', '09661805821', NULL, NULL, 'profile_picture/kEDKEjA3jRNNPztmQNrveSXYF.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:15:59', '2024-11-20 20:32:21', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 02:16:40'),
-(69, 'Roland Shane Lopez', 'rshan04122@gmail.com', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/17P7uknT1nLNN3tJZEDWeodhu.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:23:38', '2024-11-20 20:30:04', 0, 0, 'tenant', 2, NULL, NULL, '2024-11-21 02:24:38'),
-(70, 'Degam Jhonry', 'jhonrydegamo@gmail.com', 'degads', '$2y$12$h32SRh2VdQg1duaLDQnMq.AEbTF1c4e0PRJsp/ahe6XQZ/5eRh4sK', '09090909090', NULL, NULL, 'profile_picture/FurI715A5UrGqPiKsbWG1svii.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 19:34:52', '2024-11-20 19:35:49', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 03:35:42'),
-(71, 'shane lopez', 'nokielopez@gmail.com', NULL, NULL, '090909090909', NULL, '106648757521862198329', 'profile_picture/A53NKFOPfoZAZxDuuTlWf5sZc.jpg', 'Tres De Mayo', NULL, '2024-11-20 20:32:53', '2024-11-20 20:33:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-21 04:32:53');
+INSERT INTO `users` (`id`, `name`, `email`, `username`, `password`, `phone`, `fb_id`, `google_id`, `profile_picture`, `address`, `remember_token`, `created_at`, `updated_at`, `active_status`, `verify_status`, `role`, `strike`, `note`, `email_verification_code`, `email_verified_at`, `stripe_account_id`) VALUES
+(14, 'Lopez Roland Shane', 'lopezrolandshane@gmail.com', 'shaner', '$2y$12$KWBaHsB1eLFlGJ.2D.LF2O8u4qpNORuowbKP1xj0zcedchtSRZ81a', '12314134', 0, '107236937285983559710', 'profile-pictures/NsqtYbR4bm9qTg7FvyIID8MApPz7MhofeBfoJ5WS.jpg', 'dsadsadad', NULL, '2024-08-11 19:56:43', '2024-11-15 06:09:28', 0, 0, 'admin', 3, NULL, 796437, '2024-11-07 04:19:18', NULL),
+(68, 'Roland Shane Lopez', 'rshan0418@gmail.com', 'roland', '$2y$12$M9.0fLzVbEpg5m3lYEzPcuMg5u28fVIyWZjmqIGOLcTA8KfWW80.O', '09661805821', NULL, NULL, 'profile_picture/kEDKEjA3jRNNPztmQNrveSXYF.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:15:59', '2024-11-20 20:32:21', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 02:16:40', NULL),
+(69, 'Roland Shane Lopez', 'rshan5418@gmail.com', NULL, NULL, '090909090909', 1071441051576088, NULL, 'profile_picture/17P7uknT1nLNN3tJZEDWeodhu.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 18:23:38', '2024-11-22 19:40:26', 0, 0, 'tenant', 2, 'Your review contains inappropriate words.', NULL, '2024-11-21 02:24:38', 'acct_1QOsgfQIjGYcSTzY'),
+(70, 'Degam Jhonry', 'jhonrydegamo@gmail.com', 'degads', '$2y$12$h32SRh2VdQg1duaLDQnMq.AEbTF1c4e0PRJsp/ahe6XQZ/5eRh4sK', '09090909090', NULL, NULL, 'profile_picture/FurI715A5UrGqPiKsbWG1svii.jpg', 'purok 3 tres de mayo', NULL, '2024-11-20 19:34:52', '2024-11-20 19:35:49', 0, 1, 'owner', 3, NULL, NULL, '2024-11-21 03:35:42', NULL),
+(71, 'shane lopez', 'nokielopez@gmail.com', NULL, NULL, '090909090909', NULL, '106648757521862198329', 'profile_picture/A53NKFOPfoZAZxDuuTlWf5sZc.jpg', 'Tres De Mayo', NULL, '2024-11-20 20:32:53', '2024-11-20 20:33:15', 0, 0, 'tenant', 3, NULL, NULL, '2024-11-21 04:32:53', NULL);
 
 -- --------------------------------------------------------
 
@@ -575,6 +657,84 @@ CREATE TABLE `verifications` (
 INSERT INTO `verifications` (`id`, `user_id`, `id_document`, `business_permit`, `status`, `note`, `created_at`, `updated_at`) VALUES
 (21, 68, 'owner_documents/valid_id/sjtdbFROgSWGlIznJ8e9Sj3CF.jpg', 'owner_documents/business_permit/pq05sithBgblMnkqdqh4vpvEC.png', 'approved', NULL, '2024-11-20 18:16:00', '2024-11-20 18:26:11'),
 (22, 70, 'owner_documents/valid_id/8TXOZgyE7GUugLEYez0MyK2t3.jpg', 'owner_documents/business_permit/MhiNgYLjiblc00K38CMJoqhNz.jpg', 'approved', NULL, '2024-11-20 19:34:52', '2024-11-20 19:35:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wallets`
+--
+
+CREATE TABLE `wallets` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `balance` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `wallets`
+--
+
+INSERT INTO `wallets` (`id`, `user_id`, `balance`, `created_at`, `updated_at`) VALUES
+(1, 69, 10100.00, '2024-11-24 01:53:19', '2024-11-26 19:53:59'),
+(2, 70, 1400.00, '2024-11-25 01:16:52', '2024-12-01 23:09:31'),
+(8, 71, 2000.00, '2024-11-28 03:27:08', '2024-11-27 20:52:24'),
+(9, 68, 8000.00, '2024-11-28 04:55:11', '2024-11-27 20:58:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wallet_transactions`
+--
+
+CREATE TABLE `wallet_transactions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `wallet_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `payment_id` longtext DEFAULT NULL,
+  `type` varchar(255) NOT NULL,
+  `amount` decimal(15,2) NOT NULL,
+  `balance_after` decimal(15,2) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `details` text DEFAULT NULL,
+  `method` varchar(50) DEFAULT NULL,
+  `note` longtext DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `wallet_transactions`
+--
+
+INSERT INTO `wallet_transactions` (`id`, `wallet_id`, `user_id`, `payment_id`, `type`, `amount`, `balance_after`, `status`, `details`, `method`, `note`, `created_at`, `updated_at`) VALUES
+(1, 1, 69, NULL, 'cash_in', 700.00, 700.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-23 22:48:25', '2024-11-23 22:48:25'),
+(2, 1, 69, NULL, 'cash_in', 300.00, 1000.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-23 23:48:24', '2024-11-23 23:48:24'),
+(3, 1, 69, NULL, 'cash_in', 100.00, 1300.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-24 17:31:44', '2024-11-24 17:31:44'),
+(4, 1, 69, NULL, 'cash_in', 100.00, 1400.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-24 17:39:37', '2024-11-24 17:39:37'),
+(5, 1, 69, NULL, 'cash_in', 1000.00, 2400.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-24 17:40:50', '2024-11-24 17:40:50'),
+(6, 1, 69, NULL, 'cash_out', -1000.00, 400.00, 'rejected', 'Cash-out request via Stripe', NULL, 'nope', '2024-11-24 18:16:10', '2024-12-02 20:52:53'),
+(7, 1, 69, NULL, 'cash_out', -100.00, 300.00, 'rejected', 'Cash-out request via Stripe', NULL, 'Insufficient information', '2024-11-24 18:16:42', '2024-12-02 21:49:57'),
+(8, 1, 69, NULL, 'cash_in', 1000.00, 1300.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-24 19:05:21', '2024-11-24 19:05:21'),
+(9, 2, 70, NULL, 'cash_out', -1000.00, 300.00, 'pending', 'Cash-out request via Stripe', 'Gcash', '', '2024-11-24 19:16:41', '2024-11-24 19:16:41'),
+(10, 1, 69, NULL, 'cash_out', -100.00, 200.00, 'completed', 'Cash-out request via Stripe', NULL, '', '2024-11-24 19:47:16', '2024-12-02 21:51:53'),
+(11, 1, 69, NULL, 'cash_out', -100.00, 100.00, 'approved', 'Cash-out request via Stripe', NULL, '', '2024-11-24 19:49:02', '2024-12-02 21:50:59'),
+(12, 1, 69, NULL, 'cash_out', -100.00, 900.00, 'pending', 'Cash-out request via Stripe', 'paymaya', '', '2024-11-24 20:02:11', '2024-11-24 20:02:11'),
+(13, 1, 69, NULL, 'cash_out', -100.00, 800.00, 'pending', 'Cash-out request via Stripe', NULL, '', '2024-11-24 20:02:42', '2024-11-24 20:02:42'),
+(14, 1, 69, NULL, 'cash_in', 200.00, 1000.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-25 18:12:47', '2024-11-25 18:12:47'),
+(15, 2, 70, NULL, 'cash_in', 700.00, 700.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-25 21:19:27', '2024-11-25 21:19:27'),
+(16, 2, 70, 'pi_3QPHPPGB24OTjK7w1GOYduEf', 'cash_in', 700.00, 1400.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-25 21:35:40', '2024-11-25 21:35:40'),
+(17, 1, 69, NULL, 'payment', 900.00, 8200.00, 'completed', 'Payment', NULL, '', '2024-11-26 19:43:56', '2024-11-26 19:43:56'),
+(18, 1, 69, NULL, 'Refund', -900.00, 9100.00, 'completed', 'Refund', NULL, '', '2024-11-26 19:51:31', '2024-11-26 19:51:31'),
+(19, 1, 69, 'pi_3QPcJAGB24OTjK7w1zGKY5DW', 'cash_in', 1000.00, 10100.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-26 19:53:59', '2024-11-26 19:53:59'),
+(20, 8, 71, 'pi_3QPyONGB24OTjK7w1ailnaJK', 'cash_in', 10000.00, 10000.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-11-27 19:29:12', '2024-11-27 19:29:12'),
+(21, 8, 71, NULL, 'payment', -8000.00, 2000.00, 'completed', 'Payment', NULL, '', '2024-11-27 19:52:38', '2024-11-27 19:52:38'),
+(22, 8, 71, NULL, 'Refund', 8000.00, 10000.00, 'completed', 'Refund', NULL, '', '2024-11-27 20:51:03', '2024-11-27 20:51:03'),
+(23, 8, 71, NULL, 'payment', -8000.00, 2000.00, 'completed', 'Payment', NULL, '', '2024-11-27 20:52:24', '2024-11-27 20:52:24'),
+(24, 9, 68, NULL, 'Earning', 8000.00, 8000.00, 'completed', 'Earning', NULL, '', '2024-11-27 20:58:00', '2024-11-27 20:58:00'),
+(25, 2, 70, 'pi_3QRRExGB24OTjK7w1pQapnYd', 'cash_in', 1000.00, 2400.00, 'completed', 'Cash-in via Stripe', NULL, '', '2024-12-01 20:28:42', '2024-12-01 20:28:42'),
+(27, 2, 70, NULL, 'cash_out', 1000.00, 400.00, 'pending', '09090909090', 'paymaya', NULL, '2024-12-01 23:09:31', '2024-12-01 23:09:31');
 
 --
 -- Indexes for dumped tables
@@ -704,7 +864,8 @@ ALTER TABLE `sessions`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`),
-  ADD UNIQUE KEY `users_username_unique` (`username`);
+  ADD UNIQUE KEY `users_username_unique` (`username`),
+  ADD UNIQUE KEY `users_stripe_account_id_unique` (`stripe_account_id`);
 
 --
 -- Indexes for table `verifications`
@@ -714,6 +875,21 @@ ALTER TABLE `verifications`
   ADD KEY `verification_requests_user_id_foreign` (`user_id`);
 
 --
+-- Indexes for table `wallets`
+--
+ALTER TABLE `wallets`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `wallets_user_id_unique` (`user_id`);
+
+--
+-- Indexes for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `wallet_transactions_user_id_foreign` (`user_id`),
+  ADD KEY `wallet_transactions_wallet_id_foreign` (`wallet_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -721,7 +897,7 @@ ALTER TABLE `verifications`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `curse_words`
@@ -757,49 +933,61 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=372;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=427;
 
 --
 -- AUTO_INCREMENT for table `property_views`
 --
 ALTER TABLE `property_views`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `rent_forms`
 --
 ALTER TABLE `rent_forms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `verifications`
 --
 ALTER TABLE `verifications`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `wallets`
+--
+ALTER TABLE `wallets`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Constraints for dumped tables
@@ -844,8 +1032,8 @@ ALTER TABLE `property_views`
 -- Constraints for table `rent_forms`
 --
 ALTER TABLE `rent_forms`
-  ADD CONSTRAINT `rent_forms_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `rent_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `rent_forms_dorm_id_foreign` FOREIGN KEY (`dorm_id`) REFERENCES `dorms` (`id`),
+  ADD CONSTRAINT `rent_forms_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `reports`
@@ -867,6 +1055,19 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `verifications`
   ADD CONSTRAINT `verification_requests_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wallets`
+--
+ALTER TABLE `wallets`
+  ADD CONSTRAINT `wallets_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD CONSTRAINT `wallet_transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `wallet_transactions_wallet_id_foreign` FOREIGN KEY (`wallet_id`) REFERENCES `wallets` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

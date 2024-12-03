@@ -7,6 +7,7 @@ use App\Models\RentForm;
 use App\Models\Reports;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\WalletTransaction;
 use Crypt;
 use Illuminate\Http\Request;
 use App\Models\Verifications;
@@ -461,5 +462,83 @@ class AdminController extends Controller
 
         return response()->json(['success' => false], 400);
     }
+    public function viewCashoutRequests()
+    {
+        // Fetch pending cash-out requests
+        $pendingRequests = WalletTransaction::where('status', 'pending')
+            ->where('type', 'cash_out')
+            ->get();
+
+
+        return view('admin.cashout_requests', compact('pendingRequests'));
+    }
+    public function rejectCashout(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        $cashOutRequest = WalletTransaction::findOrFail($id);
+        $cashOutRequest->status = 'rejected';
+        $cashOutRequest->note = $request->reason;
+        $cashOutRequest->save();
+
+        $message = "Your cash-out request of ₱" . number_format($cashOutRequest->amount, 2) . " has been rejected. Reason: " . $request->reason;
+
+        $notification = Notification::create([
+            'user_id' => $cashOutRequest->user_id,  // Receiver (requester)
+            'type' => 'rejection',
+            'data' => $message,
+            'read' => false,
+            'route' => route('cashout.page'),
+            'dorm_id' => null,
+            'sender_id' => Auth::id(),
+        ]);
+
+        // Trigger the notification event
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => Auth::id(),
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'Reject',
+            'route' => route('cashout.page'),
+        ]));
+
+        return redirect()->back()->with('success', 'Request rejected successfully.');
+    }
+
+    public function approveCashout($id)
+    {
+        $cashoutRequest = WalletTransaction::findOrFail($id);
+        $cashoutRequest->update(['status' => 'completed']);
+
+        $message = "Your cash-out request of ₱" . number_format($cashoutRequest->amount, 2) . " has been approved.";
+
+        $notification = Notification::create([
+            'user_id' => $cashoutRequest->user_id,  // Receiver (requester)
+            'type' => 'approval',
+            'data' => $message,
+            'read' => false,
+            'route' => route('cashout.page'),
+            'dorm_id' => null,
+            'sender_id' => Auth::id(),
+        ]);
+
+        // Trigger the notification event
+        event(new NotificationEvent([
+            'reciever' => $notification->user_id,
+            'message' => $notification->data,
+            'sender' => Auth::id(),
+            'rooms' => $notification->id,
+            'roomid' => $notification->room_id,
+            'action' => 'Approve',
+            'route' => route('cashout.page'),
+        ]));
+
+        return redirect()->route('admin.cashout.requests')->with('success', 'Cash-out request approved.');
+    }
+
 }
 

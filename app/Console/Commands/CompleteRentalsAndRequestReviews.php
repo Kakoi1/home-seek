@@ -10,6 +10,7 @@ use App\Models\Reviews;
 
 use App\Models\RentForm;
 use App\Models\Notification;
+use DB;
 use Illuminate\Console\Command;
 
 class CompleteRentalsAndRequestReviews extends Command
@@ -45,8 +46,21 @@ class CompleteRentalsAndRequestReviews extends Command
                 $rentForm->status = 'completed';
                 $rentForm->save();
 
-                $dorm->availability = false;
-                $dorm->save();
+                $activeRentFormsExist = DB::selectOne("
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM rent_forms
+                    WHERE dorm_id = ?
+                    AND status IN ('pending', 'active', 'approved')
+                ) AS rent_form_exists
+            ", [$dorm->id]);
+
+                if (!$activeRentFormsExist->rent_form_exists) {
+                    // If no active, pending, or approved rent forms exist, mark dorm as available
+                    $dorm->availability = false;
+                    $dorm->save();
+                }
+
                 // Create an empty review with null fields for rating and comments
                 Reviews::create([
                     'user_id' => $rentForm->user_id,
@@ -74,6 +88,29 @@ class CompleteRentalsAndRequestReviews extends Command
                     'roomid' => $notification->dorm_id,
                     'action' => 'response',
                     'route' => route('myReviews')
+                ]));
+                $ownerNotification = Notification::create([
+                    'user_id' => $dorm->user_id, // Assuming the owner is linked to the dorm
+                    'type' => 'booking_ended',
+                    'data' => '<strong>Booking Ended</strong> <br>' .
+                        '<p>The booking for your accommodation <strong>' . ucfirst($dorm->name) . '</strong> has ended.</p><br>' .
+                        '<p>Tenant: ' . htmlspecialchars($rentForm->user->name) . '</p>' .  // Assuming user relation exists
+                        '<p>End Date: ' . htmlspecialchars($rentForm->end_date) . '</p><br>' .
+                        '<p>Sent on: ' . now()->format('Y-m-d H:i:s') . '</p>',
+                    'read' => false,
+                    'route' => null, // Replace with the appropriate route for owner
+                    'dorm_id' => $dorm->id,
+                    'sender_id' => 14, // The tenant
+                ]);
+
+                event(new NotificationEvent([
+                    'reciever' => $dorm->user_id,
+                    'message' => $ownerNotification->data,
+                    'sender' => 14,
+                    'rooms' => $ownerNotification->id,
+                    'roomid' => $ownerNotification->dorm_id,
+                    'action' => 'notification',
+                    'route' => null // Replace with the appropriate route for owner
                 ]));
             } else {
                 // If the rent form has an unpaid bill, log it

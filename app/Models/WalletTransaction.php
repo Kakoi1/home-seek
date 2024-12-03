@@ -17,6 +17,7 @@ class WalletTransaction extends Model
         'balance_after',
         'status',
         'details',
+        'method',
     ];
 
     // Relationship with the Wallet model

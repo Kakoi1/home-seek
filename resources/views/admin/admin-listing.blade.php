@@ -2,7 +2,11 @@
 
 @section('content')
 <style>
-    .container {
+    * {
+        border: transparent !important;
+    }
+
+    .containers {
         max-width: 900px;
         margin: auto;
         padding: 20px;
@@ -16,26 +20,30 @@
     }
 
     /* Table styling */
-    .properties-table {
+    .tables {
         width: 100%;
         border-collapse: collapse;
         font-family: Arial, sans-serif;
     }
 
-    .properties-table th,
-    .properties-table td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
+    .table {
+        border-bottom: transparent !important;
     }
 
-    .properties-table th {
+    .tables th,
+    .tables td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0 !important;
+    }
+
+    .tables th {
         background-color: #f5f5f5;
         font-weight: bold;
         color: #333;
     }
 
-    .properties-table tbody tr:hover {
+    .tablese tbody tr:hover {
         background-color: #fafafa;
     }
 
@@ -310,10 +318,10 @@
     }
 </style>
 <div class="container">
-    <h1>Manage Posted Accomodation</h1>
+    <h2 class="text-center">Manage Posted Accomodation</h2>
 
-    <table class="table table-bordered">
-        <thead>
+    <table class="tables">
+        <thead style="border: transparent;">
             <tr>
                 <th>Accomodation Name</th>
                 <th>Owner</th>
@@ -323,7 +331,7 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="listTable">
             @foreach($properties as $property)
                         @php
                             $fullAddress = $property->address;
@@ -372,9 +380,9 @@
         </tbody>
     </table>
     <div class="pagination-container">
-        <button class="pagination-button" id="prevPageBtn" onclick="prevPage()" disabled>Previous</button>
+        <button class="pagination-button" id="prevPageBtns" onclick="prevPage()" disabled>Previous</button>
         <span class="pagination-info">Page <span id="currentPage">1</span></span>
-        <button class="pagination-button" id="nextPageBtn" onclick="nextPage()">Next</button>
+        <button class="pagination-button" id="nextPageBtns" onclick="nextPage()">Next</button>
     </div>
 </div>
 <div id="deactivateModal" class="modal-overlay" style="display: none;">
@@ -444,7 +452,7 @@
         const end = start + propertiesPerPage;
         const propertiesToDisplay = filteredProperties.slice(start, end);
 
-        const tableBody = document.querySelector("tbody");
+        const tableBody = document.getElementById("listTable");
         tableBody.innerHTML = propertiesToDisplay.map(property => {
             // Shorten the address to a preview
             const shortAddress = property.address.split(',').slice(0, 3).join(', ');
@@ -506,8 +514,8 @@
     }
 
     function updatePaginationButtons(totalPages) {
-        document.getElementById("prevPageBtn").disabled = currentPage === 1;
-        document.getElementById("nextPageBtn").disabled = currentPage === totalPages || totalPages === 0;
+        document.getElementById("prevPageBtns").disabled = currentPage === 1;
+        document.getElementById("nextPageBtns").disabled = currentPage === totalPages || totalPages === 0;
     }
 
     function filterAndPaginate() {

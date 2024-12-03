@@ -592,47 +592,12 @@
 
     <div id="billingSection" class="rent-section">
         <h3 class="billing-title">Billing Information</h3>
-        <!-- Tabs for Payments -->
-        <div class="tabs">
-            <button class="tab-button active" data-tab="pending-payments">Pending Payments</button>
-            <button class="tab-button" data-tab="paid-payments">Paid Payments</button>
-        </div>
 
         <div class="tab-content">
             <!-- Pending Payments Tab -->
-            <div class="tab-pane active" id="pending-payments">
-                <h4>Pending Payments</h4>
-                <div id="pendingPaymentsContent" class="payment-container">
-                    @if ($pendingPayments && $pendingPayments->isEmpty())
-                        <p>No pending payments for the selected month.</p>
-                    @elseif($pendingPayments)
-                        <table class="rent-history-table" id="pendingPaymentsTable">
-                            <thead>
-                                <tr>
-                                    <th>Accommodation Name</th>
-                                    <th>Amount</th>
-                                    <th>Billing Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($pendingPayments as $payment)
-                                    <tr>
-                                        <td>{{ ucfirst($payment->rentForm->dorm->name) }}</td>
-                                        <td>₱{{ $payment->amount }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($payment->billing_date)->format('M j, Y') }}</td>
-                                        <td><strong>{{ ucfirst($payment->status) }}</strong></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                    @endif
-                </div>
-            </div>
 
             <!-- Paid Payments Tab -->
-            <div class="tab-pane" id="paid-payments">
+            <div class="tab-pane active" id="paid-payments">
                 <h4>Paid Payments</h4>
                 <div id="paidPaymentsContent" class="payment-container">
                     @if ($paidPayments && $paidPayments->isEmpty())
@@ -651,8 +616,6 @@
                                     <th>Accommodation Name</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                    <th>Reference ID</th>
-                                    <th>Mode</th>
                                     <th>Paid Date</th>
                                 </tr>
                             </thead>
@@ -662,10 +625,6 @@
                                         <td>{{ ucfirst($payment->rentForm->dorm->name) }}</td>
                                         <td>₱{{ $payment->amount }}</td>
                                         <td><strong>{{ ucfirst($payment->status) }}</strong></td>
-                                        <td><a target={{$payment->reference ? '_blank' : ''}}
-                                                href="{{$payment->reference ? 'https://storage.googleapis.com/homeseek-profile-image/' . $payment->reference : ''}}">{{$payment->reference ? 'Image' : ''}}</a>
-                                        </td>
-                                        <td>{{ ucwords(str_replace('_', ' ', $payment->mode)) }}</td>
 
                                         <td>
                                             {{ \Carbon\Carbon::parse($payment->paid_at)->format('M j, Y') }}<br>
@@ -823,29 +782,29 @@
 <script>
 
 
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    // document.querySelectorAll('.tab-button').forEach(button => {
+    //     button.addEventListener('click', () => {
+    //         // Remove active class from all buttons
+    //         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
 
-            // Hide all tab panes
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.style.display = 'none';
-            });
+    //         // Hide all tab panes
+    //         document.querySelectorAll('.tab-pane').forEach(pane => {
+    //             pane.style.display = 'none';
+    //         });
 
-            // Add active class to clicked button
-            button.classList.add('active');
+    //         // Add active class to clicked button
+    //         button.classList.add('active');
 
-            // Show the corresponding tab pane
-            const tabToShow = button.getAttribute('data-tab');
-            document.getElementById(tabToShow).style.display = 'block';
-        });
-    });
+    //         // Show the corresponding tab pane
+    //         const tabToShow = button.getAttribute('data-tab');
+    //         document.getElementById(tabToShow).style.display = 'block';
+    //     });
+    // });
 
     // Initialize by showing only the active tab pane on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector('.tab-pane.active').style.display = 'block';
-    });
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     document.querySelector('.tab-pane.active').style.display = 'block';
+    // });
 
     document.querySelectorAll('input[name="cancelReason"]').forEach(radio => {
         radio.addEventListener('change', function () {
@@ -965,8 +924,7 @@
             const filteredRows = rows.filter(row => {
                 const columns = row.getElementsByTagName('td');
                 const accommodationName = columns[0].textContent.trim().toLowerCase();
-                const referenceId = columns[3].textContent.trim().toLowerCase();
-                const paymentDate = columns[5].textContent.trim();
+                const paymentDate = columns[3].textContent.trim();
 
                 // Extract month and year from the payment date (e.g., "Nov 5, 2024")
                 const paymentDateObj = new Date(paymentDate);

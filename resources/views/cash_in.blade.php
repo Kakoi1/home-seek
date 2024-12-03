@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .card {
+        border: transparent;
+    }
+</style>
 <div class="container">
     <h2>Cash In</h2>
 
@@ -14,7 +19,7 @@
         </div>
         <button type="button" class="btn btn-primary" id="createPaymentIntent">Proceed to Payment</button>
     </form>
-
+    <br>
     <!-- Loading Screen -->
     <div id="loading" class="text-center" style="display:none; margin-top:20px;">
         <div class="spinner-border text-primary" role="status">
@@ -32,6 +37,47 @@
             <button id="closeOverlay" class="btn btn-secondary mt-3">Cancel</button>
         </div>
     </div>
+    <div class="card">
+        <div class="card-body">
+            <hr>
+            <h4 class="mb-3">Recent Cash In Transactions</h4>
+            @if($transactions->isNotEmpty())
+                <table class="table table-striped" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        @foreach($transactions as $transaction)
+                            <tr>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($transaction->created_at)->format('M j, Y') }}<br>
+                                    <small>{{ \Carbon\Carbon::parse($transaction->created_at)->format('h:i A') }}</small>
+                                </td>
+                                <td>₱{{ number_format($transaction->amount, 2) }}</td>
+                                <td>
+                                    @if($transaction->status === 'pending')
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    @elseif($transaction->status === 'completed')
+                                        <span class="badge bg-success">Completed</span>
+                                    @else
+                                        <span class="badge bg-danger">Rejected</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div id="paginationCont" class="mt-3 d-flex justify-content-center"></div>
+            @else
+                <p>No cash out transactions found.</p>
+            @endif
+        </div>
+    </div>
+
 </div>
 
 <!-- CSS for Overlay -->
@@ -167,5 +213,76 @@
             cardDetailsOverlay.style.display = 'none'; // Hide overlay
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPage = 5; // Number of rows per page
+        const tbody = document.getElementById("transactionsBody");
+        const paginationControls = document.getElementById("paginationCont");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        let currentPage = 1;
+
+        // Function to display rows for the current page
+        function displayPage(page) {
+            // Hide all rows
+            rows.forEach(row => (row.style.display = "none"));
+
+            // Calculate start and end indexes
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+
+            // Show rows for the current page
+            for (let i = startIndex; i < endIndex; i++) {
+                rows[i].style.display = "table-row";
+            }
+
+            // Update pagination controls
+            updatePaginationControls(page);
+        }
+
+        // Function to update pagination controls
+        function updatePaginationControls(page) {
+            paginationControls.innerHTML = "";
+
+            // Create "Previous" button
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "Previous";
+            prevButton.classList.add("btn", "btn-sm", "mx-1", "btn-primary");
+            prevButton.disabled = page === 1; // Disable if on the first page
+            prevButton.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayPage(currentPage);
+                }
+            });
+            paginationControls.appendChild(prevButton);
+
+            // Display the current page number
+            const pageIndicator = document.createElement("span");
+            pageIndicator.textContent = `Page ${page} of ${totalPages}`;
+            pageIndicator.classList.add("mx-2");
+            paginationControls.appendChild(pageIndicator);
+
+            // Create "Next" button
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "Next";
+            nextButton.classList.add("btn", "btn-sm", "mx-1", "btn-primary");
+            nextButton.disabled = page === totalPages; // Disable if on the last page
+            nextButton.addEventListener("click", () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayPage(currentPage);
+                }
+            });
+            paginationControls.appendChild(nextButton);
+        }
+
+        // Initial display of page 1
+        if (totalRows > 0) {
+            displayPage(1);
+        }
+    });
+
 </script>
 @endsection

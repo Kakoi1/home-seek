@@ -72,7 +72,6 @@ class DormController extends Controller
     public function showDorms()
     {
         $dorms = Dorm::where('archive', 0)
-            ->where('availability', 0)
             ->where('flag', 0)
             ->join('users', 'dorms.user_id', '=', 'users.id')
             ->where('users.active_status', 0)
@@ -127,7 +126,6 @@ class DormController extends Controller
         // Order by latest posted dorms
         $query->orderBy('dorms.created_at', 'desc')
             ->withCount('favoritedBy')
-            ->where('dorms.availability', false)
             ->where('dorms.archive', false)
             ->where('dorms.flag', false);
 
@@ -179,7 +177,7 @@ class DormController extends Controller
         } else {
             $hasPendingOrActiveRentForm = null;
         }
-        if ($dorm->availability || $dorm->flag) {
+        if ($dorm->flag) {
             return back()->withErrors('Accommodation not available');
         }
 

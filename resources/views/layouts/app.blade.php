@@ -9,9 +9,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'HomeSeek')</title>
 
-    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ env('APP_URL') . 'css/pagination.css' }}">
+    <link rel="stylesheet" href="{{ env('APP_URL') . 'css/styles.css' }}">
+    <link rel="stylesheet" href="{{ env('APP_URL') . 'css/admin.css' }}">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
@@ -658,14 +659,21 @@
                 </table>
             </div>
 
+            <!-- Pagination Controls -->
+            <div id="paginationControls" class="pagination-controls">
+                <button id="prevPageBtn" style="width: 85px;" class="btn btn-secondary">Previous</button>
+                <span id="pageNumber">Page 1</span>
+                <button id="nextPageBtn" style="width: 60px;" class="btn btn-secondary">Next</button>
+            </div>
+
             <!-- Action Buttons -->
             <div class="wallet-buttons">
-                <button id="cashInButton" class="btn btn-primary">Cash In</button>
-                <button id="cashOutButton" class="btn btn-secondary">Cash Out</button>
+                <button id="cashInButton" class="btner btn-primary">Cash In</button>
+                <button id="cashOutButton" class="btner btn-secondary">Cash Out</button>
             </div>
 
             <!-- Close Button -->
-            <button id="closeWalletOverlay" class="btn btn-danger mt-3">Close</button>
+            <button id="closeWalletOverlay" class="btner btn-danger mt-3">Close</button>
         </div>
     </div>
 
@@ -812,6 +820,13 @@
                                 const overlay = document.getElementById('walletOverlay');
                                 const transactionTableBody = document.getElementById('transactionTableBody');
                                 const walletBalance = document.getElementById('walletBalance');
+                                const pageNumber = document.getElementById('pageNumber');
+                                const prevPageBtn = document.getElementById('prevPageBtn');
+                                const nextPageBtn = document.getElementById('nextPageBtn');
+
+                                // Initialize Pagination
+                                let currentPage = 1;
+                                const itemsPerPage = 5; // Number of items per page
 
                                 overlay.style.display = 'flex'; // Show overlay
                                 transactionTableBody.innerHTML = ''; // Clear previous data
@@ -824,26 +839,67 @@
                                     // Update wallet balance
                                     walletBalance.innerText = data.balance;
 
-                                    // Populate transactions table
-                                    if (data.transactions.length > 0) {
-                                        data.transactions.forEach(transaction => {
-                                            const row = document.createElement('tr');
+                                    // Pagination logic
+                                    const totalTransactions = data.transactions;
+                                    const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
 
-                                            row.innerHTML = `
-                            <td>${transaction.date}</td>
-                            <td>${transaction.type}</td>
-                            <td>₱${transaction.amount}</td>
+                                    // Function to load page data
+                                    function loadPage(page) {
+                                        // Calculate the start and end index for the current page
+                                        const start = (page - 1) * itemsPerPage;
+                                        const end = start + itemsPerPage;
+
+                                        // Clear the current table body
+                                        transactionTableBody.innerHTML = '';
+
+                                        // Add transactions for the current page
+                                        const transactionsOnPage = totalTransactions.slice(start, end);
+
+                                        if (transactionsOnPage.length > 0) {
+                                            transactionsOnPage.forEach(transaction => {
+                                                const row = document.createElement('tr');
+                                                row.innerHTML = `
+                                <td>${transaction.date}</td>
+                                <td>${transaction.type}</td>
+                                <td>₱${transaction.amount}</td>
+                            `;
+                                                transactionTableBody.appendChild(row);
+                                            });
+                                        } else {
+                                            const noDataRow = document.createElement('tr');
+                                            noDataRow.innerHTML = `
+                            <td colspan="3" style="text-align: center;">No transactions available.</td>
                         `;
+                                            transactionTableBody.appendChild(noDataRow);
+                                        }
 
-                                            transactionTableBody.appendChild(row);
-                                        });
-                                    } else {
-                                        const noDataRow = document.createElement('tr');
-                                        noDataRow.innerHTML = `
-                        <td colspan="3" style="text-align: center;">No transactions available.</td>
-                    `;
-                                        transactionTableBody.appendChild(noDataRow);
+                                        // Update the page number
+                                        pageNumber.innerText = `Page ${page}`;
+
+                                        // Disable/Enable buttons based on the current page
+                                        prevPageBtn.disabled = page === 1;
+                                        nextPageBtn.disabled = page === totalPages;
                                     }
+
+                                    // Load initial page
+                                    loadPage(currentPage);
+
+                                    // Event Listeners for page navigation
+                                    prevPageBtn.addEventListener('click', () => {
+                                        if (currentPage > 1) {
+                                            currentPage--;
+                                            loadPage(currentPage);
+                                        }
+                                    });
+
+                                    nextPageBtn.addEventListener('click', () => {
+                                        const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
+                                        if (currentPage < totalPages) {
+                                            currentPage++;
+                                            loadPage(currentPage);
+                                        }
+                                    });
+
                                 } catch (error) {
                                     console.error('Error fetching wallet details:', error);
                                 }
@@ -876,7 +932,7 @@
                     });
 
                     document.getElementById('cashOutButton').addEventListener('click', () => {
-                        location.href = "{{ route('wallet.cashOutForm') }}"; // Route for Cash Out
+                        location.href = "{{ route('cashout.page') }}"; // Route for Cash Out
                     });
 
                     document.getElementById('userData').innerHTML = data.content;

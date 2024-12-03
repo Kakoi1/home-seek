@@ -301,120 +301,23 @@
 
                                                         <!-- Tabs for Pending and Paid Bills -->
                                                         @if ($tenant['status'] == 'active')
-                                                                <hr>
-                                                                @if (!$tenant['pending_bills']->isEmpty())
-                                                                        <div id="tab-content-pending-{{ $tenant['user_id'] }}" class="tab-content">
-                                                                            @foreach($tenant['pending_bills'] as $bill)
-                                                                                        @php
-                                                                                            // Convert the billing date to a Carbon instance
-                                                                                            $dueDate = \Carbon\Carbon::parse($bill['billing_date']);
-                                                                                            $currentDate = \Carbon\Carbon::now();
-                                                                                            // Calculate the difference in days
-                                                                                            $daysRemaining = $dueDate->diffInDays($currentDate, false); // false for signed value
-                                                                                            // Round the number of days remaining to the nearest integer
-                                                                                            $roundedDaysRemaining = round($daysRemaining);
-                                                                                            // Determine if overdue
-                                                                                            $isOverdue = $roundedDaysRemaining > 0;
-                                                                                        @endphp
-
-                                                                                        <div style="padding: 5px;">
-                                                                                            <p class="d-flex justify-content-between align-items-center mb-3">
-                                                                                                <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
-                                                                                                <!-- Display the number of days remaining -->
-                                                                                                <span @if ($isOverdue) style="color: red;" @endif>
-                                                                                                    <strong>Due Date:</strong>
-                                                                                                    @if ($roundedDaysRemaining > 0)
-                                                                                                        Over due
-                                                                                                    @elseif ($roundedDaysRemaining == 0)
-                                                                                                        Today
-                                                                                                    @else
-                                                                                                        Overdue by {{ abs($roundedDaysRemaining) }} days
-                                                                                                    @endif
-                                                                                                </span>
-                                                                                            </p>
-                                                                                        </div>
-
-                                                                                        <br>
-                                                                                        <div style="display: flex; justify-content: flex-start; gap: 10px;">
-                                                                                            <form method="POST" action="{{ route('notifyTenant', $bill['rent_form_id']) }}">
-                                                                                                @csrf
-                                                                                                <button type="submit" class="btns">Notify Payment</button>
-                                                                                            </form>
-
-                                                                                            <!-- Over the Counter Pay Button -->
-                                                                                            <button type="button" class="btn btn-info btn-sm"
-                                                                                                onclick="togglePaymentForm('paymentForm{{ $bill['id'] }}')">Pay Over the
-                                                                                                Counter</button>
-                                                                                        </div>
-
-                                                                                        <!-- Hidden Form for Over the Counter Payment -->
-                                                                                        <div id="paymentForm{{ $bill['id'] }}"
-                                                                                            style="display:none; margin-top: 10px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;">
-                                                                                            <form method="POST" action="{{ route('processPayment', $bill['id']) }} "
-                                                                                                enctype="multipart/form-data">
-                                                                                                @csrf
-                                                                                                @method('PATCH')
-                                                                                                <div class="form-group">
-                                                                                                    <label for="mode_of_payment">Mode of Payment:</label>
-                                                                                                    <select id="mode_of_payment" name="mode_of_payment"
-                                                                                                        class="form-control">
-                                                                                                        <option value="cash">Cash</option>
-                                                                                                        <option value="e_wallet">E - Wallet</option>
-                                                                                                        <option value="credit_card">Credit Card</option>
-                                                                                                        <option value="bank_transfer">Bank Transfer</option>
-
-                                                                                                    </select>
-                                                                                                </div>
-
-                                                                                                <div class="form-group">
-                                                                                                    <label for="payment_reference">Payment Reference:</label>
-                                                                                                    <input type="file" id="payment_reference" name="payment_reference"
-                                                                                                        accept="image/png, image/gif, image/jpeg" style="height: 45px;"
-                                                                                                        class="form-control" placeholder="Proof of payment">
-                                                                                                </div>
-
-                                                                                                <div class="form-group">
-                                                                                                    <label for="payment_date">Payment Date:</label>
-                                                                                                    <input type="date" id="payment_date" name="payment_date"
-                                                                                                        class="form-control" required>
-                                                                                                </div>
-
-                                                                                                <button type="submit" class="btn btn-success btn-sm">Submit Payment</button>
-                                                                                            </form>
-                                                                                        </div>
-                                                                            @endforeach
+                                                            <hr>
+                                                            @if (!$tenant['paid_bills']->isEmpty())
+                                                                <div id="tab-content-paid-{{ $tenant['user_id'] }}" class="tab-content">
+                                                                    @foreach($tenant['paid_bills'] as $bill)
+                                                                        <div style="padding: 5px;">
+                                                                            <p class="d-flex justify-content-between align-items-center mb-3">
+                                                                                <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
+                                                                                <span><strong>Paid At:</strong>
+                                                                                    {{ \Carbon\Carbon::parse($bill['paid_at'])->format('M d, Y') }}</span>
+                                                                            </p>
                                                                         </div>
-                                                                @elseif (!$tenant['paid_bills']->isEmpty())
-                                                                    <div id="tab-content-paid-{{ $tenant['user_id'] }}" class="tab-content">
-                                                                        @foreach($tenant['paid_bills'] as $bill)
-                                                                            <div style="padding: 5px;">
-                                                                                <p class="d-flex justify-content-between align-items-center mb-3">
-                                                                                    <span><strong>Amount:</strong> ₱{{ $bill['amount'] }}</span>
-                                                                                    <span><strong>Paid At:</strong>
-                                                                                        {{ \Carbon\Carbon::parse($bill['paid_at'])->format('M d, Y') }}</span>
-                                                                                </p>
-                                                                                <p class="d-flex justify-content-between align-items-center mb-3">
-                                                                                    <span><strong>Status:</strong> Paid</span>
-                                                                                    <span><strong>Mode of Payment:</strong>
-                                                                                        @if($bill['mode'] == 'credit_card')
-                                                                                            Credit Card
-                                                                                        @elseif($bill['mode'] == 'e_wallet')
-                                                                                            E-Wallet
-                                                                                        @elseif($bill['mode'] == 'bank_transfer')
-                                                                                            Bank Transfer
-                                                                                        @else
-                                                                                            {{ ucfirst($bill['mode']) }}
-                                                                                        @endif
-                                                                                    </span>
-                                                                                </p>
-
-                                                                            </div>
-                                                                            <br>
-                                                                        @endforeach
-                                                                    </div>
-                                                                @else
-                                                                    <p>No pending or paid bills available.</p>
-                                                                @endif
+                                                                        <br>
+                                                                    @endforeach
+                                                                </div>
+                                                            @else
+                                                                <p>No pending or paid bills available.</p>
+                                                            @endif
                                                         @endif
 
                                                     </div>

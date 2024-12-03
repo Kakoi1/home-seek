@@ -18,6 +18,7 @@ use App\Http\Controllers\NotifyController;
 use App\Http\Controllers\MessageController;
 use Illuminate\Support\Carbon;
 
+
 Route::get('/home', [DormController::class, 'index'])->name('home');
 Route::get('/dorms', [DormController::class, 'index'])->name('dorm');
 Route::get('/showdorms', [DormController::class, 'showDorms'])->name('showdorms');
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/deactivate-user/{id}', [AdminController::class, 'deactivate'])->name('user.deactivate');
     Route::put('/managepage/property{id}/deactivate', [AdminController::class, 'deactivateProperty'])->name('admin.deactivateProperty');
     Route::post('/warn-user/{id}', [AdminController::class, 'userwarn'])->name('user.warn');
+    Route::get('/admin/cashout/requests', [AdminController::class, 'viewCashoutRequests'])->name('admin.cashout.requests');
+    Route::patch('/admin/cashout/approve/{id}', [AdminController::class, 'approveCashout'])->name('admin.cashout.approve');
+    Route::patch('/admin/cashout/reject/{id}', [AdminController::class, 'rejectCashout'])->name('admin.cashout.reject');
+
     Route::get('/reports', function () {
         return view('admin.report'); // Path to your Blade file
     })->name('reports.view');
@@ -141,16 +146,32 @@ Route::get('/upload', function () {
 Route::group(['middleware' => ['auth', 'email.verified']], function () {
 
     Route::group(['middleware' => ['auth', 'owner.verified']], function () {
+        Route::get('/wallet/cashout', [WalletController::class, 'showCashOutPage'])->name('cashout.page');
+        Route::post('/wallet/cashout', [WalletController::class, 'submitCashOutRequest'])->name('cashout.submit');
+
 
         Route::get('/profile', [Controller::class, 'showProfile'])->name('profile.edit');
         Route::put('/profile/update', [Controller::class, 'updateProfile'])->name('profile.update');
+        Route::get('/get-rent-forms/{id}', [RoomController::class, 'getRentForms']);
 
         Route::get('/notifications', [NotifyController::class, 'getNotifications'])->name('notifies');
         Route::post('/notifications/{id}/mark-as-read', [NotifyController::class, 'markAsRead'])->name('markAsRead');
         Route::post('/report', [DormController::class, 'storeReport'])->name('report.store');
         Route::get('/wallet/dashboard', [WalletController::class, 'dashboard'])->name('wallet.dashboard');
         Route::get('/wallet/cash-in', function () {
-            return view('cash_in');
+
+            $user = auth()->user();
+            $wallet = $user->wallet;
+
+            return view('cash_in', [
+                'walletBalance' => $wallet->balance ?? 0,
+                'transactions' => $wallet->transactions()
+                    ->where('type', 'cash_in')
+                    ->latest()
+                    ->get()
+            ]);
+
+
         })->name('wallet.cashIn');
         Route::post('/wallet/cash-in', [WalletController::class, 'cashIn'])->name('wallet.cashInProcess');
         Route::post('/wallet/cash-in/confirm', [WalletController::class, 'confirmCashIn'])->name('wallet.cashInConfirm');

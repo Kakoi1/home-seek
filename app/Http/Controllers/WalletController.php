@@ -56,7 +56,7 @@ class WalletController extends Controller
             'wallet_id' => $user->wallet->id,
             'payment_id' => $request->payment_id,  // Save the payment_id here
             'type' => 'cash_in',
-            'amount' => $request->amount,
+            'amount' => '+' . $request->amount,
             'balance_after' => $user->wallet->balance,
             'status' => 'completed',
             'details' => 'Cash-in via Stripe',
@@ -115,7 +115,6 @@ class WalletController extends Controller
             'balance' => $wallet->balance,
             'transactions' => $wallet->transactions()
                 ->latest() // Get the latest transactions first
-                ->take(10) // Limit to the most recent 10 transactions
                 ->get() // Execute the query
                 ->map(function ($transaction) {
                     return [
@@ -127,59 +126,46 @@ class WalletController extends Controller
         ]);
     }
 
-    public function processCashOut(Request $request)
+    public function showCashOutPage()
     {
-        // Validate the input
+        $user = auth()->user();
+        $wallet = $user->wallet;
+
+        return view('cashout', [
+            'walletBalance' => $wallet->balance ?? 0,
+            'transactions' => $wallet->transactions()
+                ->where('type', 'cash_out')
+                ->latest()
+                ->get()
+        ]);
+    }
+    public function submitCashOutRequest(Request $request)
+    {
         $request->validate([
-            'amount' => 'required|numeric|min:1|max:' . auth()->user()->wallet->balance,
-            'destination' => 'required|string', // This is the user's bank account or external account ID
+            'amount' => 'required|numeric|min:100|max:' . auth()->user()->wallet->balance,
+            'payment_method' => 'required|in:gcash,paymaya,bank_transfer',
+            'account_details' => 'required|string|max:255',
         ]);
 
         $user = auth()->user();
-        $amount = $request->amount;
 
-        // Deduct the balance from the user's wallet
-        $user->wallet->balance -= $amount;
-        $user->wallet->save();
-
-        // Log the transaction
-        WalletTransaction::create([
-            'user_id' => $user->id,
-            'wallet_id' => $user->wallet->id,
+        // Deduct from wallet
+        $wallet = $user->wallet;
+        $wallet->balance -= $request->amount;
+        $wallet->save();
+        // Log transaction
+        $wallet->transactions()->create([
             'type' => 'cash_out',
-            'amount' => -$amount,
-            'balance_after' => $user->wallet->balance,
-            'status' => 'pending', // Payouts might require manual approval
-            'details' => 'Cash-out request via Stripe',
+            'amount' => $request->amount,
+            'method' => $request->payment_method,
+            'details' => $request->account_details,
+            'status' => 'pending', // Initial status
+            'user_id' => $user->id,
+            'wallet_id' => $wallet->id,
+            'balance_after' => $user->wallet->balance - $request->amount,
         ]);
 
-        // Set the Stripe secret key
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        try {
-            // Create a payout to the user's connected account
-            $payout = Payout::create([
-                'amount' => $amount * 100, // Amount in cents
-                'currency' => 'php',
-                'method' => 'instant', // Instant payout method
-                'destination' => $user->stripe_account_id,
-            ], [
-                'stripe_account' => $user->stripe_account_id,
-            ]);
-
-            // Update the transaction status to "completed"
-            WalletTransaction::where('user_id', $user->id)
-                ->where('type', 'cash_out')
-                ->latest()
-                ->first()
-                ->update(['status' => 'completed']);
-
-        } catch (\Exception $e) {
-            // Handle errors, e.g., Stripe payout failure
-            return redirect()->back()->withErrors(['error' => 'Cash-out failed: ' . $e->getMessage()]);
-        }
-
-        return redirect()->route('wallet.cashOutForm')->with('success', 'Cash-out request submitted successfully!');
+        return redirect()->back()->with('success', 'Cash out request submitted successfully.');
     }
 
 }

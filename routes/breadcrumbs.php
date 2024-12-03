@@ -30,6 +30,10 @@ Breadcrumbs::for('admin.manageuser', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.dashboard');
     $trail->push('Manage Users', route('admin.manageuser'));
 });
+Breadcrumbs::for('admin.cashout.requests', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Cash Out', route('admin.cashout.requests'));
+});
 
 Breadcrumbs::for('owner.Property', function (BreadcrumbTrail $trail) {
     $trail->parent('owner.Dashboard');
@@ -65,9 +69,9 @@ Breadcrumbs::for('wallet.cashIn', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Cash In', route('wallet.cashIn'));
 });
-Breadcrumbs::for('wallet.cashOutForm', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('cashout.page', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
-    $trail->push('Cash out', route('wallet.cashOutForm'));
+    $trail->push('Cash out', route('cashout.page'));
 });
 Breadcrumbs::for('user.rentForms', function (BreadcrumbTrail $trail) {
     $trail->parent('home');

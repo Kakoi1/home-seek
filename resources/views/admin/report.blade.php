@@ -44,10 +44,18 @@
         color: black;
     }
 
-    th {
-        background: #091327;
-        color: whitesmoke;
+    th,
+    th:last-child {
+        background: transparent;
+        color: black;
+        border: transparent;
+        border-bottom: solid #e0e0e0 1px !important;
 
+    }
+
+    #reportTableBody td {
+        border: transparent;
+        border-bottom: solid #e0e0e0 1px !important;
     }
 
     tr:nth-child(even) {
@@ -92,10 +100,16 @@
         color: #fff;
         font-weight: bold;
     }
+
+    select {
+        border: solid #e0e0e0 1px !important;
+        border-radius: 5px;
+        height: 40px;
+    }
 </style>
 
 <div class="container">
-    <h2>Reports Management</h2>
+    <h2 class="text-center">Reports Management</h2>
 
     <div class="filters">
         <label for="statusFilter">Status:</label>
@@ -113,7 +127,7 @@
         </select>
     </div>
 
-    <table class="table table-bordered">
+    <table class="tables">
         <thead>
             <tr>
                 <th>Reporter</th>

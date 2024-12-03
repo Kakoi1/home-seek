@@ -3,6 +3,8 @@
 @section('title', 'Dorm Details')
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
 <style>
     /* Existing styles */
     #overlay {
@@ -88,7 +90,7 @@
         background: linear-gradient(to right, rgba(11, 136, 147, 0.911), rgba(54, 0, 51, 0.877));
         color: white;
         border-radius: 5px;
-        margin: 0 auto;
+        /* margin: 0 auto; */
         display: block;
     }
 
@@ -461,6 +463,138 @@
     .price-details hr {
         margin: 10px 0;
     }
+
+    .overlqy {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .overlqy.hidden {
+        display: none;
+    }
+
+    .overlqy-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .overliy-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 1000px;
+        height: 600px;
+    }
+
+    .overliy {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        /* Hidden by default */
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        /* Ensures it appears on top of everything */
+    }
+
+    .fc-day:hover {
+        background-color: transparent !important;
+        /* Disable hover effect */
+    }
+
+    /* Change the background color of the calendar header */
+    .fc-header-toolbar {
+        padding: 10px;
+    }
+
+    .fc-scroller th {
+        background: transparent !important;
+    }
+
+    /* Change the background color of the current day */
+
+    /* Change the background color of weekends (Saturday/Sunday) */
+
+    .fc-day {
+        background-color: #f0f0f0 !important;
+        /* Example: Light gray for weekends */
+    }
+
+    /* Change the color of the event labels */
+    .fc-event {
+        background-color: #378006;
+        /* Change event background color */
+        color: white !important;
+        /* Change text color inside events */
+    }
+
+    /* Change color of event on hover */
+    .fc-event:hover {
+        background-color: #2e6d2f !important;
+        /* Darken event color on hover */
+    }
+
+    /* Change the navigation button color */
+    .fc-button {
+        background-color: #007bff;
+        /* Change button color */
+        color: white !important;
+        /* Button text color */
+    }
+
+    .fc-button:hover {
+        background-color: #0056b3;
+        /* Darken button color on hover */
+    }
+
+    /* Modify the font style */
+    .fc-title {
+        font-weight: bold;
+        /* Make event titles bold */
+    }
+
+    .fc-view-harness {
+        overflow: hidden;
+    }
+
+    .calendar-button:hover {
+        background-color: #4cae4c;
+    }
+
+    #calendar {
+        width: 100%;
+        height: 500px;
+        /* Adjust height for calendar */
+        overflow: hidden;
+    }
+
+    .actins {
+        margin-top: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .actins .btn {
+        margin: 0 10px;
+    }
 </style>
 @php
     // Decode the JSON string into an array
@@ -555,7 +689,9 @@
                 <div class="host-info">
                     <p onclick="openUserPopup({{$dorm->user_id}})">Posted by <strong> <a
                                 href="javascript: void(0)">{{ $dorm->user->name }}</a></strong></p>
-
+                    <p><Strong>Status: </Strong> <Strong
+                            style="color: {{$dorm->availability ? 'red' : 'green'}};">{{$dorm->availability ? 'Occupied' : 'Available'}}</Strong>
+                    </p>
                     <p><strong>Date Posted</strong> ·
                         @if ($dorm->created_at->diffInYears() < 1)
                             {{ $dorm->created_at->diffForHumans() }}
@@ -563,15 +699,15 @@
                             {{ $dorm->created_at->format('Y F') }}
                         @endif
                     </p>
-                    @if (Auth::check())
-                        @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
-                            <div style="float:left;">
+                    <div style="float:left;width: 80%;display: flex;gap: 10px;">
+                        @if (Auth::check())
+                            @if (Auth::id() != $dorm->user_id && Auth::user()->role !== 'admin')
                                 <button onclick="showReportPopup({{$dorm->user->id}}, {{$dorm->id}}, 'property')"
                                     class="bts">Report Accommodation <i class="fa-solid fa-flag"></i></button>
-                            </div>
+                            @endif
                         @endif
-
-                    @endif
+                        <button id="showCalendarButton">Show Calendar</button>
+                    </div>
 
                 </div>
 
@@ -583,17 +719,17 @@
                     </div>
 
                     @auth
-                        <form id="bookingForm" action="{{ route('rentForm.store') }}" method="post">
+                        <form id="bookingForm" method="post">
                             @csrf
                             <div class="form-group">
                                 <label for="checkin">Check-in</label>
-                                <input type="date" id="checkin" name="start_date">
+                                <input type="date" id="checkin" name="start_date" required>
                             </div>
                             <input type="hidden" name="dorm_id" value="{{ $dorm->id }}">
                             <input type="hidden" name="total_price" id="tprice">
                             <div class="form-group">
                                 <label for="checkout">Check-out</label>
-                                <input type="date" id="checkout" name="end_date">
+                                <input type="date" id="checkout" name="end_date" required>
                             </div>
                             <div class="form-group">
                                 <label for="guests">Guests</label>
@@ -605,7 +741,8 @@
                             </div>
 
                             @if (!$hasPendingOrActiveRentForm)
-                                <button type="submit" id="Book" class="btn-reserve">Book now</button>
+                                <button type="button" id="Book" class="btn-reserve">Book now</button>
+
                             @else
                                 <p class="text-danger">You already have booked an accommodation. You cannot book at this moment.</p>
                             @endif
@@ -626,6 +763,20 @@
                                 accommodation.</p>
                         </div>
                     @endguest
+                </div>
+
+                <!-- Confirmation Overlay -->
+                <div id="confirmationOverlay" class="overlqy hidden">
+                    <div class="overlqy-content">
+                        <h3>Confirm Booking</h3>
+                        <p>Total Price: ₱<span id="overlayTotalPrice"></span></p>
+                        <p>Your Wallet Balance: ₱<span id="walletBalance">{{ Auth::user()->wallet->balance ?? 0 }}</span>
+                        </p>
+                        <div class="actins">
+                            <button id="confirmBooking" class="btn btn-success">Confirm</button>
+                            <button id="cancelBooking" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -674,14 +825,18 @@
         @endif
     </div>
 
-
     <div id="imageModal" class="image-modal" style="display: none;">
         <span class="closemodal">&times;</span>
         <img class="modal-content" id="fullImage">
         <!-- <div id="image-caption"></div> -->
     </div>
 
-
+    <div id="calendarOverlay" class="overliy">
+        <div class="overliy-content">
+            <!-- Calendar container -->
+            <div id="calendar"></div>
+        </div>
+    </div>
 
     <!-- Separate Overlays for Room Management and Delete Modal -->
     <div id="room-management-overlay" class="modal-overlay" style="display: none;"></div>
@@ -689,7 +844,7 @@
 
 </div>
 <!-- Overlay -->
-<script src="{{ asset('js/map.js') }}"></script>
+<script src="{{env('APP_URL') . 'js/map.js' }}"></script>
 
 <br><br>
 <script>
@@ -697,51 +852,214 @@
         document.addEventListener("DOMContentLoaded", function () {
             const checkinInput = document.getElementById("checkin");
             const checkoutInput = document.getElementById("checkout");
+            const bookButton = document.getElementById('Book');
+            const confirmButton = document.getElementById('confirmBooking');
+            const cancelButton = document.getElementById('cancelBooking');
+            const overlay = document.getElementById('confirmationOverlay'); // Add overlay reference
+            const totalPriceField = document.getElementById("tprice");
             const pricePerNight = {{ $dorm->price }};
-            const cleaningFee = 1500;
+            const walletBalance = {{ Auth::user()->wallet->balance ?? 0 }}; // Ensure wallet balance is available
 
-            // Set today's date as minimum for check-in
+            // Utility function to format numbers as currency
+            function formatCurrency(amount) {
+                return `₱${amount.toLocaleString()}`;
+            }
+
             const today = new Date().toISOString().split("T")[0];
             checkinInput.setAttribute("min", today);
 
-            // Update the checkout min date once checkin is selected
+            // Event listener to set the minimum checkout date based on selected check-in date
             checkinInput.addEventListener("change", function () {
-                const checkinDate = checkinInput.value;
-                checkoutInput.setAttribute("min", checkinDate);
-                calculateTotal();  // Recalculate the total price
+                const checkinDate = new Date(checkinInput.value);
+                if (!isNaN(checkinDate)) {
+                    checkoutInput.setAttribute("min", checkinInput.value);
+                    calculateTotal();
+                }
             });
 
-            // Calculate the total price when check-out is selected
-            checkoutInput.addEventListener("change", function () {
-                calculateTotal();
-            });
+            // Event listener to calculate the total price when checkout date changes
+            checkoutInput.addEventListener("change", calculateTotal);
 
+            // Event listener to handle the "Book" button click
+            try {
+                bookButton.addEventListener('click', function () {
+                    const totalPrice = parseFloat(totalPriceField.value || 0);
+                    if (!totalPrice || totalPrice > walletBalance) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Insufficient Balance',
+                            text: 'You do not have enough balance in your wallet to make this booking.',
+                        });
+                        return;
+                    }
+                    overlay.classList.remove('hidden'); // Show overlay for confirmation
+                });
+            } catch (error) {
+
+            }
+
+
+            // Calculate the total price based on check-in and check-out dates
             function calculateTotal() {
                 const checkinDate = new Date(checkinInput.value);
                 const checkoutDate = new Date(checkoutInput.value);
 
-                // Ensure checkout is after checkin
-                if (checkoutDate > checkinDate) {
-                    const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
-                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Days between checkin and checkout
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDiff = checkoutDate - checkinDate;
+                    const nights = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-                    // Update the nights and total price display
-                    document.getElementById("nights").textContent = nights;
+                    // Calculate total price
                     const totalPrice = nights * pricePerNight;
-                    document.getElementById("total-price").textContent = `₱${totalPrice.toLocaleString()}`;
-                    document.getElementById("tprice").value = totalPrice;
-                    const finalTotal = totalPrice + cleaningFee;
-                    document.getElementById("final-total").textContent = `₱${finalTotal.toLocaleString()}`;
+                    document.getElementById("nights").textContent = nights;
+                    document.getElementById("total-price").textContent = formatCurrency(totalPrice);
+                    document.getElementById("overlayTotalPrice").textContent = formatCurrency(totalPrice);
+                    totalPriceField.value = totalPrice; // Update hidden input for form
                 } else {
-                    // Reset the totals if dates are invalid
+                    // Reset values if dates are invalid
                     document.getElementById("nights").textContent = 0;
-                    document.getElementById("total-price").textContent = "₱0";
-                    document.getElementById("final-total").textContent = "₱0";
+                    document.getElementById("total-price").textContent = formatCurrency(0);
+                    document.getElementById("overlayTotalPrice").textContent = formatCurrency(0);
+                    totalPriceField.value = 0;
                 }
             }
 
+            // Event listener for confirming the booking
+            confirmButton.addEventListener('click', function () {
+                const formData = new FormData(document.getElementById('bookingForm'));
+
+                fetch('{{ route("rentForm.store") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking Successful',
+                                text: data.message,
+                            }).then(() => {
+                                window.location.href = '{{ route("user.rentForms") }}';
+                            });
+                        } else {
+                            // Check if there are validation errors
+                            if (data.errors) {
+                                // Create a message to show all validation errors
+                                let errorMessages = '';
+                                for (let key in data.errors) {
+                                    if (data.errors.hasOwnProperty(key)) {
+                                        errorMessages += data.errors[key].join(' ') + '\n';
+                                    }
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Validation Failed',
+                                    text: errorMessages.trim(),
+                                });
+                            } else {
+                                // If no validation errors but some other error occurred
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Booking Failed',
+                                    text: data.message,
+                                });
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong, please try again.',
+                        });
+                    });
+
+                overlay.classList.add('hidden'); // Hide overlay after confirmation
+            });
+
+
+            // Event listener for canceling the booking
+            cancelButton.addEventListener('click', function () {
+                overlay.classList.add('hidden'); // Hide overlay when canceled
+            });
+            checkinInput.addEventListener("input", function () {
+                if (checkinInput.value === "") {
+                    checkoutInput.setAttribute("disabled", "true");  // Disable checkout date
+                } else {
+                    checkoutInput.removeAttribute("disabled");  // Enable checkout date if check-in date is not empty
+                }
+            });
+
+            // Optional: Set a default state when the page loads
+            if (checkinInput.value === "") {
+                checkoutInput.setAttribute("disabled", "true");
+            }
         });
     @endif
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the button and overlay elements
+        const showCalendarButton = document.getElementById('showCalendarButton');
+        const calendarOverlay = document.getElementById('calendarOverlay');
+        const dormId = {{$dorm->id}}
+        // Initialize FullCalendar with the desired settings
+        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            initialView: 'dayGridMonth', // Initial view (monthly grid view)
+            events: function (info, successCallback, failureCallback) {
+                // Fetch the rent form data from the backend (your API)
+                fetch(`/get-rent-forms/${dormId}`)  // You can change this URL to your API endpoint
+                    .then(response => response.json())
+                    .then(data => {
+                        // Map the fetched data to events for FullCalendar
+                        console.log(data);  // You can log data to inspect it
+
+                        const events = data.map(rentForm => ({
+                            title: `Booked`,  // You can display user name or other info here
+                            start: rentForm.start_date,  // Start date of the booking
+                            end: rentForm.end_date,  // End date of the booking
+                            description: `Status: ${rentForm.status}`,  // Display the status
+                            color: rentForm.status === 'approved' ? 'green' : rentForm.status === 'pending' ? 'orange' : 'blue',  // Color by status
+                        }));
+
+                        successCallback(events);  // Return the mapped events to FullCalendar
+                    })
+                    .catch(error => {
+                        console.error('Error fetching rent forms:', error);
+                        failureCallback(error);
+                    });
+            },
+            eventClick: function (info) {
+                // Optional: Display more details when an event is clicked
+                alert('Event: ' + info.event.title + '\n' +
+                    'Start: ' + info.event.start.toLocaleString() + '\n' +
+                    'End: ' + info.event.end.toLocaleString() + '\n' +
+                    'Status: ' + info.event.extendedProps.description);
+            }
+        });
+
+        // Show the calendar when the "Show Calendar" button is clicked
+        showCalendarButton.addEventListener('click', function () {
+            // Display the overlay
+            calendarOverlay.style.display = 'flex';
+
+            // Render the calendar
+            calendar.render();
+        });
+
+        // Close the overlay if clicked outside the calendar
+        calendarOverlay.addEventListener('click', function (event) {
+            if (event.target === calendarOverlay) {
+                // Hide the overlay
+                calendarOverlay.style.display = 'none';
+            }
+        });
+    });
+
+
 
     document.addEventListener("DOMContentLoaded", function () {
         trackView({{ $dorm->id }});
@@ -797,5 +1115,7 @@
             modaler.style.display = "none";
         }
     }
+
+
 </script>
 @endsection

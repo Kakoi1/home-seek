@@ -6,6 +6,7 @@ use App\Mail\ContactMessageMail;
 use App\Models\CurseWords;
 use App\Models\Reviews;
 use App\Models\Wallet;
+use App\Models\WalletTransaction;
 use Crypt;
 use DB;
 use Carbon\Carbon;
@@ -256,6 +257,10 @@ class Controller extends BaseController
                     'redirect_url' => route('owner.Dashboard')
                 ]);
             }
+            Wallet::create([
+                'user_id' => $user->id,
+                'balance' => 0,
+            ]);
 
             // Default login redirect for Google account after registration
             Auth::login($user);
@@ -981,6 +986,7 @@ class Controller extends BaseController
             $rentForm->status = 'cancelled';
             $data = '<strong>Booking Cancellation Approved</strong><br>' .
                 '<p>Your request for cancellation has been processed successfully.</p><br>' .
+                '<p>And a ₱' . number_format($rentForm->total_price, 2) . ' has been added to your wallet for Refund.</p><br>' .
                 '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
             $notification = Notification::create([
                 'user_id' => $rentForm->user_id, // Assuming the owner is linked to the room
@@ -991,10 +997,38 @@ class Controller extends BaseController
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
-
+            $user = $rentForm->user;
+            $wallet = $user->wallet;
+            $wallet->balance += $rentForm->total_price;
+            $wallet->save();
+            $transaction = WalletTransaction::create([
+                'user_id' => $user->id,
+                'wallet_id' => $user->wallet->id,
+                'payment_id' => null,  // Save the payment_id here
+                'type' => 'Refund',
+                'amount' => '' . $rentForm->total_price,
+                'balance_after' => $user->wallet->balance,
+                'status' => 'completed',
+                'details' => 'Refund',
+            ]);
+            $rentForm->save();
             $dorm = Dorm::find($rentForm->dorm_id);
-            $dorm->availability = false;
-            $dorm->save();
+
+            $activeRentFormsExist = DB::selectOne("
+            SELECT EXISTS (
+                SELECT 1
+                FROM rent_forms
+                WHERE dorm_id = ?
+                AND status IN ('pending', 'active', 'approved')
+            ) AS rent_form_exists
+        ", [$dorm->id]);
+
+            if (!$activeRentFormsExist->rent_form_exists) {
+                // If no active, pending, or approved rent forms exist, mark dorm as available
+                $dorm->availability = false;
+                $dorm->save();
+            }
+
 
         } else if ($request->input('status') == 'rejected') {
             $data = '<strong>Booking Cancellation Rejected</strong><br>' .
@@ -1011,7 +1045,7 @@ class Controller extends BaseController
                 'sender_id' => $userId
             ]);
 
-
+            $rentForm->save();
         }
 
         event(new NotificationEvent([
@@ -1023,7 +1057,7 @@ class Controller extends BaseController
             'action' => 'response',
             'route' => route('user.rentForms')
         ]));
-        $rentForm->save();
+
         return redirect()->back()->with('success', 'status updated successfully.');
     }
 

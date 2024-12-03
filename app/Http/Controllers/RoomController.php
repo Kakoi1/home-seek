@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
 use Carbon\Carbon;
 use App\Models\Dorm;
 use App\Models\Reviews;
@@ -38,10 +40,23 @@ class RoomController extends Controller
 
         abort(404); // Send a 404 error if no ID was provided or form not found
     }
+    public function getRentForms($id)
+    {
+        // Fetch RentForms for a specific dorm that are approved, active, or pending
+        $rentForms = RentForm::where('dorm_id', $id)
+            ->whereIn('status', ['approved', 'active', 'pending'])
+            ->get();
+
+        // Return the rent forms as JSON to be used in the frontend
+        return response()->json($rentForms);
+    }
+
 
     public function storeBook(Request $request)
     {
         $userId = Auth::id();
+
+        // Validate incoming data
         $request->validate([
             'dorm_id' => 'required',
             'start_date' => 'required|date|after:today',
@@ -49,26 +64,74 @@ class RoomController extends Controller
             'guests' => 'required|integer|min:1',
             'total_price' => 'required|numeric|min:0',
         ]);
+
+        // Find the dorm, or fail if not found
         $dorm = Dorm::findOrFail($request->dorm_id);
-        if ($dorm->flag || $dorm->availabilty) {
-            return back()->withErrors('Accommodation not available');
+
+        // Check if the dorm is unavailable or flagged
+        if ($dorm->flag) {
+            return response()->json(['status' => 'error', 'message' => 'Accommodation not available']);
         }
-        // Save the booking
-        RentForm::create([
-            'user_id' => $userId, // Assuming the user is logged in
+        $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d');
+        $endDate = Carbon::parse($request->input('end_date'))->format('Y-m-d');
+
+        // Raw SQL to check if there are any overlapping reservations
+        $overlapExists = DB::selectOne("
+        SELECT EXISTS (
+            SELECT 1
+            FROM rent_forms
+            WHERE dorm_id = ?
+            AND (
+                status = 'pending'
+                OR status = 'active'
+                OR status = 'approved'
+            )
+            AND (
+                (start_date BETWEEN ? AND ?)
+                OR (end_date BETWEEN ? AND ?)
+                OR (start_date <= ? AND end_date >= ?)
+            )
+        ) AS overlap_exists
+    ", [$dorm->id, $startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
+
+        if ($overlapExists->overlap_exists) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The selected dates are already booked for this Accommodation.'
+            ]);
+        }
+
+
+
+        // Fetch the user's wallet
+        $user = Auth::user();
+        $wallet = $user->wallet;  // This assumes the user has a 'wallet' relationship defined
+        $walletBalance = $wallet->balance;
+
+        // Check if the wallet balance is sufficient
+        if ($walletBalance < $request->total_price) {
+            return response()->json(['status' => 'error', 'message' => 'Insufficient balance in your wallet']);
+        }
+
+        // Save the booking (RentForm)
+        $rentForm = RentForm::create([
+            'user_id' => $userId,
             'dorm_id' => $request->input('dorm_id'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
             'guest' => $request->input('guests'),
             'total_price' => $request->input('total_price'),
-            'status' => 'pending' // Default status
+            'status' => 'pending',  // Default status
         ]);
 
-        // Create a notification for the room owner
+        // Deduct the total price from the user's wallet balance
+
+
+        // Create a notification for the dorm owner
         $notification = Notification::create([
-            'user_id' => $dorm->user_id, // Assuming the owner is linked to the room
+            'user_id' => $dorm->user_id, // Owner of the dorm
             'type' => 'Form Submit',
-            'data' => '<strong>Someone Booked</strong> <br> <p>Someone Booked your Accomodation <strong>' . $dorm->name . '</strong></p><br> <p>Date: ' . now() . '</p>',
+            'data' => '<strong>Someone Booked</strong> <br> <p>Someone booked your accommodation <strong>' . $dorm->name . '</strong></p><br> <p>Date: ' . now()->format('Y-m-d H:i:s') . '</p>',
             'read' => false,
             'route' => route('managetenant'),
             'dorm_id' => $request->dorm_id,
@@ -85,10 +148,19 @@ class RoomController extends Controller
             'action' => 'rent',
             'route' => route('managetenant')
         ]));
-        $dorm->availability = true;
+
+        // Update dorm availability (mark as unavailable)
+        $dorm->availability = false;
         $dorm->save();
-        return redirect()->route('user.rentForms')->with('success', 'Booking Created!');
+
+        // Respond with success message
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Booking Created!',
+        ]);
     }
+
+
 
     public function updateBook(Request $request, $id)
     {
@@ -139,6 +211,7 @@ class RoomController extends Controller
             $data = '<strong>Booking Cancellation request</strong><br>' .
                 '<p>Cancellation request: ' . htmlspecialchars($rentForm->note) . ' on <strong>' . htmlspecialchars($rentForm->dorm->name) . '</strong></p><br>' .
                 '<p>Sent on ' . now()->format('Y-m-d H:i:s') . '</p>';
+            $rentForm->save();
         } else {
             $dorm = Dorm::find($rentForm->dorm_id);
             $rentForm->status = 'cancelled';
@@ -147,9 +220,22 @@ class RoomController extends Controller
             $data = '<strong>Booking Cancellation</strong><br>' .
                 '<p>Booking Cancelled due to: ' . htmlspecialchars($rentForm->note) . ' on <strong>' . htmlspecialchars($rentForm->dorm->name) . '</strong></p><br>' .
                 '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
+            $rentForm->save();
+            $activeRentFormsExist = DB::selectOne("
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM rent_forms
+                    WHERE dorm_id = ?
+                    AND status IN ('pending', 'active', 'approved')
+                ) AS rent_form_exists
+            ", [$dorm->id]);
 
-            $dorm->availability = false;
-            $dorm->save();
+            if (!$activeRentFormsExist->rent_form_exists) {
+                // If no active, pending, or approved rent forms exist, mark dorm as available
+                $dorm->availability = false;
+                $dorm->save();
+            }
+
         }
         // Redirect back with success message
 
@@ -174,7 +260,7 @@ class RoomController extends Controller
             'action' => 'rent',
             'route' => route('managetenant')
         ]));
-        $rentForm->save();
+
         return redirect()->back()->with('success', $message);
     }
 
@@ -194,6 +280,7 @@ class RoomController extends Controller
                 'type' => 'Form Response',
                 'data' => '<strong>Booking Approved</strong><br>' .
                     '<p>Congratulations! Your booking at <strong>' . htmlspecialchars($dorm->name) . '</strong> has been successfully approved.</p>' .
+                    '<p>And a ₱' . number_format($rentForm->total_price, 2) . ' has deducted to your wallet for payment.</p>' .
                     '<p>Please prepare for your stay and let us know if you have any questions.</p>' .
                     '<p>Date Approved: ' . now()->format('Y-m-d H:i:s') . '</p>' .
                     '<p>We look forward to hosting you!</p>',
@@ -202,7 +289,22 @@ class RoomController extends Controller
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+            $user = $rentForm->user;
+            $wallet = $user->wallet;
+            $wallet->balance -= $rentForm->total_price;
+            $wallet->save();
+            $transaction = WalletTransaction::create([
+                'user_id' => $user->id,
+                'wallet_id' => $user->wallet->id,
+                'payment_id' => null,  // Save the payment_id here
+                'type' => 'payment',
+                'amount' => '-' . $rentForm->total_price,
+                'balance_after' => $user->wallet->balance,
+                'status' => 'completed',
+                'details' => 'Payment',
+            ]);
             $dorm->availability = true;
+            $rentForm->save();
             $dorm->save();
 
         } else if ($request->input('status') == 'rejected') {
@@ -219,9 +321,24 @@ class RoomController extends Controller
                 'sender_id' => $userId
             ]);
             $rentForm->note = $request->rejection_reason;
+            $rentForm->save();
             $dorm = Dorm::find($rentForm->dorm_id);
-            $dorm->availability = false;
-            $dorm->save();
+
+            $activeRentFormsExist = DB::selectOne("
+            SELECT EXISTS (
+                SELECT 1
+                FROM rent_forms
+                WHERE dorm_id = ?
+                AND status IN ('pending', 'active', 'approved')
+            ) AS rent_form_exists
+        ", [$dorm->id]);
+
+            if (!$activeRentFormsExist->rent_form_exists) {
+                // If no active, pending, or approved rent forms exist, mark dorm as available
+                $dorm->availability = false;
+                $dorm->save();
+            }
+
         }
 
         event(new NotificationEvent([
@@ -233,7 +350,7 @@ class RoomController extends Controller
             'action' => 'response',
             'route' => route('user.rentForms')
         ]));
-        $rentForm->save();
+
         return redirect()->back()->with('success', 'Rent form status updated successfully.');
     }
 

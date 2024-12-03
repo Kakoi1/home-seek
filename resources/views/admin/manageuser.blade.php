@@ -6,6 +6,10 @@
 
 <style>
     /* Search Bar */
+    * {
+        border: transparent !important;
+    }
+
     .search-bar {
         margin-bottom: 15px;
     }
@@ -22,6 +26,7 @@
     .custom-table {
         width: 100%;
         border-collapse: collapse;
+        border-bottom: solid 1px;
     }
 
     .custom-table th,
@@ -175,12 +180,20 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
+    #userTableBody tr {
+        border-bottom: solid #e0e0e0 1px !important;
+    }
+
+    #searchBar {
+        border: solid #e0e0e0 1px !important;
+    }
 </style>
 
 <!-- Main content -->
 <div class="home-content">
     <div class="container">
-        <h2>Manage Users</h2>
+        <h2 class="text-center">Manage Users</h2>
 
         <!-- Filter Buttons -->
         <div class="filter-buttons">
