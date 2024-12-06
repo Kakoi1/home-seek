@@ -181,7 +181,10 @@ class Controller extends BaseController
             // If no 'owner' role, just save profile picture
             $user->profile_picture = $path;
             $user->save();
-
+            Wallet::create([
+                'user_id' => $user->id,
+                'balance' => 0,
+            ]);
             // Default login redirect after successful registration
             Auth::login($user);
             return response()->json([
@@ -250,17 +253,19 @@ class Controller extends BaseController
                 ]));
 
                 // Successful login after Google registration
+                Wallet::create([
+                    'user_id' => $user->id,
+                    'balance' => 0,
+                ]);
                 Auth::login($user);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Your registration is complete.',
                     'redirect_url' => route('owner.Dashboard')
                 ]);
             }
-            Wallet::create([
-                'user_id' => $user->id,
-                'balance' => 0,
-            ]);
+
 
             // Default login redirect for Google account after registration
             Auth::login($user);
