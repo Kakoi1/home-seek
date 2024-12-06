@@ -96,7 +96,7 @@
 
 
     /* Responsive Styling */
-    @media (max-width: 830px) {
+    @media (max-width: 1030px) {
         .nav-menu {
             display: none;
             flex-direction: column;

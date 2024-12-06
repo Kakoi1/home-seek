@@ -98,6 +98,9 @@
                         text: data.message,
                         icon: 'error',
                         confirmButtonText: 'OK',
+                    }).then(() => {
+                        // Redirect to home page after confirmation
+                        window.location.reload;
                     });
                 }
             })

@@ -640,10 +640,11 @@
 
     <div id="walletOverlay" class="overli" style="display:none;">
         <div class="overli-content">
-            <h2>My Wallet</h2>
-            <p><strong>Wallet Balance:</strong> ₱<span id="walletBalance">0.00</span></p>
-
-            <h4>Transaction History</h4>
+            <h2 style="text-align: left !important;">My Wallet</h2>
+            <div style="display: flex;justify-content: space-between;align-items: center;">
+                <h5>Transaction History</h5>
+                <h6>Wallet Balance: ₱<span id="walletBalance" style="color: blue;"><strong>0.00</strong></span></h6>
+            </div>
             <div id="walletTransactions" class="transaction-list">
                 <table class="table">
                     <thead>

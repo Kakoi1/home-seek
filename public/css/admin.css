@@ -463,6 +463,9 @@
       .sidebar.active~.home-section .user-nav .profile-details {
           display: none;
       }
+      .sidebar .logo_name {
+        display: none;
+    }
   }
 
   @media (max-width: 400px) {
@@ -483,7 +486,9 @@
           left: 60px;
           width: calc(100% - 60px);
       }
-
+      .sidebar.logo_name {
+        display: none;
+    }
       .home-section .user-nav {
           width: 100%;
           left: 0;

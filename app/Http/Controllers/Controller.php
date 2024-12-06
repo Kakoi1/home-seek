@@ -1090,10 +1090,18 @@ class Controller extends BaseController
         $warnReason = 'Your review contains inappropriate words.';
 
         // Validate input
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'rating' => 'required|integer|min:1|max:5',
             'comments' => 'nullable|string|max:1000',
         ]);
+
+        // Check for validation errors
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         // Get the list of curse words from the database
         $curseWords = CurseWords::pluck('word')->map(function ($word) {
@@ -1113,7 +1121,7 @@ class Controller extends BaseController
 
                 // Check if user should be deactivated (i.e., strikes are exhausted)
                 if ($user->strike <= 0) {
-                    $user->active_status = false;  // Deactivate the user
+                    $user->active_status = true;  // Deactivate the user
                     $user->note = $warnReason;  // Set the warning reason
                 }
 
@@ -1143,10 +1151,11 @@ class Controller extends BaseController
                     'route' => null
                 ]));
 
-                // Redirect with an error if a curse word was found
-                return redirect()->back()->withErrors([
-                    'comments' => 'Your review contains inappropriate words. Please edit and try again.'
-                ])->withInput();
+                // Return JSON response for curse word detection
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your review contains inappropriate words. Please edit and try again.',
+                ], 400);
             }
         }
 
@@ -1156,9 +1165,13 @@ class Controller extends BaseController
             'comments' => $request->comments,
         ]);
 
-        // Redirect to home with a success message
-        return redirect()->route('home')->with('success', 'Review submitted successfully!');
+        // Return JSON response for success
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Review submitted successfully!',
+        ]);
     }
+
 
     public function userReviews()
     {
