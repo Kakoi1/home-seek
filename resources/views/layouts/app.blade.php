@@ -834,13 +834,7 @@
                         }
 
                     }
-                    document.getElementById('cashInButton').addEventListener('click', () => {
-                        location.href = "{{ route('wallet.cashIn') }}"; // Route for Cash In
-                    });
 
-                    document.getElementById('cashOutButton').addEventListener('click', () => {
-                        location.href = "{{ route('cashout.page') }}"; // Route for Cash Out
-                    });
 
                     document.getElementById('userData').innerHTML = data.content;
 
@@ -1158,6 +1152,13 @@ cursor: pointer; /* Cursor changes to pointer on hover */
         document.getElementById('closeWalletOverlay').addEventListener('click', () => {
             const overlay = document.getElementById('walletOverlay');
             overlay.style.display = 'none'; // Hide overlay
+        });
+        document.getElementById('cashInButton').addEventListener('click', () => {
+            location.href = "{{ route('wallet.cashIn') }}"; // Route for Cash In
+        });
+
+        document.getElementById('cashOutButton').addEventListener('click', () => {
+            location.href = "{{ route('cashout.page') }}"; // Route for Cash Out
         });
     </script>
 
