@@ -234,7 +234,7 @@
             const row = `
         <tr>
             <td>${capitalizeFirstLetter(report.user.name)}</td>
-            <td>${capitalizeFirstLetter(report.reported.name)}</td>
+            <td>${!report.dorm ? capitalizeFirstLetter(report.reported.name) : 'N/A'}</td>
             <td>${report.dorm ? capitalizeFirstLetter(report.dorm.name) : 'N/A'}</td>
             <td>${capitalizeFirstLetter(report.reason)}</td>
             <td>${capitalizeFirstLetter(report.status)}</td>

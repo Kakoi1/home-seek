@@ -207,6 +207,7 @@
                 <div class="dropdownMenu">
                     <ul>
                         <li><a style="color: #333333;" onclick="openUserPopup({{Auth::id()}})">Profile</a></li>
+                        <li><a style="color: #333333;" id="myWallet">My Wallet</a></li>
                         <li><a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

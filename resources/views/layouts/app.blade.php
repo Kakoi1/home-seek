@@ -601,7 +601,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="userButton" id="userButton" style="display: flex;width: 250px;"></div>
+                <div class="userButton" id="userButton"></div>
             </div>
             <hr>
             <div id="userData"></div>
@@ -813,102 +813,11 @@
                             });
 
                             // Create 'My Wallet' button
-                            const walletButton = document.createElement('button');
-                            walletButton.innerText = 'My Wallet';
 
-                            // Wallet overlay functionality
-                            walletButton.addEventListener('click', async () => {
-                                const overlay = document.getElementById('walletOverlay');
-                                const transactionTableBody = document.getElementById('transactionTableBody');
-                                const walletBalance = document.getElementById('walletBalance');
-                                const pageNumber = document.getElementById('pageNumber');
-                                const prevPageBtn = document.getElementById('prevPageBtn');
-                                const nextPageBtn = document.getElementById('nextPageBtn');
-
-                                // Initialize Pagination
-                                let currentPage = 1;
-                                const itemsPerPage = 5; // Number of items per page
-
-                                overlay.style.display = 'flex'; // Show overlay
-                                transactionTableBody.innerHTML = ''; // Clear previous data
-
-                                try {
-                                    // Fetch wallet details
-                                    const response = await fetch("{{ route('wallet.details') }}");
-                                    const data = await response.json();
-
-                                    // Update wallet balance
-                                    walletBalance.innerText = data.balance;
-
-                                    // Pagination logic
-                                    const totalTransactions = data.transactions;
-                                    const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
-
-                                    // Function to load page data
-                                    function loadPage(page) {
-                                        // Calculate the start and end index for the current page
-                                        const start = (page - 1) * itemsPerPage;
-                                        const end = start + itemsPerPage;
-
-                                        // Clear the current table body
-                                        transactionTableBody.innerHTML = '';
-
-                                        // Add transactions for the current page
-                                        const transactionsOnPage = totalTransactions.slice(start, end);
-
-                                        if (transactionsOnPage.length > 0) {
-                                            transactionsOnPage.forEach(transaction => {
-                                                const row = document.createElement('tr');
-                                                row.innerHTML = `
-                                <td>${transaction.date}</td>
-                                <td>${transaction.type}</td>
-                                <td>₱${transaction.amount}</td>
-                            `;
-                                                transactionTableBody.appendChild(row);
-                                            });
-                                        } else {
-                                            const noDataRow = document.createElement('tr');
-                                            noDataRow.innerHTML = `
-                            <td colspan="3" style="text-align: center;">No transactions available.</td>
-                        `;
-                                            transactionTableBody.appendChild(noDataRow);
-                                        }
-
-                                        // Update the page number
-                                        pageNumber.innerText = `Page ${page}`;
-
-                                        // Disable/Enable buttons based on the current page
-                                        prevPageBtn.disabled = page === 1;
-                                        nextPageBtn.disabled = page === totalPages;
-                                    }
-
-                                    // Load initial page
-                                    loadPage(currentPage);
-
-                                    // Event Listeners for page navigation
-                                    prevPageBtn.addEventListener('click', () => {
-                                        if (currentPage > 1) {
-                                            currentPage--;
-                                            loadPage(currentPage);
-                                        }
-                                    });
-
-                                    nextPageBtn.addEventListener('click', () => {
-                                        const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
-                                        if (currentPage < totalPages) {
-                                            currentPage++;
-                                            loadPage(currentPage);
-                                        }
-                                    });
-
-                                } catch (error) {
-                                    console.error('Error fetching wallet details:', error);
-                                }
-                            });
 
                             // Add the buttons to the userButton container
                             userButton.appendChild(editButton);
-                            userButton.appendChild(walletButton);
+                            // userButton.appendChild(walletButton);
                         }
 
                         // Close overlay when the close button is clicked
@@ -923,10 +832,7 @@
                             @endif
 
                         }
-                        document.getElementById('closeWalletOverlay').addEventListener('click', () => {
-                            const overlay = document.getElementById('walletOverlay');
-                            overlay.style.display = 'none'; // Hide overlay
-                        });
+
                     }
                     document.getElementById('cashInButton').addEventListener('click', () => {
                         location.href = "{{ route('wallet.cashIn') }}"; // Route for Cash In
@@ -1157,7 +1063,102 @@ cursor: pointer; /* Cursor changes to pointer on hover */
         updateReportReasonOptions('user');
 
 
+        const walletButton = document.getElementById('myWallet');
+        // walletButton.innerText = 'My Wallet';
 
+        // Wallet overlay functionality
+        walletButton.addEventListener('click', async () => {
+            const overlay = document.getElementById('walletOverlay');
+            const transactionTableBody = document.getElementById('transactionTableBody');
+            const walletBalance = document.getElementById('walletBalance');
+            const pageNumber = document.getElementById('pageNumber');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            // Initialize Pagination
+            let currentPage = 1;
+            const itemsPerPage = 5; // Number of items per page
+
+            overlay.style.display = 'flex'; // Show overlay
+            transactionTableBody.innerHTML = ''; // Clear previous data
+
+            try {
+                // Fetch wallet details
+                const response = await fetch("{{ route('wallet.details') }}");
+                const data = await response.json();
+
+                // Update wallet balance
+                walletBalance.innerText = data.balance;
+
+                // Pagination logic
+                const totalTransactions = data.transactions;
+                const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
+
+                // Function to load page data
+                function loadPage(page) {
+                    // Calculate the start and end index for the current page
+                    const start = (page - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+
+                    // Clear the current table body
+                    transactionTableBody.innerHTML = '';
+
+                    // Add transactions for the current page
+                    const transactionsOnPage = totalTransactions.slice(start, end);
+
+                    if (transactionsOnPage.length > 0) {
+                        transactionsOnPage.forEach(transaction => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${transaction.date}</td>
+                                <td>${transaction.type}</td>
+                                <td>₱${transaction.amount}</td>
+                            `;
+                            transactionTableBody.appendChild(row);
+                        });
+                    } else {
+                        const noDataRow = document.createElement('tr');
+                        noDataRow.innerHTML = `
+                            <td colspan="3" style="text-align: center;">No transactions available.</td>
+                        `;
+                        transactionTableBody.appendChild(noDataRow);
+                    }
+
+                    // Update the page number
+                    pageNumber.innerText = `Page ${page}`;
+
+                    // Disable/Enable buttons based on the current page
+                    prevPageBtn.disabled = page === 1;
+                    nextPageBtn.disabled = page === totalPages;
+                }
+
+                // Load initial page
+                loadPage(currentPage);
+
+                // Event Listeners for page navigation
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        loadPage(currentPage);
+                    }
+                });
+
+                nextPageBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(totalTransactions.length / itemsPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        loadPage(currentPage);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching wallet details:', error);
+            }
+        });
+        document.getElementById('closeWalletOverlay').addEventListener('click', () => {
+            const overlay = document.getElementById('walletOverlay');
+            overlay.style.display = 'none'; // Hide overlay
+        });
     </script>
 
 </body>

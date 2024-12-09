@@ -888,12 +888,24 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Insufficient Balance',
-                            text: 'You do not have enough balance in your wallet to make this booking.',
+                            html: `
+                        <p>You do not have enough balance in your wallet to make this booking.</p>
+                        <p>Your wallet balance is: <strong>${walletBalance.toFixed(2)}</strong></p>
+                        <p>Total price is: <strong>${totalPrice.toFixed(2)}</strong></p>
+                    `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Cash In',
+                            cancelButtonText: 'Cancel',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '{{route('wallet.cashIn')}}'; // Replace with your actual cash-in route
+                            }
                         });
                         return;
                     }
                     overlay.classList.remove('hidden'); // Show overlay for confirmation
                 });
+
             } catch (error) {
 
             }
