@@ -244,9 +244,9 @@
                 </tbody>
             </table>
             <div class="pagination-container">
-                <button class="pagination-button" id="prevPageBtns" onclick="prevPage()" disabled>Previous</button>
+                <button class="pagination-button" id="prevPageBtns" onclick="prevPages()" disabled>Previous</button>
                 <span class="pagination-info">Page <span id="currentPages">1</span></span>
-                <button class="pagination-button" id="nextPageBtns" onclick="nextPage()">Next</button>
+                <button class="pagination-button" id="nextPageBtns" onclick="nextPages()">Next</button>
             </div>
         </div>
 
@@ -664,7 +664,7 @@
 
 
     // Functions for pagination controls
-    function nextPage() {
+    function nextPages() {
         const totalPages = calculateTotalPages();
         if (currentPage < totalPages) {
             currentPage++;
@@ -672,7 +672,7 @@
         }
     }
 
-    function prevPage() {
+    function prevPages() {
         if (currentPage > 1) {
             currentPage--;
             renderTable(currentPage);
