@@ -244,9 +244,9 @@
                 </tbody>
             </table>
             <div class="pagination-container">
-                <button class="pagination-button" id="prevPageBtn" onclick="prevPage()" disabled>Previous</button>
-                <span class="pagination-info">Page <span id="currentPage">1</span></span>
-                <button class="pagination-button" id="nextPageBtn" onclick="nextPage()">Next</button>
+                <button class="pagination-button" id="prevPageBtns" onclick="prevPages()" disabled>Previous</button>
+                <span class="pagination-info">Page <span id="currentPages">1</span></span>
+                <button class="pagination-button" id="nextPageBtns" onclick="nextPages()">Next</button>
             </div>
         </div>
 
@@ -664,7 +664,7 @@
 
 
     // Functions for pagination controls
-    function nextPage() {
+    function nextPages() {
         const totalPages = calculateTotalPages();
         if (currentPage < totalPages) {
             currentPage++;
@@ -672,7 +672,7 @@
         }
     }
 
-    function prevPage() {
+    function prevPages() {
         if (currentPage > 1) {
             currentPage--;
             renderTable(currentPage);
@@ -680,11 +680,11 @@
     }
 
     function updatePaginationButtons(totalPages) {
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
+        const prevPageBtns = document.getElementById("prevPageBtns");
+        const nextPageBtns = document.getElementById("nextPageBtns");
 
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages || totalPages === 0; // Disable if no results
+        prevPageBtns.disabled = currentPage === 1;
+        nextPageBtns.disabled = currentPage === totalPages || totalPages === 0; // Disable if no results
     }
 
     // Filter and paginate function for search
