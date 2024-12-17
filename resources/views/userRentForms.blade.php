@@ -456,8 +456,8 @@
                                     <input type="hidden" name="rent_id" value="{{ $currentRent->id }}">
                                 </form>
 
-                                <a href="javascript:void(0);" class="btn edit-button"
-                                    onclick="document.getElementById('editRentForm').submit();">Edit</a>
+                                <!-- <a href="javascript:void(0);" class="btn edit-button"
+                                                    onclick="document.getElementById('editRentForm').submit();">Edit</a> -->
 
                             @else
                                 <p>No current rent information available.</p>

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Dorm;
 use App\Models\RentForm;
+use App\Models\WalletTransaction;
 use DB;
 use Illuminate\Console\Command;
 use App\Models\Booking; // Adjust to the correct model path
@@ -44,6 +45,22 @@ class CancelStaleBookings extends Command
             $dorm = Dorm::find($booking->dorm_id);
             $booking->status = 'cancelled';
             $booking->note = 'Automatically cancelled due to no response for more than 1 day.';
+
+            $user = $booking->user;
+            $wallet = $user->wallet;
+            $wallet->balance += $booking->total_price;
+            $wallet->save();
+            $transaction = WalletTransaction::create([
+                'user_id' => $user->id,
+                'wallet_id' => $user->wallet->id,
+                'payment_id' => null,  // Save the payment_id here
+                'type' => 'Refund',
+                'amount' => '' . $booking->total_price,
+                'balance_after' => $user->wallet->balance,
+                'status' => 'completed',
+                'details' => 'Refund',
+            ]);
+
             $booking->save();
             $activeRentFormsExist = DB::selectOne("
             SELECT EXISTS (

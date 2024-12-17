@@ -113,6 +113,19 @@ class RoomController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Insufficient balance in your wallet']);
         }
 
+        $wallet->balance -= $request->input('total_price');
+        $wallet->save();
+        $transaction = WalletTransaction::create([
+            'user_id' => $user->id,
+            'wallet_id' => $user->wallet->id,
+            'payment_id' => null,  // Save the payment_id here
+            'type' => 'payment',
+            'amount' => '-' . $request->input('total_price'),
+            'balance_after' => $user->wallet->balance,
+            'status' => 'completed',
+            'details' => 'Payment',
+        ]);
+
         // Save the booking (RentForm)
         $rentForm = RentForm::create([
             'user_id' => $userId,
@@ -220,6 +233,21 @@ class RoomController extends Controller
             $data = '<strong>Booking Cancellation</strong><br>' .
                 '<p>Booking Cancelled due to: ' . htmlspecialchars($rentForm->note) . ' on <strong>' . htmlspecialchars($rentForm->dorm->name) . '</strong></p><br>' .
                 '<p>Sent on' . now()->format('Y-m-d H:i:s') . '</p>';
+
+            $user = $rentForm->user;
+            $wallet = $user->wallet;
+            $wallet->balance += $rentForm->total_price;
+            $wallet->save();
+            $transaction = WalletTransaction::create([
+                'user_id' => $user->id,
+                'wallet_id' => $user->wallet->id,
+                'payment_id' => null,  // Save the payment_id here
+                'type' => 'Refund',
+                'amount' => '' . $rentForm->total_price,
+                'balance_after' => $user->wallet->balance,
+                'status' => 'completed',
+                'details' => 'Refund',
+            ]);
             $rentForm->save();
             $activeRentFormsExist = DB::selectOne("
                 SELECT EXISTS (
@@ -280,7 +308,6 @@ class RoomController extends Controller
                 'type' => 'Form Response',
                 'data' => '<strong>Booking Approved</strong><br>' .
                     '<p>Congratulations! Your booking at <strong>' . htmlspecialchars($dorm->name) . '</strong> has been successfully approved.</p>' .
-                    '<p>And a ₱' . number_format($rentForm->total_price, 2) . ' has deducted to your wallet for payment.</p>' .
                     '<p>Please prepare for your stay and let us know if you have any questions.</p>' .
                     '<p>Date Approved: ' . now()->format('Y-m-d H:i:s') . '</p>' .
                     '<p>We look forward to hosting you!</p>',
@@ -289,20 +316,7 @@ class RoomController extends Controller
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
-            $user = $rentForm->user;
-            $wallet = $user->wallet;
-            $wallet->balance -= $rentForm->total_price;
-            $wallet->save();
-            $transaction = WalletTransaction::create([
-                'user_id' => $user->id,
-                'wallet_id' => $user->wallet->id,
-                'payment_id' => null,  // Save the payment_id here
-                'type' => 'payment',
-                'amount' => '-' . $rentForm->total_price,
-                'balance_after' => $user->wallet->balance,
-                'status' => 'completed',
-                'details' => 'Payment',
-            ]);
+
             $dorm->availability = true;
             $rentForm->save();
             $dorm->save();
@@ -320,6 +334,22 @@ class RoomController extends Controller
                 'dorm_id' => $rentForm->dorm_id,
                 'sender_id' => $userId
             ]);
+
+            $user = $rentForm->user;
+            $wallet = $user->wallet;
+            $wallet->balance += $rentForm->total_price;
+            $wallet->save();
+            $transaction = WalletTransaction::create([
+                'user_id' => $user->id,
+                'wallet_id' => $user->wallet->id,
+                'payment_id' => null,  // Save the payment_id here
+                'type' => 'Refund',
+                'amount' => '' . $rentForm->total_price,
+                'balance_after' => $user->wallet->balance,
+                'status' => 'completed',
+                'details' => 'Refund',
+            ]);
+
             $rentForm->note = $request->rejection_reason;
             $rentForm->save();
             $dorm = Dorm::find($rentForm->dorm_id);
