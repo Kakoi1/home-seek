@@ -16,7 +16,6 @@
         "paymongo/paymongo-php": "*",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-google-cloud-storage": "^2.3",
-        "srmklive/paypal": "~3.0",
         "stripe/stripe-php": "^16.3"
     },
     "require-dev": {
